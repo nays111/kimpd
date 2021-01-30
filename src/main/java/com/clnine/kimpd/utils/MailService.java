@@ -52,7 +52,7 @@ public class MailService {
     }
 
     //pw찾기
-    public void sendPwFindMail(String email) {
+    public String sendPwFindMail(String email) {
         //인증메일 전송 + 키 값 리턴
         String tmpPw = getTmpPw();
         try{
@@ -71,7 +71,7 @@ public class MailService {
             e.printStackTrace();
         }
 
-        //return tmpPw;
+        return tmpPw;
     }
 
 

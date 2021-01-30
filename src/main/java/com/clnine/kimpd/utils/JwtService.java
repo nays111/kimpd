@@ -19,13 +19,13 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class JwtService {
     /**
      * JWT 생성
-     * @param userId
+     * @param userIdx
      * @return String
      */
-    public String createJwt(int userId) {
+    public String createJwt(int userIdx) {
         Date now = new Date();
         return Jwts.builder()
-                .claim("userId", userId)
+                .claim("userIdx", userIdx)
                 .setIssuedAt(now)
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
@@ -41,11 +41,11 @@ public class JwtService {
     }
 
     /**
-     * JWT에서 userId 추출
+     * JWT에서 userIdx 추출
      * @return int
      * @throws BaseException
      */
-    public int getUserId() throws BaseException {
+    public int getUserIdx() throws BaseException {
         // 1. JWT 추출
         String accessToken = getJwt();
         if (accessToken == null || accessToken.length() == 0) {
@@ -62,7 +62,7 @@ public class JwtService {
             throw new BaseException(INVALID_JWT);
         }
 
-        // 3. userId 추출
-        return claims.getBody().get("userId", Integer.class);
+        // 3. userIdx 추출
+        return claims.getBody().get("userIdx", Integer.class);
     }
 }

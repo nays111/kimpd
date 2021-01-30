@@ -35,7 +35,7 @@ spring:
 
   datasource:
     platform: mysql
-    url: jdbc:mysql://springboot.clbn7tgxxyxe.ap-northeast-2.rds.amazonaws.com/bootDB
-    username: nays111
-    password: skdbstn15!
+    url: jdbc:mysql://kimpd-db-instance.covc7wcbhugw.ap-northeast-2.rds.amazonaws.com/kimpddb
+    username: kimpdlabs
+    password: tobi0810!
     driver-class-name: com.mysql.cj.jdbc.Driver

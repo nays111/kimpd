@@ -5,6 +5,7 @@ import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
+import com.clnine.kimpd.utils.MailService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,62 +19,63 @@ public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserInfoProvider userInfoProvider;
     private final JwtService jwtService;
-
+    private final MailService mailService;
     @Autowired
-    public UserInfoService(UserInfoRepository userInfoRepository, UserInfoProvider userInfoProvider, JwtService jwtService) {
+    public UserInfoService(UserInfoRepository userInfoRepository, UserInfoProvider userInfoProvider, JwtService jwtService, MailService mailService) {
         this.userInfoRepository = userInfoRepository;
         this.userInfoProvider = userInfoProvider;
         this.jwtService = jwtService;
+        this.mailService = mailService;
     }
 
-    /**
-     * 회원가입
-     * @param postUserReq
-     * @return PostUserRes
-     * @throws BaseException
-     */
-    public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
-        UserInfo existsUserInfo = null;
-        try {
-            // 1-1. 이미 존재하는 회원이 있는지 조회
-            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
-        } catch (BaseException exception) {
-            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
-            if (exception.getStatus() != NOT_FOUND_USER) {
-                throw exception;
-            }
-        }
-        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
-        if (existsUserInfo != null) {
-            throw new BaseException(DUPLICATED_USER);
-        }
-
-        // 2. 유저 정보 생성
-        String email = postUserReq.getEmail();
-        String nickname = postUserReq.getNickname();
-        String phoneNumber = postUserReq.getPhoneNumber();
-        String password;
-        try {
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_POST_USER);
-        }
-        UserInfo userInfo = new UserInfo(email, password, nickname, phoneNumber);
-
-        // 3. 유저 정보 저장
-        try {
-            userInfo = userInfoRepository.save(userInfo);
-        } catch (Exception exception) {
-            throw new BaseException(FAILED_TO_POST_USER);
-        }
-
-        // 4. JWT 생성
-        String jwt = jwtService.createJwt(userInfo.getId());
-
-        // 5. UserInfoLoginRes로 변환하여 return
-        int id = userInfo.getId();
-        return new PostUserRes(id, jwt);
-    }
+//    /**
+//     * 회원가입
+//     * @param postUserReq
+//     * @return PostUserRes
+//     * @throws BaseException
+//     */
+//    public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
+//        UserInfo existsUserInfo = null;
+//        try {
+//            // 1-1. 이미 존재하는 회원이 있는지 조회
+//            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
+//        } catch (BaseException exception) {
+//            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
+//            if (exception.getStatus() != NOT_FOUND_USER) {
+//                throw exception;
+//            }
+//        }
+//        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
+//        if (existsUserInfo != null) {
+//            throw new BaseException(DUPLICATED_USER);
+//        }
+//
+//        // 2. 유저 정보 생성
+//        String email = postUserReq.getEmail();
+//        String nickname = postUserReq.getNickname();
+//        String phoneNumber = postUserReq.getPhoneNumber();
+//        String password;
+//        try {
+//            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
+//        } catch (Exception ignored) {
+//            throw new BaseException(FAILED_TO_POST_USER);
+//        }
+//        UserInfo userInfo = new UserInfo(email, password, nickname, phoneNumber);
+//
+//        // 3. 유저 정보 저장
+//        try {
+//            userInfo = userInfoRepository.save(userInfo);
+//        } catch (Exception exception) {
+//            throw new BaseException(FAILED_TO_POST_USER);
+//        }
+//
+//        // 4. JWT 생성
+//        String jwt = jwtService.createJwt(userInfo.getId());
+//
+//        // 5. UserInfoLoginRes로 변환하여 return
+//        int id = userInfo.getId();
+//        return new PostUserRes(id, jwt);
+//    }
 
     /**
      * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
@@ -94,12 +96,12 @@ public class UserInfoService {
 
     /**
      * 회원 탈퇴
-     * @param userId
+     * @param userIdx
      * @throws BaseException
      */
-    public void deleteUserInfo(int userId) throws BaseException {
+    public void deleteUserInfo(int userIdx) throws BaseException {
         // 1. 존재하는 UserInfo가 있는지 확인 후 저장
-        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserId(userId);
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
 
         // 2-1. 해당 UserInfo를 완전히 삭제
 //        try {
@@ -115,6 +117,28 @@ public class UserInfoService {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_DELETE_USER);
         }
+    }
+
+    public void patchUserPassword(String email) throws BaseException{
+        UserInfo existsUserInfo = null;
+        try{
+            //존재한다면
+            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(email);
+        }catch(BaseException exception){
+            throw new BaseException(NOT_FOUND_USER);
+        }
+        //새비밀번호 전송
+        String newPassword = mailService.sendPwFindMail(email);
+        try {
+            newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+        existsUserInfo.setPassword(newPassword);
+
+        userInfoRepository.save(existsUserInfo);
+
+
     }
 
 

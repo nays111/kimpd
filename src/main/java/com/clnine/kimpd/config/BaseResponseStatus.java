@@ -19,7 +19,7 @@ public enum BaseResponseStatus {
     SUCCESS_READ_SEARCH_USERS(true, 1017, "회원 검색 조회에 성공하였습니다."),
 
     //Kimpd response code
-    SUCCESS_SEND_TEMP_PASSWOD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
+    SUCCESS_SEND_TEMP_PASSWORD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
 
 
     // 2000 : Request 오류
@@ -34,6 +34,7 @@ public enum BaseResponseStatus {
     WRONG_PASSWORD(false, 2032, "비밀번호를 다시 입력해주세요."),
     DO_NOT_MATCH_PASSWORD(false, 2033, "비밀번호와 비밀번호확인 값이 일치하지 않습니다."),
     EMPTY_NICKNAME(false, 2040, "닉네임을 입력해주세요."),
+    EMPTY_ID(false, 2041, "아이디를 입력해주세요."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
