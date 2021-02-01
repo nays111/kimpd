@@ -20,8 +20,11 @@ public enum BaseResponseStatus {
 
     //Kimpd response code
     SUCCESS_SEND_TEMP_PASSWORD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
-
-
+    SUCCESS_CHECK_ID(true,1019,"사용할 수 있는 ID입니다"),
+    SUCCESS_CHECK_NICKNAME(true,1020,"사용할 수 있는 닉네임입니다"),
+    SUCCESS_READ_PROJECTS(true,1021,"프로젝트 조회에 성공하였습니다."),
+    SUCCESS_POST_PROJECT(true,1022,"프로젝트 생성에 성공하였습니다."),
+    SUCCESS_POST_CASTING(true,1023,"섭외 요청에 성공하였습니다."),
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -35,6 +38,22 @@ public enum BaseResponseStatus {
     DO_NOT_MATCH_PASSWORD(false, 2033, "비밀번호와 비밀번호확인 값이 일치하지 않습니다."),
     EMPTY_NICKNAME(false, 2040, "닉네임을 입력해주세요."),
     EMPTY_ID(false, 2041, "아이디를 입력해주세요."),
+    INVALID_PASSWORD(false,2042, "비밀번호 형식을 확인해주세요."),
+    EMPTY_PHONE_NUMBER(false,2043,"휴대폰 번호를 입력해주세요."),
+    INVALID_PHONE_NUMBER(false,2044,"휴대폰 형식을 확인해주세요."),
+    EMPTY_PROJECT_NAME(false,2045,"프로젝트 이름을 입력해주세요."),
+    EMPTY_PROJECT_MAKER(false,2046,"프로젝트 제작사를 입력해주세요."),
+    EMPTY_PROJECT_START_DATE(false,2047,"프로젝트 시작일을 입력해주세요."),
+    EMPTY_PROJECT_END_DATE(false,2048,"프로젝트 종료일을 입력해주세요."),
+    EMPTY_PROJECT_DESCRIPTION(false,2049,"프로젝트 설명을 입력해주세요."),
+    EMPTY_PROJECT_BUDGET(false,2050,"프로젝트 예산을 입력해주세요."),
+    EMPTY_CASTING_PRICE(false,2051,"섭외 비용을 입력해주세요."),
+    EMPTY_CASTING_START_DATE(false,2052,"섭외 시작일을 입력해주세요."),
+    EMPTY_CASTING_END_DATE(false,2053,"섭외 종료일을 입력해주세요."),
+    EMPTY_CASTING_PRICE_DATE(false,2054,"입금 기한을 입력해주세요"),
+    EMPTY_CASTING_WORK(false,2055,"담당 업무를 입력해주세요."),
+    EMPTY_CASTING_MESSAGE(false,2056,"섭외 메세지를 입력해주세요."),
+    EMPTY_PROJECT_FILE_URL(false,2057,"프로젝트 파일을 입력해주세요."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -45,7 +64,12 @@ public enum BaseResponseStatus {
     FAILED_TO_LOGIN(false, 3014, "로그인에 실패하였습니다."),
     FAILED_TO_DELETE_USER(false, 3015, "회원 탈퇴에 실패하였습니다."),
     FAILED_TO_PATCH_USER(false, 3016, "개인정보 수정에 실패하였습니다."),
-
+    FAILED_TO_POST_PROJECT(false,3017,"프로젝트 생성에 실패하였습니다."),
+    FAILED_TO_GET_PROJECTS(false,3018,"프로젝트를 불러오는데 실패하였습니다."),
+    FAILED_TO_POST_CASTING(false,3019,"섭외 신청에 실패하였습니다."),
+    ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT(false,3020,"이미 해당 프로젝트에 대해 해당 유저에게 섭외 요청을 보낸적이 있습니다."),
+    FAILED_TO_GET_CASTING(false,3021,"캐스팅 정보 조회에 실패하였습니다."),
+    NOT_FOUND_CASTING(false,3022,"존재하지 않는 캐스팅입니다."),
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");

@@ -7,9 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class PostUserReq {
-    private String email;
+    private int userType;
+    private String id;
     private String password;
     private String confirmPassword;
-    private String nickname;
-    private String phoneNumber;
+    private String email;
+    private int agreeAdvertisement;
+    private String phoneNum;
 }

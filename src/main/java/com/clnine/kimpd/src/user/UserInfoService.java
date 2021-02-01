@@ -28,54 +28,56 @@ public class UserInfoService {
         this.mailService = mailService;
     }
 
-//    /**
-//     * 회원가입
-//     * @param postUserReq
-//     * @return PostUserRes
-//     * @throws BaseException
-//     */
-//    public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
-//        UserInfo existsUserInfo = null;
-//        try {
-//            // 1-1. 이미 존재하는 회원이 있는지 조회
-//            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
-//        } catch (BaseException exception) {
-//            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
-//            if (exception.getStatus() != NOT_FOUND_USER) {
-//                throw exception;
-//            }
-//        }
-//        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
-//        if (existsUserInfo != null) {
-//            throw new BaseException(DUPLICATED_USER);
-//        }
-//
-//        // 2. 유저 정보 생성
-//        String email = postUserReq.getEmail();
-//        String nickname = postUserReq.getNickname();
-//        String phoneNumber = postUserReq.getPhoneNumber();
-//        String password;
-//        try {
-//            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
-//        } catch (Exception ignored) {
-//            throw new BaseException(FAILED_TO_POST_USER);
-//        }
-//        UserInfo userInfo = new UserInfo(email, password, nickname, phoneNumber);
-//
-//        // 3. 유저 정보 저장
-//        try {
-//            userInfo = userInfoRepository.save(userInfo);
-//        } catch (Exception exception) {
-//            throw new BaseException(FAILED_TO_POST_USER);
-//        }
-//
-//        // 4. JWT 생성
-//        String jwt = jwtService.createJwt(userInfo.getId());
-//
-//        // 5. UserInfoLoginRes로 변환하여 return
-//        int id = userInfo.getId();
-//        return new PostUserRes(id, jwt);
-//    }
+    /**
+     * 회원가입
+     * @param postUserReq
+     * @return PostUserRes
+     * @throws BaseException
+     */
+    public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
+        UserInfo existsUserInfo = null;
+        try {
+            // 1-1. 이미 존재하는 회원이 있는지 조회
+            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
+        } catch (BaseException exception) {
+            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
+            if (exception.getStatus() != NOT_FOUND_USER) {
+                throw exception;
+            }
+        }
+        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
+        if (existsUserInfo != null) {
+            throw new BaseException(DUPLICATED_USER);
+        }
+
+        // 2. 유저 정보 생성
+        int userType = postUserReq.getUserType();
+        String id = postUserReq.getId();
+        String email = postUserReq.getEmail();
+        String phoneNumber = postUserReq.getPhoneNum();
+        String password;
+        try {
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+
+        UserInfo userInfo = new UserInfo(userType,id,password,email,phoneNumber);
+
+        // 3. 유저 정보 저장
+        try {
+            userInfo = userInfoRepository.save(userInfo);
+        } catch (Exception exception) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+
+        // 4. JWT 생성
+        String jwt = jwtService.createJwt(userInfo.getUserIdx());
+
+        // 5. UserInfoLoginRes로 변환하여 return
+        int userIdx = userInfo.getUserIdx();
+        return new PostUserRes(userIdx, jwt);
+    }
 
     /**
      * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
@@ -119,7 +121,7 @@ public class UserInfoService {
         }
     }
 
-    public void patchUserPassword(String email) throws BaseException{
+    public GetNewPasswordRes patchUserPassword(String email) throws BaseException{
         UserInfo existsUserInfo = null;
         try{
             //존재한다면
@@ -129,6 +131,7 @@ public class UserInfoService {
         }
         //새비밀번호 전송
         String newPassword = mailService.sendPwFindMail(email);
+        String password=newPassword;
         try {
             newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
         } catch (Exception ignored) {
@@ -137,9 +140,10 @@ public class UserInfoService {
         existsUserInfo.setPassword(newPassword);
 
         userInfoRepository.save(existsUserInfo);
-
-
+        return new GetNewPasswordRes(password);
     }
+
+
 
 
 

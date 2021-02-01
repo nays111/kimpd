@@ -7,7 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       # create, update, create-drop, none 등의 옵션이 있습니다.
       # create: 기존테이블 삭제 후 다시 생성
       # update: 변경된 부분만 반영

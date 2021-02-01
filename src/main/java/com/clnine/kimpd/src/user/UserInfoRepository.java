@@ -12,6 +12,9 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
     List<UserInfo> findByEmailAndStatus(String email, String status);
     List<UserInfo> findByStatusAndNicknameIsContaining(String status, String word);
     List<UserInfo> findByIdAndStatus(String id,String status);
+    boolean existsByIdAndStatus(String id,String status);
+    boolean existsByNicknameAndStatus(String nickname,String status);
+    UserInfo findUserInfoByUserIdxAndStatus(int userIdx,String status);
 
 
 

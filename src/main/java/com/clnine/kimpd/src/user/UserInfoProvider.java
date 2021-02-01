@@ -109,6 +109,18 @@ public class UserInfoProvider {
         return userInfo;
     }
 
+
+    public Boolean isIdUsable(String id) {
+        return !userInfoRepository.existsByIdAndStatus(id,"ACTIVE");
+    }
+
+    public Boolean isNicknameUsable(String nickname){
+        return !userInfoRepository.existsByNicknameAndStatus(nickname,"ACTIVE");
+    }
+
+
+
+
     /**
      *
      */

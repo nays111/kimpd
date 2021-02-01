@@ -5,13 +5,19 @@ import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.user.models.*;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.utils.MailService;
+import com.clnine.kimpd.utils.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.RequestScope;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
-import static com.clnine.kimpd.utils.ValidationRegex.isRegexEmail;
+import static com.clnine.kimpd.utils.SmsService.sendMessage;
+import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 
 @RestController
@@ -29,87 +35,49 @@ public class UserInfoController {
         this.jwtService = jwtService;
         this.mailService = mailService;
     }
+    /**
+     * 회원가입 API
+     * [POST] /users
+     * @RequestBody PostUserReq
+     * @return BaseResponse<PostUserRes>
+     */
+    @ResponseBody
+    @PostMapping("")
+    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
+        // 1. Body Parameter Validation
+        if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+        if (!isRegexEmail(parameters.getEmail())){
+            return new BaseResponse<>(INVALID_EMAIL);
+        }
+        if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
+            return new BaseResponse<>(EMPTY_PASSWORD);
+        }
+        if(!isRegexPassword(parameters.getPassword())){
+            return new BaseResponse<>(INVALID_PASSWORD);
+        }
+        if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
+            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
+        }
+        if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
+            return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
+        }
+        if(parameters.getPhoneNum()==null || parameters.getPhoneNum().length()==0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+//        if(!isRegexPhoneNumber(parameters.getPhoneNum())){
+//            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+//        }
 
-//    /**
-//     * 회원 전체 조회 API
-//     * [GET] /users
-//     * 회원 닉네임 검색 조회 API
-//     * [GET] /users?word=
-//     * @return BaseResponse<List<GetUsersRes>>
-//     */
-//    @ResponseBody
-//    @GetMapping("") // (GET) 127.0.0.1:9000/users
-//    public BaseResponse<List<GetUsersRes>> getUsers(@RequestParam(required = false) String word) {
-//        try {
-//            List<GetUsersRes> getUsersResList = userInfoProvider.retrieveUserInfoList(word);
-//            if (word == null) {
-//                return new BaseResponse<>(SUCCESS_READ_USERS, getUsersResList);
-//            } else {
-//                return new BaseResponse<>(SUCCESS_READ_SEARCH_USERS, getUsersResList);
-//            }
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
-
-//    /**
-//     * 회원 조회 API
-//     * [GET] /users/:userId
-//     * @PathVariable userId
-//     * @return BaseResponse<GetUserRes>
-//     */
-//    @ResponseBody
-//    @GetMapping("/{userId}")
-//    public BaseResponse<GetUserRes> getUser(@PathVariable Integer userId) {
-//        if (userId == null || userId <= 0) {
-//            return new BaseResponse<>(EMPTY_USERID);
-//        }
-//
-//        try {
-//            GetUserRes getUserRes = userInfoProvider.retrieveUserInfo(userId);
-//            return new BaseResponse<>(SUCCESS_READ_USER, getUserRes);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
-
-//    /**
-//     * 회원가입 API
-//     * [POST] /users
-//     * @RequestBody PostUserReq
-//     * @return BaseResponse<PostUserRes>
-//     */
-//    @ResponseBody
-//    @PostMapping("")
-//    public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
-//        // 1. Body Parameter Validation
-//        if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
-//            return new BaseResponse<>(EMPTY_EMAIL);
-//        }
-//        if (!isRegexEmail(parameters.getEmail())){
-//            return new BaseResponse<>(INVALID_EMAIL);
-//        }
-//        if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
-//            return new BaseResponse<>(EMPTY_PASSWORD);
-//        }
-//        if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
-//            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
-//        }
-//        if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
-//            return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
-//        }
-//        if (parameters.getNickname() == null || parameters.getNickname().length() == 0) {
-//            return new BaseResponse<>(EMPTY_NICKNAME);
-//        }
-//
-//        // 2. Post UserInfo
-//        try {
-//            PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
-//            return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
+        // 2. Post UserInfo
+        try {
+            PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
+            return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 
     /**
      * 회원 정보 수정 API
@@ -136,6 +104,50 @@ public class UserInfoController {
         }
     }
 
+    /**
+     * [2021.01.31] 2.아이디 중복확인 API
+     * [GET] /users/duplicated-id?id=
+     * @param id
+     * @return BaseResponse<>
+     */
+    @ResponseBody
+    @GetMapping("/duplicated-id")
+    public BaseResponse<Void> checkIdDuplicate(@RequestParam(value="id") String id){
+        if(id==null || id.length()==0){
+            return new BaseResponse<>(EMPTY_ID);
+        }
+        if(userInfoProvider.isIdUsable(id)==true){
+            return new BaseResponse<>(SUCCESS_CHECK_ID);
+        }else{
+            return new BaseResponse<>(DUPLICATED_USER);
+        }
+    }
+
+    /**
+     * [2020.01.31] 3.닉네임 중복확인 API
+     * [GET] /users/duplicated-nickname?nickname=
+     * @param nickname
+     * @return BaseResponse<>
+     */
+    @ResponseBody
+    @GetMapping("/duplicated-nickname")
+    public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value="nickname")String nickname){
+        if(nickname==null || nickname.length()==0) {
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+        if(userInfoProvider.isNicknameUsable(nickname)==true){
+            return new BaseResponse<>(SUCCESS_CHECK_NICKNAME);
+        }else{
+            return new BaseResponse<>(DUPLICATED_USER);
+        }
+    }
+
+    /**
+     * [2021.01.30] 7.로그인 API
+     * [POST] /users/login
+     * @RequstBody PostLoginReq
+     * @return PostLoginRes
+     */
     @ResponseBody
     @PostMapping("/login")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters){
@@ -154,28 +166,44 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    @GetMapping("/phone-auth")
+    public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
+        if(phoneNum==null || phoneNum.length()==0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+        else if (!isRegexPhoneNumber(phoneNum)) {
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        String secureCode="1234";
+        Map<String,Object> m = sendMessage(secureCode,phoneNum);
+//        GetUserPhoneCertification getUserPhoneCertification = new GetUserPhoneCertification(phoneNum,secureCode);
+//        Map<String, Object>successMap = SmsService.sendSecureCode(getUserPhoneCertification);
+        return new BaseResponse<>(SUCCESS_CHECK_ID);
+
+    }
+
+    /**
+     * [2021.01.30] 9.비밀번호 찾기 API
+     * [GET] /users/password?email=
+     * @param userEmail
+     * @return
+     */
     @GetMapping("/password")
-    public BaseResponse<String> lostPassword(@RequestParam(value="email") String userEmail){
+    public BaseResponse<GetNewPasswordRes> lostPassword(@RequestParam(value="email") String userEmail){
         if(userEmail==null || userEmail.length()==0){
             return new BaseResponse<>(EMPTY_EMAIL);
         }else if(!isRegexEmail(userEmail)){
             return new BaseResponse<>(INVALID_EMAIL);
         }
-        //1. 메일 입력을 잘못한 경우 -controller에서 처리
-        //2. 메일 형식에 맞춰 입력하지 않은 경우 - controller에서 처리
-        //3. 존재하지 않는 메일인 경우 (db조회했을 때 없을때 - provider에서 처리)
-        //4. 존재하는 메일인 경우 (db조회했을 때 있을때 - provider에서 처리)
-            //4-1. 메일로 새로운 비밀번호 전송 (mailService)
-            //4-2. 새로운 비밀번호로 업데이트 (service에서 처리)
         try {
-            userInfoService.patchUserPassword(userEmail);
-            return new BaseResponse<>(SUCCESS_PATCH_USER);
+            GetNewPasswordRes getNewPasswordRes = userInfoService.patchUserPassword(userEmail);
+            return new BaseResponse<GetNewPasswordRes>(SUCCESS_PATCH_USER,getNewPasswordRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
 
     }
-
 
     /**
      * 회원 탈퇴 API
@@ -212,41 +240,4 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-//
-//    @PostMapping("/lost-password")
-//    public BaseResponse<Void> lostPassword(@RequestBody PostLostPasswordReq postLostPasswordReq) {
-//        // 1. Body Parameter Validation
-//        if (postLostPasswordReq.getEmail() == null || postLostPasswordReq.getEmail().length() == 0) {
-//            return new BaseResponse<>(EMPTY_EMAIL);
-//        } else if (!isRegexEmail(postLostPasswordReq.getEmail())) { //이메일 형식 틀리면 틀렸다고
-//            return new BaseResponse<>(INVALID_EMAIL);
-//        }
-//
-//        //이메일 제대로 입력됬으면 임시 비밀번호 발급
-//        try {
-//
-//
-//            return new BaseResponse<>(SUCCESS_SEND_TEMP_PASSWOD);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
-//        String newPassword = mailService.sendPwFindMail(postLostPasswordReq.getEmail());
-//    }
-
-    //pw찾기
-    @PostMapping("/pwfind")
-    public void pwfind(@RequestBody PostLostPasswordReq postLostPasswordReq) {
-//        try {
-//
-//            return new BaseResponse<>(SUCCESS_SEND_TEMP_PASSWOD);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-        mailService.sendPwFindMail(postLostPasswordReq.getEmail());
-
-    }
-
-
 }

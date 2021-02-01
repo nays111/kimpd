@@ -22,122 +22,55 @@ public class UserInfo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userIdx;
 
-    /**
-     * 유저 타입
-     */
     @Column(name="userType",nullable = false)
     private int userType;
 
-    /**
-     * 유저 ID
-     */
+    @Column(name="id",nullable = false)
     private String id;
 
-    /**
-     * 유저 비밀번호
-     */
+    @Column(name="password",nullable = false)
     private String password;
 
-    /**
-     * 유저 이메일
-     */
+    @Column(name="email",nullable = false)
     private String email;
 
-    /**
-     * 유저 휴대폰 번호
-     */
+    @Column(name="phoneNum",nullable = false)
     private String phoneNum;
 
-    /**
-     * 유저 주소
-     */
+    @Column(name="address")
     private String address;
 
-    /**
-     * 광고 수신 동의 여부
-     */
+    @Column(name="agreeAdvertisement")
     private int agreeAdvertisement;
 
     /**
-     * 개인 사업자명
+     * 개인사업자
      */
-    private String businessNumber;
+   private String businessNumber;
 
-    /**
-     * 사업자 등록 이미지
-     */
+
     private String businessImageURL;
 
-    /**
-     * 법인 사업자명
-     */
+
     private String corporationBusinessName;
 
-    /**
-     * 법인 사업자 번호
-     */
+
     private String corporationBusinessNumber;
 
-    /**
-     * 닉네임
-     */
+
     private String nickname;
 
-    /**
-     * 프로필 이미지 URL
-     */
+
     private String profileImageURL;
 
-    /**
-     * 상태값 (ACTIVE)
-     */
-    private String status;
 
+    private String status="ACTIVE";
 
-
-
-//    /**
-//     * 유저 ID
-//     */
-//    @Id // PK를 의미하는 어노테이션
-//    @Column(name = "id", nullable = false, updatable = false)
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private int id;
-//
-//    /**
-//     * 이메일
-//     */
-//    @Column(name = "email", nullable = false, length = 100)
-//    private String email;
-//
-//    /**
-//     * 비밀번호
-//     */
-//    @Column(name = "password", nullable = false)
-//    private String password;
-//
-//    /**
-//     * 닉네임
-//     */
-//    @Column(name = "nickname", nullable = false, length = 30)
-//    private String nickname;
-//
-//    /**
-//     * 전화번호
-//     */
-//    @Column(name = "phoneNumber", length = 30)
-//    private String phoneNumber;
-//
-//    /**
-//     * 상태
-//     */
-//    @Column(name = "status", nullable = false, length = 10)
-//    private String status = "ACTIVE";
-//
-//    public UserInfo(String email, String password, String nickname, String phoneNumber) {
-//        this.email = email;
-//        this.password = password;
-//        this.nickname = nickname;
-//        this.phoneNumber = phoneNumber;
-//    }
+    public UserInfo(int userType, String id, String password, String email, String phoneNumber) {
+        this.userType = userType;
+        this.id = id;
+        this.password = password;
+        this.email = email;
+        this.phoneNum=phoneNumber;
+    }
 }
