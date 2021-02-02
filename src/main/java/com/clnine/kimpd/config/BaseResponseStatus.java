@@ -17,7 +17,6 @@ public enum BaseResponseStatus {
     SUCCESS_DELETE_USER(true, 1015, "회원 탈퇴에 성공하였습니다."),
     SUCCESS_PATCH_USER(true, 1016, "회원정보 수정에 성공하였습니다."),
     SUCCESS_READ_SEARCH_USERS(true, 1017, "회원 검색 조회에 성공하였습니다."),
-
     //Kimpd response code
     SUCCESS_SEND_TEMP_PASSWORD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
     SUCCESS_CHECK_ID(true,1019,"사용할 수 있는 ID입니다"),
@@ -25,6 +24,9 @@ public enum BaseResponseStatus {
     SUCCESS_READ_PROJECTS(true,1021,"프로젝트 조회에 성공하였습니다."),
     SUCCESS_POST_PROJECT(true,1022,"프로젝트 생성에 성공하였습니다."),
     SUCCESS_POST_CASTING(true,1023,"섭외 요청에 성공하였습니다."),
+    SUCCESS_SEND_MESSAGE(true,1024,"성공적으로 메시지를 전송하였습니다."),
+
+
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -70,6 +72,9 @@ public enum BaseResponseStatus {
     ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT(false,3020,"이미 해당 프로젝트에 대해 해당 유저에게 섭외 요청을 보낸적이 있습니다."),
     FAILED_TO_GET_CASTING(false,3021,"캐스팅 정보 조회에 실패하였습니다."),
     NOT_FOUND_CASTING(false,3022,"존재하지 않는 캐스팅입니다."),
+    FAILED_TO_SEND_MESSAGE(false,3023,"메시지 전송에 실패하였습니다."),
+    FAILED_TO_POST_SECURE_CODE(false,3024,"인증번호를 저장 못했습니다."),
+
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");

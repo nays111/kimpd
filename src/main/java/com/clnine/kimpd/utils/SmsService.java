@@ -13,6 +13,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.json.JsonParseException;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,9 +25,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.clnine.kimpd.config.secret.Secret.aligoId;
-import static com.clnine.kimpd.config.secret.Secret.aligoKey;
+import static com.clnine.kimpd.config.secret.Secret.*;
 
+@Service
 public class SmsService {
     public  static Map<String, Object> sendMessage(String message, String phoneNum)
             throws IOException, JsonParseException {
@@ -47,7 +48,7 @@ public class SmsService {
         /******************** 전송정보 ********************/
         sms.put("msg", message); // 메세지 내용
         sms.put("receiver", phoneNum); // 수신번호
-        sms.put("sender", "01036306193"); // 발신번호
+        sms.put("sender", aligoSender); // 발신번호
         sms.put("testmode_yn", "Y"); // Y 인경우 실제문자 전송X , 자동취소(환불) 처리
 
         /******************** 전송정보 ********************/

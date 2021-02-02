@@ -6,12 +6,15 @@ import com.clnine.kimpd.src.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.utils.MailService;
+import com.clnine.kimpd.utils.SmsService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.secret.Secret.aligoSender;
+import static com.clnine.kimpd.utils.SmsService.sendMessage;
 
 
 @Service
@@ -20,12 +23,19 @@ public class UserInfoService {
     private final UserInfoProvider userInfoProvider;
     private final JwtService jwtService;
     private final MailService mailService;
+    private final SmsService smsService;
+    private final CertificateRepository certificateRepository;
     @Autowired
-    public UserInfoService(UserInfoRepository userInfoRepository, UserInfoProvider userInfoProvider, JwtService jwtService, MailService mailService) {
+    public UserInfoService(UserInfoRepository userInfoRepository, UserInfoProvider userInfoProvider,
+                           JwtService jwtService, MailService mailService,
+                           CertificateRepository certificateRepository,
+                           SmsService smsService) {
         this.userInfoRepository = userInfoRepository;
         this.userInfoProvider = userInfoProvider;
         this.jwtService = jwtService;
         this.mailService = mailService;
+        this.certificateRepository = certificateRepository;
+        this.smsService = smsService;
     }
 
     /**
@@ -141,6 +151,29 @@ public class UserInfoService {
 
         userInfoRepository.save(existsUserInfo);
         return new GetNewPasswordRes(password);
+    }
+
+    /**
+     * 휴대폰 인증번호를 데이터베이스에 저장
+     * @param rand
+     * @param phoneNum
+     * @throws BaseException
+     */
+    public void PostSecureCode(int rand,String phoneNum) throws BaseException{
+        String message="김피디입니다.화면의 인증번호란에 ["+rand+"]를 입력해주세요.";
+
+        try{
+            sendMessage(message,phoneNum);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_SEND_MESSAGE);
+        }
+        Certification certification=new Certification(phoneNum,rand);
+        try{
+            certificateRepository.save(certification);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_POST_SECURE_CODE);
+        }
+
     }
 
 

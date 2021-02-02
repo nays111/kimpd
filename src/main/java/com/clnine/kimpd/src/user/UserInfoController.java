@@ -141,7 +141,29 @@ public class UserInfoController {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
-
+    /**
+     * [2021.02.01] 4. 휴대폰 인증 번호 전송 API
+     * [GET] /users/phone-auth?phoneNum=
+     */
+    @GetMapping("/phone-auth")
+    public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
+        if(phoneNum==null || phoneNum.length()==0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+        else if (!isRegexPhoneNumber(phoneNum)) {
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        /**
+         * 랜덤한 인증코드 여섯 자리를 생성후 db에 저장하고 메시지 전송
+         */
+        int rand = (int) (Math.random() * 899999) + 100000;
+        try{
+            userInfoService.PostSecureCode(rand,phoneNum);
+            return new BaseResponse<>(SUCCESS_SEND_MESSAGE);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
     /**
      * [2021.01.30] 7.로그인 API
      * [POST] /users/login
@@ -167,21 +189,6 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/phone-auth")
-    public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
-        if(phoneNum==null || phoneNum.length()==0){
-            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
-        }
-        else if (!isRegexPhoneNumber(phoneNum)) {
-            return new BaseResponse<>(INVALID_PHONE_NUMBER);
-        }
-        String secureCode="1234";
-        Map<String,Object> m = sendMessage(secureCode,phoneNum);
-//        GetUserPhoneCertification getUserPhoneCertification = new GetUserPhoneCertification(phoneNum,secureCode);
-//        Map<String, Object>successMap = SmsService.sendSecureCode(getUserPhoneCertification);
-        return new BaseResponse<>(SUCCESS_CHECK_ID);
-
-    }
 
     /**
      * [2021.01.30] 9.비밀번호 찾기 API

@@ -43,25 +43,30 @@ public class UserInfo extends BaseEntity {
     @Column(name="agreeAdvertisement")
     private int agreeAdvertisement;
 
-    /**
-     * 개인사업자
-     */
-   private String businessNumber;
+    @Column(name="privateBusinessName")
+    private String privateBusinessName;//개인 사업자명
+    @Column(name="businessNumber")
+    private String businessNumber;//사업자 등록번호
+    @Column(name="businessImageURL")
+    private String businessImageURL;//사업자 등록 이미지
+    @Column(name="corporationBusinessName")
+    private String corporationBusinessName;//법인 사업자명
+    @Column(name="corporationBusinessNumber")
+    private String corporationBusinessNumber;//법인 사업자번호
 
+    @Column(name="nickname")
+    private String nickname;//닉네임
 
-    private String businessImageURL;
-
-
-    private String corporationBusinessName;
-
-
-    private String corporationBusinessNumber;
-
-
-    private String nickname;
-
-
-    private String profileImageURL;
+    @Column(name="profileImageURL")
+    private String profileImageURL;//프로필이미지
+    @Column(name="introduce")
+    private String introduce;
+    @Column(name="career")
+    private String career;
+    @Column(name="etc")
+    private String etc;
+    @Column(name="agreeShowDB")
+    private int agreeShowDB=1;
 
 
     private String status="ACTIVE";
