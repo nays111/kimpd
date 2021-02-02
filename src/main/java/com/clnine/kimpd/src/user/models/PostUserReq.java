@@ -14,4 +14,9 @@ public class PostUserReq {
     private String email;
     private int agreeAdvertisement;
     private String phoneNum;
+    //private int certifiacteCode;
+    private String businessNumber; //사업자 등록번호
+    private String businessImageURL; //사업자 등록증
+    private String corporationBusinessName; //법인 사업자명
+    private String corporationBusinessNumber;//법인 등록번호
 }

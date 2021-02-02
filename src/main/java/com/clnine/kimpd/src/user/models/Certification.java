@@ -7,6 +7,8 @@ import org.intellij.lang.annotations.JdkConstants;
 
 import javax.persistence.*;
 
+import static com.clnine.kimpd.config.secret.Secret.aligoSender;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -19,11 +21,16 @@ public class Certification extends BaseEntity {
     private int certificationIdx;
 
     @Column(name="managerPhoneNum")
-    String managerPhoneNum;
+    String managerPhoneNum=aligoSender;
 
     @Column(name="userPhoneNum")
     String userPhoneNum;
 
     @Column(name="secureCode")
-    String secureCode;
+    int secureCode;
+
+    public Certification(String phoneNum, int rand) {
+        this.userPhoneNum=phoneNum;
+        this.secureCode = rand;
+    }
 }
