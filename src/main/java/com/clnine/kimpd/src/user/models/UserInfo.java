@@ -57,6 +57,9 @@ public class UserInfo extends BaseEntity {
     @Column(name="nickname")
     private String nickname;//닉네임
 
+    /**
+     * 전문가 전용 컬럼
+     */
     @Column(name="profileImageURL")
     private String profileImageURL;//프로필이미지
     @Column(name="introduce")
@@ -71,11 +74,15 @@ public class UserInfo extends BaseEntity {
 
     private String status="ACTIVE";
 
-    public UserInfo(int userType, String id, String password, String email, String phoneNumber) {
+    public UserInfo(int userType, String id, String password,
+                    String email, String phoneNumber,String introduce) {
         this.userType = userType;
         this.id = id;
         this.password = password;
         this.email = email;
         this.phoneNum=phoneNumber;
+        this.introduce = introduce;
     }
+
+
 }

@@ -2,22 +2,25 @@ package com.clnine.kimpd.src.user;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.src.category.*;
+import com.clnine.kimpd.src.category.models.*;
 import com.clnine.kimpd.src.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.utils.MailService;
 import com.clnine.kimpd.utils.SmsService;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
-import static com.clnine.kimpd.config.secret.Secret.aligoSender;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserInfoProvider userInfoProvider;
@@ -25,18 +28,11 @@ public class UserInfoService {
     private final MailService mailService;
     private final SmsService smsService;
     private final CertificateRepository certificateRepository;
-    @Autowired
-    public UserInfoService(UserInfoRepository userInfoRepository, UserInfoProvider userInfoProvider,
-                           JwtService jwtService, MailService mailService,
-                           CertificateRepository certificateRepository,
-                           SmsService smsService) {
-        this.userInfoRepository = userInfoRepository;
-        this.userInfoProvider = userInfoProvider;
-        this.jwtService = jwtService;
-        this.mailService = mailService;
-        this.certificateRepository = certificateRepository;
-        this.smsService = smsService;
-    }
+    private final GenreCategoryRepository genreCategoryRepository;
+    private final UserGenreCategoryRepository userGenreCategoryRepository;
+    private final JobCategoryChildRepository jobCategoryChildRepository;
+    private final JobCategoryParentRepository jobCategoryParentRepository;
+    private final UserJobCategoryRepository userJobCategoryRepository;
 
     /**
      * 회원가입
@@ -66,19 +62,56 @@ public class UserInfoService {
         String email = postUserReq.getEmail();
         String phoneNumber = postUserReq.getPhoneNum();
         String password;
+
+        /**
+         * address test
+         */
+        String introduce = postUserReq.getIntroduce();
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
+         //(1,2,3) 이런식으로 저장
+        //List<GenreCategory> genreCategoryList = categoryRepository.findAllByGenreCategoryIdx(genreCategoryIdx);
 
-        UserInfo userInfo = new UserInfo(userType,id,password,email,phoneNumber);
+        /**
+         * 1,2,3,4, 이런식으로 카테고리 인덱스를 입력받음
+         * genreCategory에서 해당되는 genreCategory 객체 생성
+         * userGenreCategory에 userInfo와 genreCategory 를 담는다.
+         */
+        UserInfo userInfo = new UserInfo(userType,id,password,email,phoneNumber,introduce);
 
         // 3. 유저 정보 저장
         try {
             userInfo = userInfoRepository.save(userInfo);
         } catch (Exception exception) {
             throw new BaseException(FAILED_TO_POST_USER);
+        }
+        // 어차피 리스트 길이는 같아야함
+        ArrayList<Integer> jobParentCategoryIdxList = postUserReq.getJobParentCategoryIdx();
+        ArrayList<Integer> jobChildCategoryIdxList = postUserReq.getJobChildCategoryIdx();
+        try{
+            for(int i=0;i<jobParentCategoryIdxList.size();i++){
+                JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
+                //JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdxAndAndJobCategoryParent(jobChildCategoryIdxList.get(i),jobCategoryParent);
+                JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+                UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
+                userJobCategoryRepository.save(userJobCategory);
+            }
+        }catch(Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_JOB_CATEGORY);
+        }
+
+        ArrayList<Integer> genreCategoryIdxList = postUserReq.getGenreCategoryIdx();
+        try{
+            for(int i=0;i<genreCategoryIdxList.size();i++){
+                GenreCategory genreCategory = genreCategoryRepository.findAllByGenreCategoryIdx(genreCategoryIdxList.get(i));
+                UserGenreCategory userGenreCategory = new UserGenreCategory(userInfo,genreCategory);
+                userGenreCategoryRepository.save(userGenreCategory);
+            }
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
         }
 
         // 4. JWT 생성
@@ -131,6 +164,13 @@ public class UserInfoService {
         }
     }
 
+    /**
+     * 이메일로 새로운 랜덤 비밀번호 전송후 유저 비밀번호 업데이트
+     * @param email
+     * @return
+     * @throws BaseException
+     */
+
     public GetNewPasswordRes patchUserPassword(String email) throws BaseException{
         UserInfo existsUserInfo = null;
         try{
@@ -173,14 +213,7 @@ public class UserInfoService {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_POST_SECURE_CODE);
         }
-
     }
-
-
-
-
-
-
 
 
 }

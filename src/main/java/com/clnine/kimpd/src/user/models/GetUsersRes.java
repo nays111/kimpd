@@ -6,6 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class GetUsersRes {
-    private final int userId;
-    private final String email;
+    private final int userIdx;
+    private final String profileImageURL;
+    //private final String jobCategoryName;
+    private final String introduce;
+    private final double star;
+    private final int reviewCount;
 }
