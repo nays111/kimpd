@@ -21,15 +21,15 @@ public class ProjectService {
     private final UserInfoRepository userInfoRepository;
     private final ProjectRepository projectRepository;
 
-    public void PostProject(PostProjectReq postProjectReq,int userIdx) throws BaseException {
+    public void PostProject(PostProjectReq postProjectReq, int userIdx) throws BaseException {
 
         UserInfo userInfo;
-        try{
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
-        }catch(Exception ignored){
+        try {
+            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
+        } catch (Exception ignored) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
-        System.out.println("userIdx:"+userInfo.getUserIdx());
+        System.out.println("userIdx:" + userInfo.getUserIdx());
 
         String projectName = postProjectReq.getProjectName();
         String projectMaker = postProjectReq.getProjectMaker();
@@ -39,12 +39,12 @@ public class ProjectService {
         String projectFileURL = postProjectReq.getProjectFileURL();
         String projectBudget = postProjectReq.getProjectBudget();
 
-        Project project = new Project(userInfo,projectName,projectMaker,projectStartDate,projectEndDate,projectFileURL,projectBudget,projectDescription);
-        try{
+        Project project = new Project(userInfo, projectName, projectMaker, projectStartDate, projectEndDate, projectFileURL, projectBudget, projectDescription);
+        System.out.println(userInfo.getUserIdx());
+        try {
             projectRepository.save(project);
-        }catch(Exception ignored){
+        } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_PROJECT);
         }
     }
-
 }

@@ -8,10 +8,12 @@ import com.clnine.kimpd.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.utils.SmsService.sendMessage;
 
 @Service
 public class UserInfoProvider {
@@ -118,8 +120,25 @@ public class UserInfoProvider {
         return !userInfoRepository.existsByNicknameAndStatus(nickname,"ACTIVE");
     }
 
+    public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException{
+        List<UserInfo> existsUserInfoList;
+        try {
+            existsUserInfoList = userInfoRepository.findByPhoneNumAndStatus(phoneNum, "ACTIVE");
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
 
+        // 2. 존재하는 UserInfo가 있는지 확인
+        UserInfo userInfo;
+        if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
+            userInfo = existsUserInfoList.get(0);
+        } else {
+            throw new BaseException(NOT_FOUND_USER);
+        }
 
+        // 3. UserInfo를 return
+        return userInfo;
+    }
 
     /**
      *
@@ -142,6 +161,46 @@ public class UserInfoProvider {
 
         // 3. UserInfo를 return
         return userInfo;
-
     }
+
+    public GetIdRes SendId(String phoneNum) throws BaseException{
+        UserInfo userInfo;
+        try{
+             userInfo = retrieveUserInfoByPhoneNum(phoneNum);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
+
+        String id = userInfo.getId();
+        String message="김피디입니다. 회원님의 ID 는 ["+id+"] 입니다.";
+        try{
+            sendMessage(message,phoneNum);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_SEND_MESSAGE);
+        }
+        return new GetIdRes(id);
+    }
+
+
+    /**
+     * 전문가 리스트 조회하기
+     * 1. status=ACTIVE 이면서 userType=2인 회원 모두 조회
+     * 2. status=ACTIVE 이면서 userType=2인 회원의 수 조회
+     */
+//    public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException{
+//        List<UserInfo> userInfoList;
+//        try{
+//            if(word==null){
+//                userInfoList = userInfoRepository.findByStatusAndUserType("ACTIVE",2);
+//            }
+//            else{
+//                userInfoList = userInfoRepository.findByStatusAndUserTypeAndNicknameIsContaining("ACTIVE",2,word);
+//            }
+//        }catch(Exception ignored){
+//            throw new BaseException(FAILED_TO_GET_USER);
+//        }
+//        for(int i=0;i<userInfoList.size();i++){
+//
+//        }
+
 }

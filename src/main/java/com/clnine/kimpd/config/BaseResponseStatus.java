@@ -25,8 +25,12 @@ public enum BaseResponseStatus {
     SUCCESS_POST_PROJECT(true,1022,"프로젝트 생성에 성공하였습니다."),
     SUCCESS_POST_CASTING(true,1023,"섭외 요청에 성공하였습니다."),
     SUCCESS_SEND_MESSAGE(true,1024,"성공적으로 메시지를 전송하였습니다."),
-
-
+    SUCCESS_SEND_ID_MESSAGE(true,1025,"성공적으로 ID를 메시지로 전송하였습니다."),
+    SUCCESS_PATCH_USER_PASSWORD(true,1026,"입력하신 메일로 새 비밀번호를 발급하였습니다."),
+    SUCCESS_GET_HOME_RES(true,1027,"홈화면 조회에 성공했습니다."),
+    SUCCESS_GET_PARENT_JOB_CATEGORY(true,1028,"1차 직종 카테고리 조회에 성공하였습니다."),
+    SUCCESS_GET_GENRE_CATEGORY(true,1029,"장르 카테고리 조회에 성공하였습니다."),
+    SUCCESS_GET_CHILD_JOB_CATEGORY(true,1030,"2차 직종 카테고리 조회에 성공하였습니다."),
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -56,7 +60,13 @@ public enum BaseResponseStatus {
     EMPTY_CASTING_WORK(false,2055,"담당 업무를 입력해주세요."),
     EMPTY_CASTING_MESSAGE(false,2056,"섭외 메세지를 입력해주세요."),
     EMPTY_PROJECT_FILE_URL(false,2057,"프로젝트 파일을 입력해주세요."),
-
+    EMPTY_BUSINESS_NUMBER(false,2058,"사업자 등록번호를 입력해주세요."),
+    EMPTY_BUSINESS_IMAGE(false,2059,"사업자 등록증을 업로드해주세요."),
+    EMPTY_BUSINESS_NAME(false,2060,"개인 사업자명을 입력해주세요"),
+    EMPTY_CORP_BUSINESS_NUMBER(false,2061,"법인 사업자 등록번호를 입력해주세요."),
+    NO_SELECT_GENRE_CATEGORY(false,2062,"장르 카테고리를 선택해주세요."),
+    EMPTY_CORP_BUSINESS_NAME(false,2063,"법인 사업자명을 입력해주세요."),
+    EMPTY_JOB_CATEGORY_PARENT_IDX(false,2064,"1차 직종 카테고리 번호를 먼저 입력해주세요."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -74,7 +84,12 @@ public enum BaseResponseStatus {
     NOT_FOUND_CASTING(false,3022,"존재하지 않는 캐스팅입니다."),
     FAILED_TO_SEND_MESSAGE(false,3023,"메시지 전송에 실패하였습니다."),
     FAILED_TO_POST_SECURE_CODE(false,3024,"인증번호를 저장 못했습니다."),
-
+    FAILED_TO_POST_USER_GENRE_CATEGORY(false,3025,"장르 카테고리를 저장하지 못했습니다"),
+    FAILED_TO_POST_USER_JOB_CATEGORY(false,3026,"직종 카테고리를 저장하지 못했습니다."),
+    FAILED_TO_GET_PARENT_JOB_CATEGORIES(false,3027, "직종 카테고리 리스트 조회에 실패했습니다."),
+    FAILED_TO_GET_BANNERS(false,3028,"배너 리스트 조회에 실패했습니다."),
+    FAILED_TO_GET_CHILD_JOB_CATEGORIES(false,3029,"2차 직종 카테고리 리스트 조회에 실패했습니다."),
+    FAILED_TO_GET_GENRE_CATEGORIES(false,3030,"장르 카테고리 조회에 실패했습니다."),
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");

@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name="project")
+@Table(name="Project")
 @RequiredArgsConstructor
 public class Project extends BaseEntity {
     @Id

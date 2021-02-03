@@ -44,7 +44,7 @@ public class UserInfoController {
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
-        // 1. Body Parameter Validation
+
         if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
             return new BaseResponse<>(EMPTY_EMAIL);
         }
@@ -66,39 +66,54 @@ public class UserInfoController {
         if(parameters.getPhoneNum()==null || parameters.getPhoneNum().length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
-//        if(!isRegexPhoneNumber(parameters.getPhoneNum())){
-//            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        if(!isRegexPhoneNumber(parameters.getPhoneNum())){
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+//        if(parameters.getAgreeAdvertisement() || parameters.getAgreeAdvertisement()>1){
+//            return new BaseResponse<>(INVALID_AGREE_ADGERTISEMENT_CHECK);
 //        }
+
+        /**
+         * 필수 X 입력 아닌사항
+         */
+        if(parameters.getBusinessNumber()!=null){
+            if(parameters.getBusinessNumber().length()==0){
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+        }
+
+        if(parameters.getBusinessImageURL()!=null){
+            if(parameters.getBusinessImageURL().length()==0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+            //todo url 파일 형식 검사
+        }
+        if(parameters.getCorporationBusinessName()!=null){
+            if(parameters.getCorporationBusinessName().length()==0){
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
+            }
+        }
+
+        if(parameters.getCorporationBusinessNumber()!=null){
+            if(parameters.getCorporationBusinessNumber().length()==0){
+                    return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            }
+        }
+
+        if(parameters.getNickname()!=null){
+            if(parameters.getNickname().length()==0){
+                return new BaseResponse<>(EMPTY_NICKNAME);
+            }
+        }
+        if(parameters.getGenreCategoryIdx().size()==0){
+            //카테고리 선택을 하나도 안했을 경우
+            return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
+        }
 
         // 2. Post UserInfo
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-    }
-
-    /**
-     * 회원 정보 수정 API
-     * [PATCH] /users/:userId
-     * @PathVariable userId
-     * @RequestBody PatchUserReq
-     * @return BaseResponse<PatchUserRes>
-     */
-    @ResponseBody
-    @PatchMapping("/{userId}")
-    public BaseResponse<PatchUserRes> patchUsers(@PathVariable Integer userId, @RequestBody PatchUserReq parameters) {
-        if (userId == null || userId <= 0) {
-            return new BaseResponse<>(EMPTY_USERID);
-        }
-
-        if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
-            return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
-        }
-
-        try {
-            return new BaseResponse<>(SUCCESS_PATCH_USER, userInfoService.updateUserInfo(userId, parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -145,7 +160,7 @@ public class UserInfoController {
      * [2021.02.01] 4. 휴대폰 인증 번호 전송 API
      * [GET] /users/phone-auth?phoneNum=
      */
-    @GetMapping("/phone-auth")
+    @PostMapping("/phone-auth")
     public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
         if(phoneNum==null || phoneNum.length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -174,17 +189,52 @@ public class UserInfoController {
     @PostMapping("/login")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters){
         if(parameters.getId()==null||parameters.getId().length()==0){
-            //아이디를 입력안했을 경우
             return new BaseResponse<>(EMPTY_ID);
         }else if(parameters.getPassword()==null||parameters.getPassword().length()==0){
-            //비밀번호를 입력안했을 경우
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
-        // 2. Login
         try {
             PostLoginRes postLoginRes = userInfoProvider.login(parameters);
             return new BaseResponse<>(SUCCESS_LOGIN, postLoginRes);
         } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+    /**
+     * [2021.01.31] 7-1. JWT 검증 API
+     * [GET] /users/jwt
+     * @return BaseResponse<Void>
+     */
+    @GetMapping("/jwt")
+    public BaseResponse<Void> jwt() {
+        try {
+            int userIdx = jwtService.getUserIdx();
+            userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+            return new BaseResponse<>(SUCCESS_JWT);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * [2021.02.03] 8. 아이디 찾기 API
+     * [GET] /users/id?id=
+     * phoneNumber로 userInfo 에서 id 조회 -> id를 입력받은 phoneNumber로 sendMessage
+     * @param phoneNumber
+     * @return
+     */
+    @GetMapping("/id")
+    public BaseResponse<GetIdRes> lostId(@RequestParam(value="phoneNum")String phoneNumber){
+        if(phoneNumber==null || phoneNumber.length()==0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }else if(!isRegexPhoneNumber(phoneNumber)){
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        try{
+            //todo 아래 부분만 수정
+            GetIdRes getIdRes = userInfoProvider.SendId(phoneNumber);
+            return new BaseResponse<>(SUCCESS_SEND_ID_MESSAGE,getIdRes);
+        }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
@@ -205,46 +255,12 @@ public class UserInfoController {
         }
         try {
             GetNewPasswordRes getNewPasswordRes = userInfoService.patchUserPassword(userEmail);
-            return new BaseResponse<GetNewPasswordRes>(SUCCESS_PATCH_USER,getNewPasswordRes);
+            return new BaseResponse<GetNewPasswordRes>(SUCCESS_PATCH_USER_PASSWORD,getNewPasswordRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
 
     }
 
-    /**
-     * 회원 탈퇴 API
-     * [DELETE] /users/:userId
-     * @PathVariable userId
-     * @return BaseResponse<Void>
-     */
-    @DeleteMapping("/{userId}")
-    public BaseResponse<Void> deleteUsers(@PathVariable Integer userId) {
-        if (userId == null || userId <= 0) {
-            return new BaseResponse<>(EMPTY_USERID);
-        }
 
-        try {
-            userInfoService.deleteUserInfo(userId);
-            return new BaseResponse<>(SUCCESS_DELETE_USER);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-    }
-
-    /**
-     * JWT 검증 API
-     * [GET] /users/jwt
-     * @return BaseResponse<Void>
-     */
-    @GetMapping("/jwt")
-    public BaseResponse<Void> jwt() {
-        try {
-            int userIdx = jwtService.getUserIdx();
-            userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-            return new BaseResponse<>(SUCCESS_JWT);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-    }
 }
