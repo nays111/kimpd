@@ -41,7 +41,7 @@ public class ValidationRegex {
         return matcher.find();
     }
     public static boolean isRegexImageType(String target){
-        String regex = "^\\.(gif|jpg|png)$";
+        String regex = "^\\.(pdf|jpg|png)$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();

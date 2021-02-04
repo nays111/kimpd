@@ -19,20 +19,21 @@ public class PostUserReq {
     private String email;
     private int agreeAdvertisement;
     private String phoneNum;
+    private String address;
     //todo 인증번호 (certificateCode 회원가입할 떄 처리할지?)
     //private int certifiacteCode;
+    @Nullable
     private String privateBusinessName;//개인사업자명
+    @Nullable
     private String businessNumber; //사업자 등록번호
+    @Nullable
     private String businessImageURL; //사업자 등록증
+    @Nullable
     private String corporationBusinessName; //법인 사업자명
+    @Nullable
     private String corporationBusinessNumber;//법인 등록번호
+    @Nullable
     private String nickname;
-    private String profileImageURL;
-    private String introduce;
-    private String career;
-    private String etc;
-    private int agreeShowDB;
-
     @Nullable
     private ArrayList<Integer> genreCategoryIdx; //장르 카테고리 인덱스
     @Nullable

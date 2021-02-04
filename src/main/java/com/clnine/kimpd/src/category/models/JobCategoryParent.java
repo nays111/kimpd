@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -17,4 +19,7 @@ public class JobCategoryParent {
 
     @Column(name="jobCategoryName")
     private String jobCategoryName;
+
+//    @OneToMany(mappedBy = "JobCategoryParent")
+//    private List<UserJobCategory> userJobCategoryList=new ArrayList<UserJobCategory>();
 }

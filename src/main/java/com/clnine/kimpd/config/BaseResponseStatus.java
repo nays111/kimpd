@@ -67,6 +67,16 @@ public enum BaseResponseStatus {
     NO_SELECT_GENRE_CATEGORY(false,2062,"장르 카테고리를 선택해주세요."),
     EMPTY_CORP_BUSINESS_NAME(false,2063,"법인 사업자명을 입력해주세요."),
     EMPTY_JOB_CATEGORY_PARENT_IDX(false,2064,"1차 직종 카테고리 번호를 먼저 입력해주세요."),
+    NO_SELECT_JOB_PARENT_CATEGORY(false,2065,"1차 직종 카테고리를 선택해주세요."),
+    NO_SELECT_JOB_CHILD_CATEGORY(false,2066,"2차 직종 카테고리를 선택해주세요."),
+    EMPTY_PRIVATE_BUSINESS_NAME(false,2067,"개인 사업자명을 입력해주세요."),
+    INVALID_AGREE_ADVERTISEMENT_CHECK(false,2068,"광고 동의 여부 처리가 잘못되었습니다."),
+    INVALID_USER_TYPE(false,2069,"잘못된 유저 타입입니다."),
+    INVALID_ID(false,2070,"잘못된 ID 형식입니다."),
+    INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
+    INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~7자리로 입력해주세요.)"),
+    EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
+
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -90,6 +100,9 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_BANNERS(false,3028,"배너 리스트 조회에 실패했습니다."),
     FAILED_TO_GET_CHILD_JOB_CATEGORIES(false,3029,"2차 직종 카테고리 리스트 조회에 실패했습니다."),
     FAILED_TO_GET_GENRE_CATEGORIES(false,3030,"장르 카테고리 조회에 실패했습니다."),
+    FAILED_TO_GET_PROJECTS_LIST(false,3031,"프로젝트 리스트 조회에 실패하였습니다."),
+
+
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");

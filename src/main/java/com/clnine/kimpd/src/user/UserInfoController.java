@@ -45,72 +45,174 @@ public class UserInfoController {
     @PostMapping("")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
 
+        /**
+         * 유저 타입 처리
+         */
+        if(parameters.getUserType()==0){
+            return new BaseResponse<>(INVALID_USER_TYPE);
+        }
+        if(parameters.getUserType()>6){
+            return new BaseResponse<>(INVALID_USER_TYPE);
+        }
+
+
+        /**
+         * 아이디 처리
+         */
+        if(parameters.getId()==null || parameters.getId().length()==0){
+            return new BaseResponse<>(EMPTY_ID);
+        }
+        if(!isRegexId(parameters.getId())){
+            return new BaseResponse<>(INVALID_ID);
+        }
+
+        /**
+         * 이메일 처리
+         */
         if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
             return new BaseResponse<>(EMPTY_EMAIL);
         }
         if (!isRegexEmail(parameters.getEmail())){
             return new BaseResponse<>(INVALID_EMAIL);
         }
+        /**
+         * 패스워드 처리
+         */
         if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
         if(!isRegexPassword(parameters.getPassword())){
             return new BaseResponse<>(INVALID_PASSWORD);
         }
+        /**
+         * 패스워드 확인 처리
+         */
         if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
             return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
         }
         if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
         }
+        /**
+         * 휴대폰 처리
+         */
         if(parameters.getPhoneNum()==null || parameters.getPhoneNum().length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
         if(!isRegexPhoneNumber(parameters.getPhoneNum())){
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
-//        if(parameters.getAgreeAdvertisement() || parameters.getAgreeAdvertisement()>1){
-//            return new BaseResponse<>(INVALID_AGREE_ADGERTISEMENT_CHECK);
+        /**
+         * 광고 동의 여부 처리
+         */
+//        if(parameters.getAgreeAdvertisement()!=0 || parameters.getAgreeAdvertisement()!=1){
+//            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
 //        }
+        /**
+         * 주소 처리
+         */
+        if(parameters.getAddress()==null || parameters.getAddress().length()==0){
+            return new BaseResponse<>(EMPTY_ADDRESS);
+        }
+        //todo 주소 형식 처리
 
         /**
          * 필수 X 입력 아닌사항
+         */
+
+        /**
+         * 개인 사업자명 처리
+         */
+        if(parameters.getPrivateBusinessName()!=null){
+            if(parameters.getPrivateBusinessName().length()==0){
+                return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
+            }
+        }
+
+        /**
+         * 사업자 등록 번호 처리
          */
         if(parameters.getBusinessNumber()!=null){
             if(parameters.getBusinessNumber().length()==0){
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
         }
+        //todo 사업자 등록 번호 양식 검사
 
+        /**
+         * 사업자 등록증 처리
+         */
         if(parameters.getBusinessImageURL()!=null){
             if(parameters.getBusinessImageURL().length()==0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            //todo url 파일 형식 검사
+            if(!isRegexImageType(parameters.getBusinessImageURL())){
+                return new BaseResponse<>(INVALID_IMAGE_TYPE);
+            }
         }
+
+        /**
+         * 법인 사업자명 처리
+         */
         if(parameters.getCorporationBusinessName()!=null){
             if(parameters.getCorporationBusinessName().length()==0){
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
         }
-
+        //todo 법인 사업자명 형식 검사
+        /**
+         * 법인 등록 번호 처리
+         */
         if(parameters.getCorporationBusinessNumber()!=null){
             if(parameters.getCorporationBusinessNumber().length()==0){
-                    return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
         }
-
+        //todo 법인 등록 번호 형식 검사
+        /**
+         * 닉네임 처리
+         */
         if(parameters.getNickname()!=null){
             if(parameters.getNickname().length()==0){
                 return new BaseResponse<>(EMPTY_NICKNAME);
             }
-        }
-        if(parameters.getGenreCategoryIdx().size()==0){
-            //카테고리 선택을 하나도 안했을 경우
-            return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
+            if(!isRegexNickname(parameters.getNickname())){
+                return new BaseResponse<>(INVALID_NICKNAME);
+            }
         }
 
-        // 2. Post UserInfo
+        /**
+         * 직종카테고리-1차 분류 처리
+         */
+        if(parameters.getJobParentCategoryIdx()!=null){
+            if(parameters.getJobParentCategoryIdx().size()==0){
+                //카테고리 선택을 하나도 안했을 경우
+                return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
+            }
+        }
+
+        /**
+         * 직종카테고리-2차 분류 처리
+         */
+        if(parameters.getJobChildCategoryIdx()!=null){
+            if(parameters.getJobChildCategoryIdx().size()==0){
+                //카테고리 선택을 하나도 안했을 경우
+                return new BaseResponse<>(NO_SELECT_JOB_CHILD_CATEGORY);
+            }
+        }
+
+
+        /**
+         * 장르카테고리 처리
+         */
+        if(parameters.getGenreCategoryIdx()!=null){
+            if(parameters.getGenreCategoryIdx().size()==0){
+                //카테고리 선택을 하나도 안했을 경우
+                return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
+            }
+        }
+
+
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
@@ -160,7 +262,7 @@ public class UserInfoController {
      * [2021.02.01] 4. 휴대폰 인증 번호 전송 API
      * [GET] /users/phone-auth?phoneNum=
      */
-    @PostMapping("/phone-auth")
+    @GetMapping("/phone-auth")
     public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
         if(phoneNum==null || phoneNum.length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -260,6 +362,16 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
 
+    }
+
+    @GetMapping("/experts")
+    public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word){
+        try{
+            List<GetUsersRes> getUsersResList = userInfoProvider.getUserInfoList(word);
+            return new BaseResponse<>(SUCCESS_READ_USERS,getUsersResList);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
 
