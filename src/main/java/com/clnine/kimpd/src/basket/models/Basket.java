@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @Table(name="Basket")
-public class basket extends BaseEntity {
+public class Basket extends BaseEntity {
     @Id
     @Column(name="basketIdx",nullable = false,updatable = false)
     @GeneratedValue(strategy =GenerationType.IDENTITY)

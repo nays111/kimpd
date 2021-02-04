@@ -2,6 +2,11 @@ package com.clnine.kimpd.src.user;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.src.category.UserJobCategoryRepository;
+import com.clnine.kimpd.src.category.models.JobCategoryParent;
+import com.clnine.kimpd.src.category.models.UserJobCategory;
+import com.clnine.kimpd.src.review.ReviewRepository;
+import com.clnine.kimpd.src.review.models.review;
 import com.clnine.kimpd.src.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
@@ -18,16 +23,24 @@ import static com.clnine.kimpd.utils.SmsService.sendMessage;
 @Service
 public class UserInfoProvider {
     private final UserInfoRepository userInfoRepository;
-        private final JwtService jwtService;
+    private final JwtService jwtService;
+    private final ReviewRepository reviewRepository;
+    private final UserJobCategoryRepository userJobCategoryRepository;
 
     @Autowired
-    public UserInfoProvider(UserInfoRepository userInfoRepository, JwtService jwtService) {
+    public UserInfoProvider(UserInfoRepository userInfoRepository,
+                            JwtService jwtService,
+                            ReviewRepository reviewRepository,
+                            UserJobCategoryRepository userJobCategoryRepository) {
         this.userInfoRepository = userInfoRepository;
         this.jwtService = jwtService;
+        this.reviewRepository = reviewRepository;
+        this.userJobCategoryRepository = userJobCategoryRepository;
     }
 
     /**
      * 로그인
+     *
      * @param postLoginReq
      * @return PostLoginRes
      * @throws BaseException
@@ -58,9 +71,25 @@ public class UserInfoProvider {
         return new PostLoginRes(userIdx, jwt);
     }
 
+    public GetUserRes getUserRes(int userIdx) throws BaseException {
+        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+        String nickname = userInfo.getNickname();
+        String profileImageURL = userInfo.getProfileImageURL();
+        int userType = userInfo.getUserType();
+        String stringUserType = null;
+        if (userType == 1) {
+            stringUserType = "일반회원";
+        } else if (userType == 2) {
+            stringUserType = "전문가회원";
+        }
+        GetUserRes getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, stringUserType);
+        return getUserRes;
+    }
+
 
     /**
      * 회원 조회
+     *
      * @param userIdx
      * @return UserInfo
      * @throws BaseException
@@ -86,6 +115,7 @@ public class UserInfoProvider {
 
     /**
      * ID로 회원 조회
+     *
      * @param id
      * @return UserInfo
      * @throws BaseException
@@ -113,14 +143,14 @@ public class UserInfoProvider {
 
 
     public Boolean isIdUsable(String id) {
-        return !userInfoRepository.existsByIdAndStatus(id,"ACTIVE");
+        return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE");
     }
 
-    public Boolean isNicknameUsable(String nickname){
-        return !userInfoRepository.existsByNicknameAndStatus(nickname,"ACTIVE");
+    public Boolean isNicknameUsable(String nickname) {
+        return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE");
     }
 
-    public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException{
+    public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
             existsUserInfoList = userInfoRepository.findByPhoneNumAndStatus(phoneNum, "ACTIVE");
@@ -143,7 +173,7 @@ public class UserInfoProvider {
     /**
      *
      */
-    public UserInfo retrieveUserInfoByEmail(String email) throws BaseException{
+    public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
             existsUserInfoList = userInfoRepository.findByEmailAndStatus(email, "ACTIVE");
@@ -163,44 +193,73 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    public GetIdRes SendId(String phoneNum) throws BaseException{
+    public GetIdRes SendId(String phoneNum) throws BaseException {
         UserInfo userInfo;
-        try{
-             userInfo = retrieveUserInfoByPhoneNum(phoneNum);
-        }catch(Exception ignored){
+        try {
+            userInfo = retrieveUserInfoByPhoneNum(phoneNum);
+        } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         String id = userInfo.getId();
-        String message="김피디입니다. 회원님의 ID 는 ["+id+"] 입니다.";
-        try{
-            sendMessage(message,phoneNum);
-        }catch(Exception ignored){
+        String message = "김피디입니다. 회원님의 ID 는 [" + id + "] 입니다.";
+        try {
+            sendMessage(message, phoneNum);
+        } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_SEND_MESSAGE);
         }
         return new GetIdRes(id);
     }
 
+    //전문가이면서
+    public List<GetUsersRes> getUserInfoList(String word) throws BaseException {
+        List<UserInfo> userInfoList;
 
-    /**
-     * 전문가 리스트 조회하기
-     * 1. status=ACTIVE 이면서 userType=2인 회원 모두 조회
-     * 2. status=ACTIVE 이면서 userType=2인 회원의 수 조회
-     */
-//    public List<GetUsersRes> retrieveUserInfoList(String word) throws BaseException{
-//        List<UserInfo> userInfoList;
-//        try{
-//            if(word==null){
-//                userInfoList = userInfoRepository.findByStatusAndUserType("ACTIVE",2);
-//            }
-//            else{
-//                userInfoList = userInfoRepository.findByStatusAndUserTypeAndNicknameIsContaining("ACTIVE",2,word);
-//            }
-//        }catch(Exception ignored){
-//            throw new BaseException(FAILED_TO_GET_USER);
-//        }
-//        for(int i=0;i<userInfoList.size();i++){
-//
-//        }
 
+        //userInfo를 가지고 userJobCategory 리스트
+        //userJobCategory를 가지고 jobCategory 에 가서 jobCategoryName;
+        try {
+            if (word == null) {
+                userInfoList = userInfoRepository.findByStatusAndUserType("ACTIVE", 2);
+            } else {
+                userInfoList = userInfoRepository.findByUserTypeAndStatusAndNicknameIsContainingOrIntroduceIsContaining(2, "ACTIVE", word, word);
+            }
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
+        ArrayList<GetUsersRes> getUsersResList = new ArrayList<>();
+        for (int i = 0; i < userInfoList.size(); i++) {
+            UserInfo userInfo = userInfoList.get(i);
+            int userIdx = userInfo.getUserIdx();
+            String nickname = userInfo.getNickname();
+            String introduce = userInfo.getIntroduce();
+            String profileImageURL = userInfo.getProfileImageURL();
+            List<UserJobCategory> userJobCategoryList = userJobCategoryRepository.findByUserInfo(userInfo);
+            ArrayList<String> jobCategoryParentNameList = new ArrayList<>();
+            for (int j = 0; j < userJobCategoryList.size(); j++) {
+                String categoryName = userJobCategoryList.get(j).getJobCategoryParent().getJobCategoryName();
+                jobCategoryParentNameList.add(categoryName);
+            }
+
+            //UserInfo 있으니깐 UserInfo 로 JobCategoryParent를 찾아냄
+            //jobCategoryParent가  찾아냈으니깐 거기서 parentName가져온다.
+
+            Integer count = reviewRepository.countAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
+            if (count == null) {
+                count = 0;
+            }
+            List<review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
+            double sum = 0;
+            for (int j = 0; j < reviewList.size(); j++) {
+                sum += reviewList.get(j).getStar();
+            }
+            //todo 소수점 두자리로
+            double average = Math.round((sum/count)*100)/100.0;
+
+            GetUsersRes getUsersRes = new GetUsersRes(userIdx, nickname, profileImageURL, jobCategoryParentNameList, introduce, count, average);
+            getUsersResList.add(getUsersRes);
+        }
+
+        return getUsersResList;
+    }
 }

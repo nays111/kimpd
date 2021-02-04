@@ -62,25 +62,32 @@ public class UserInfoService {
         String email = postUserReq.getEmail();
         String phoneNumber = postUserReq.getPhoneNum();
         String password;
+        String address = postUserReq.getAddress();
+        int agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
+        String privateBusinessName = postUserReq.getPrivateBusinessName();
+        String businessNumber = postUserReq.getBusinessNumber();
+        String businessImageURL = postUserReq.getBusinessImageURL();
+        String corporationBusinessName = postUserReq.getCorporationBusinessName();
+        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
+        String nickname = postUserReq.getNickname();
 
-        /**
-         * address test
-         */
-        String introduce = postUserReq.getIntroduce();
+
+
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-         //(1,2,3) 이런식으로 저장
-        //List<GenreCategory> genreCategoryList = categoryRepository.findAllByGenreCategoryIdx(genreCategoryIdx);
+
 
         /**
          * 1,2,3,4, 이런식으로 카테고리 인덱스를 입력받음
          * genreCategory에서 해당되는 genreCategory 객체 생성
          * userGenreCategory에 userInfo와 genreCategory 를 담는다.
          */
-        UserInfo userInfo = new UserInfo(userType,id,password,email,phoneNumber,introduce);
+        UserInfo userInfo = new UserInfo(userType,id,password,email,
+                phoneNumber,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
+                corporationBusinessName,corporationBusinessNumber,nickname);
 
         // 3. 유저 정보 저장
         try {
@@ -92,12 +99,13 @@ public class UserInfoService {
         ArrayList<Integer> jobParentCategoryIdxList = postUserReq.getJobParentCategoryIdx();
         ArrayList<Integer> jobChildCategoryIdxList = postUserReq.getJobChildCategoryIdx();
         try{
-            for(int i=0;i<jobParentCategoryIdxList.size();i++){
-                JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
-                //JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdxAndAndJobCategoryParent(jobChildCategoryIdxList.get(i),jobCategoryParent);
-                JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
-                UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
-                userJobCategoryRepository.save(userJobCategory);
+            if(jobChildCategoryIdxList!=null && jobParentCategoryIdxList!=null){
+                for(int i=0;i<jobParentCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+                    UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
+                    userJobCategoryRepository.save(userJobCategory);
+                }
             }
         }catch(Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_JOB_CATEGORY);
@@ -105,10 +113,12 @@ public class UserInfoService {
 
         ArrayList<Integer> genreCategoryIdxList = postUserReq.getGenreCategoryIdx();
         try{
-            for(int i=0;i<genreCategoryIdxList.size();i++){
-                GenreCategory genreCategory = genreCategoryRepository.findAllByGenreCategoryIdx(genreCategoryIdxList.get(i));
-                UserGenreCategory userGenreCategory = new UserGenreCategory(userInfo,genreCategory);
-                userGenreCategoryRepository.save(userGenreCategory);
+            if(genreCategoryIdxList!=null){
+                for(int i=0;i<genreCategoryIdxList.size();i++){
+                    GenreCategory genreCategory = genreCategoryRepository.findAllByGenreCategoryIdx(genreCategoryIdxList.get(i));
+                    UserGenreCategory userGenreCategory = new UserGenreCategory(userInfo,genreCategory);
+                    userGenreCategoryRepository.save(userGenreCategory);
+                }
             }
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);

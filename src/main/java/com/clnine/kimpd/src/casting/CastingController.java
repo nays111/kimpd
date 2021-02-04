@@ -2,11 +2,17 @@ package com.clnine.kimpd.src.casting;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.casting.models.CastingCountRes;
+import com.clnine.kimpd.src.casting.models.GetCastingsRes;
+import com.clnine.kimpd.src.casting.models.GetMyCastingRes;
 import com.clnine.kimpd.src.casting.models.PostCastingReq;
+import com.clnine.kimpd.src.user.UserInfoProvider;
+import com.clnine.kimpd.src.user.models.GetUserRes;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
@@ -16,6 +22,41 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class CastingController {
     private final JwtService jwtService;
     private final CastingService castingService;
+    private final CastingProvider castingProvider;
+    private final UserInfoProvider userInfoProvider;
+    @ResponseBody
+    @GetMapping("")
+    public BaseResponse<GetCastingsRes>getCastings(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        GetUserRes getUserRes;
+        try{
+            getUserRes = userInfoProvider.getUserRes(userIdx);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+        CastingCountRes castingCountRes;
+        try{
+            castingCountRes = castingProvider.getCastingCount(userIdx);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+        List<GetMyCastingRes> getMyCastingResList;
+        try{
+            getMyCastingResList = castingProvider.getMyCastingRes(userIdx,1,1);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+
+
+        GetCastingsRes getCastingsRes = new GetCastingsRes(getUserRes,castingCountRes,getMyCastingResList);
+        return new BaseResponse<>(SUCCESS_READ_USER,getCastingsRes);
+
+    }
 
     @ResponseBody
     @PostMapping("")
