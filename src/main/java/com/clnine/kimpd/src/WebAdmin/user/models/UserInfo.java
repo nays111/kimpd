@@ -1,6 +1,6 @@
-package com.softsquared.template.src.user.models;
+package com.clnine.kimpd.src.WebAdmin.user.models;
 
-import com.softsquared.template.config.BaseEntity;
+import com.clnine.kimpd.config.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
