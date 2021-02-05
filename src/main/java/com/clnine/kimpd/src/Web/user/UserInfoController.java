@@ -31,11 +31,13 @@ public class UserInfoController {
         this.jwtService = jwtService;
         this.mailService = mailService;
     }
+
     /**
      * 회원가입 API
      * [POST] /users
-     * @RequestBody PostUserReq
+     *
      * @return BaseResponse<PostUserRes>
+     * @RequestBody PostUserReq
      */
     @ResponseBody
     @PostMapping("")
@@ -44,10 +46,10 @@ public class UserInfoController {
         /**
          * 유저 타입 처리
          */
-        if(parameters.getUserType()==0){
+        if (parameters.getUserType() == 0) {
             return new BaseResponse<>(INVALID_USER_TYPE);
         }
-        if(parameters.getUserType()>6){
+        if (parameters.getUserType() > 6) {
             return new BaseResponse<>(INVALID_USER_TYPE);
         }
 
@@ -55,10 +57,10 @@ public class UserInfoController {
         /**
          * 아이디 처리
          */
-        if(parameters.getId()==null || parameters.getId().length()==0){
+        if (parameters.getId() == null || parameters.getId().length() == 0) {
             return new BaseResponse<>(EMPTY_ID);
         }
-        if(!isRegexId(parameters.getId())){
+        if (!isRegexId(parameters.getId())) {
             return new BaseResponse<>(INVALID_ID);
         }
 
@@ -68,7 +70,7 @@ public class UserInfoController {
         if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
             return new BaseResponse<>(EMPTY_EMAIL);
         }
-        if (!isRegexEmail(parameters.getEmail())){
+        if (!isRegexEmail(parameters.getEmail())) {
             return new BaseResponse<>(INVALID_EMAIL);
         }
         /**
@@ -77,7 +79,7 @@ public class UserInfoController {
         if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
-        if(!isRegexPassword(parameters.getPassword())){
+        if (!isRegexPassword(parameters.getPassword())) {
             return new BaseResponse<>(INVALID_PASSWORD);
         }
         /**
@@ -92,10 +94,10 @@ public class UserInfoController {
         /**
          * 휴대폰 처리
          */
-        if(parameters.getPhoneNum()==null || parameters.getPhoneNum().length()==0){
+        if (parameters.getPhoneNum() == null || parameters.getPhoneNum().length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
-        if(!isRegexPhoneNumber(parameters.getPhoneNum())){
+        if (!isRegexPhoneNumber(parameters.getPhoneNum())) {
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
         /**
@@ -107,7 +109,7 @@ public class UserInfoController {
         /**
          * 주소 처리
          */
-        if(parameters.getAddress()==null || parameters.getAddress().length()==0){
+        if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {
             return new BaseResponse<>(EMPTY_ADDRESS);
         }
         //todo 주소 형식 처리
@@ -119,8 +121,8 @@ public class UserInfoController {
         /**
          * 개인 사업자명 처리
          */
-        if(parameters.getPrivateBusinessName()!=null){
-            if(parameters.getPrivateBusinessName().length()==0){
+        if (parameters.getPrivateBusinessName() != null) {
+            if (parameters.getPrivateBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
             }
         }
@@ -128,8 +130,8 @@ public class UserInfoController {
         /**
          * 사업자 등록 번호 처리
          */
-        if(parameters.getBusinessNumber()!=null){
-            if(parameters.getBusinessNumber().length()==0){
+        if (parameters.getBusinessNumber() != null) {
+            if (parameters.getBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
         }
@@ -138,11 +140,11 @@ public class UserInfoController {
         /**
          * 사업자 등록증 처리
          */
-        if(parameters.getBusinessImageURL()!=null){
-            if(parameters.getBusinessImageURL().length()==0) {
+        if (parameters.getBusinessImageURL() != null) {
+            if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if(!isRegexImageType(parameters.getBusinessImageURL())){
+            if (!isRegexImageType(parameters.getBusinessImageURL())) {
                 return new BaseResponse<>(INVALID_IMAGE_TYPE);
             }
         }
@@ -150,8 +152,8 @@ public class UserInfoController {
         /**
          * 법인 사업자명 처리
          */
-        if(parameters.getCorporationBusinessName()!=null){
-            if(parameters.getCorporationBusinessName().length()==0){
+        if (parameters.getCorporationBusinessName() != null) {
+            if (parameters.getCorporationBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
         }
@@ -159,8 +161,8 @@ public class UserInfoController {
         /**
          * 법인 등록 번호 처리
          */
-        if(parameters.getCorporationBusinessNumber()!=null){
-            if(parameters.getCorporationBusinessNumber().length()==0){
+        if (parameters.getCorporationBusinessNumber() != null) {
+            if (parameters.getCorporationBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
         }
@@ -168,11 +170,11 @@ public class UserInfoController {
         /**
          * 닉네임 처리
          */
-        if(parameters.getNickname()!=null){
-            if(parameters.getNickname().length()==0){
+        if (parameters.getNickname() != null) {
+            if (parameters.getNickname().length() == 0) {
                 return new BaseResponse<>(EMPTY_NICKNAME);
             }
-            if(!isRegexNickname(parameters.getNickname())){
+            if (!isRegexNickname(parameters.getNickname())) {
                 return new BaseResponse<>(INVALID_NICKNAME);
             }
         }
@@ -180,8 +182,8 @@ public class UserInfoController {
         /**
          * 직종카테고리-1차 분류 처리
          */
-        if(parameters.getJobParentCategoryIdx()!=null){
-            if(parameters.getJobParentCategoryIdx().size()==0){
+        if (parameters.getJobParentCategoryIdx() != null) {
+            if (parameters.getJobParentCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
             }
@@ -190,8 +192,8 @@ public class UserInfoController {
         /**
          * 직종카테고리-2차 분류 처리
          */
-        if(parameters.getJobChildCategoryIdx()!=null){
-            if(parameters.getJobChildCategoryIdx().size()==0){
+        if (parameters.getJobChildCategoryIdx() != null) {
+            if (parameters.getJobChildCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_JOB_CHILD_CATEGORY);
             }
@@ -201,8 +203,8 @@ public class UserInfoController {
         /**
          * 장르카테고리 처리
          */
-        if(parameters.getGenreCategoryIdx()!=null){
-            if(parameters.getGenreCategoryIdx().size()==0){
+        if (parameters.getGenreCategoryIdx() != null) {
+            if (parameters.getGenreCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
             }
@@ -220,18 +222,19 @@ public class UserInfoController {
     /**
      * [2021.01.31] 2.아이디 중복확인 API
      * [GET] /users/duplicated-id?id=
+     *
      * @param id
      * @return BaseResponse<>
      */
     @ResponseBody
     @GetMapping("/duplicated-id")
-    public BaseResponse<Void> checkIdDuplicate(@RequestParam(value="id") String id){
-        if(id==null || id.length()==0){
+    public BaseResponse<Void> checkIdDuplicate(@RequestParam(value = "id") String id) {
+        if (id == null || id.length() == 0) {
             return new BaseResponse<>(EMPTY_ID);
         }
-        if(userInfoProvider.isIdUsable(id)==true){
+        if (userInfoProvider.isIdUsable(id) == true) {
             return new BaseResponse<>(SUCCESS_CHECK_ID);
-        }else{
+        } else {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
@@ -239,44 +242,70 @@ public class UserInfoController {
     /**
      * [2020.01.31] 3.닉네임 중복확인 API
      * [GET] /users/duplicated-nickname?nickname=
+     *
      * @param nickname
      * @return BaseResponse<>
      */
     @ResponseBody
     @GetMapping("/duplicated-nickname")
-    public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value="nickname")String nickname){
-        if(nickname==null || nickname.length()==0) {
+    public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value = "nickname") String nickname) {
+        if (nickname == null || nickname.length() == 0) {
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
-        if(userInfoProvider.isNicknameUsable(nickname)==true){
+        if (userInfoProvider.isNicknameUsable(nickname) == true) {
             return new BaseResponse<>(SUCCESS_CHECK_NICKNAME);
-        }else{
+        } else {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
+
     /**
      * [2021.02.01] 4. 휴대폰 인증 번호 전송 API
      * [GET] /users/phone-auth?phoneNum=
      */
     @GetMapping("/phone-auth")
-    public BaseResponse<String> phoneAuth(@RequestParam(value="phoneNum")String phoneNum) throws IOException, ParseException {
-        if(phoneNum==null || phoneNum.length()==0){
+    public BaseResponse<String> phoneAuth(@RequestParam(value = "phoneNum") String phoneNum) throws IOException, ParseException {
+        if (phoneNum == null || phoneNum.length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
-        }
-        else if (!isRegexPhoneNumber(phoneNum)) {
+        } else if (!isRegexPhoneNumber(phoneNum)) {
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
         /**
          * 랜덤한 인증코드 여섯 자리를 생성후 db에 저장하고 메시지 전송
          */
         int rand = (int) (Math.random() * 899999) + 100000;
-        try{
-            userInfoService.PostSecureCode(rand,phoneNum);
+        try {
+            userInfoService.PostSecureCode(rand, phoneNum);
             return new BaseResponse<>(SUCCESS_SEND_MESSAGE);
-        }catch(BaseException exception){
+        } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    @ResponseBody
+    @GetMapping("/phone-auth/check")
+    public BaseResponse<Void> phoneAuthCheck(@RequestParam(value = "phoneNum") String phoneNum, @RequestBody GetCertificationCodeReq getCertificationCodeReq) throws BaseException {
+        //body에 인
+        //전송된 휴대폰 번호로 Certifiacte 테이블 조회
+        if (getCertificationCodeReq.getCode() == null) {
+            return new BaseResponse<>(EMPTY_CODE);
+        }
+        System.out.println(getCertificationCodeReq.getCode());
+
+        try {
+            int code = userInfoProvider.checkPhoneNumCode(phoneNum);
+            if(code==getCertificationCodeReq.getCode()){
+                return new BaseResponse<>(SUCCESS);
+            }else{
+                return new BaseResponse<>(WRONG_SECURE_CODE);
+            }
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+
     /**
      * [2021.01.30] 7.로그인 API
      * [POST] /users/login
@@ -304,11 +333,12 @@ public class UserInfoController {
      * @return BaseResponse<Void>
      */
     @GetMapping("/jwt")
-    public BaseResponse<Void> jwt() {
+    public BaseResponse<GetUserRes> jwt() {
+        GetUserRes getUserRes;
         try {
             int userIdx = jwtService.getUserIdx();
-            userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-            return new BaseResponse<>(SUCCESS_JWT);
+            getUserRes = userInfoProvider.getUserRes(userIdx);
+            return new BaseResponse<>(SUCCESS,getUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
