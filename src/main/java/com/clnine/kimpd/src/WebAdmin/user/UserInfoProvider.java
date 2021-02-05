@@ -1,17 +1,17 @@
-package com.softsquared.template.src.user;
+package com.clnine.kimpd.src.WebAdmin.user;
 
-import com.softsquared.template.config.secret.Secret;
-import com.softsquared.template.utils.AES128;
-import com.softsquared.template.config.BaseException;
-import com.softsquared.template.utils.JwtService;
-import com.softsquared.template.src.user.models.*;
+import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.utils.AES128;
+import com.clnine.kimpd.config.BaseException;
+import com.clnine.kimpd.utils.JwtService;
+import com.clnine.kimpd.src.WebAdmin.user.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.softsquared.template.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
 public class UserInfoProvider {
@@ -96,7 +96,7 @@ public class UserInfoProvider {
         }
 
         // 3. Create JWT
-        String jwt = jwtService.createJwt(webAdmin.getId());
+        String jwt = jwtService.createWebAdminJwt(webAdmin.getId());
 
         // 4. PostLoginRes 변환하여 return
         String id = webAdmin.getId();

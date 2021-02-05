@@ -1,15 +1,15 @@
-package com.softsquared.template.src.user;
+package com.clnine.kimpd.src.WebAdmin.user;
 
-import com.softsquared.template.utils.JwtService;
-import com.softsquared.template.config.secret.Secret;
-import com.softsquared.template.utils.AES128;
-import com.softsquared.template.config.BaseException;
-import com.softsquared.template.src.user.models.*;
+import com.clnine.kimpd.utils.JwtService;
+import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.utils.AES128;
+import com.clnine.kimpd.config.BaseException;
+import com.clnine.kimpd.src.WebAdmin.user.models.*;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.softsquared.template.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 
 @Service
@@ -68,7 +68,7 @@ public class UserInfoService {
         }
 
         // 4. JWT 생성
-        String jwt = jwtService.createJwt(admin.getId());
+        String jwt = jwtService.createWebAdminJwt(admin.getId());
 
         // 5. UserInfoLoginRes로 변환하여 return
         String webAdminId = admin.getId();

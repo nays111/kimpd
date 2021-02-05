@@ -1,6 +1,6 @@
-package com.softsquared.template.src.user;
+package com.clnine.kimpd.src.WebAdmin.user;
 
-import com.softsquared.template.src.user.models.WebAdmin;
+import com.clnine.kimpd.src.WebAdmin.user.models.WebAdmin;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

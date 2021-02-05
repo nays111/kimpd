@@ -1,4 +1,4 @@
-package com.softsquared.template.src.user.models;
+package com.clnine.kimpd.src.WebAdmin.user.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

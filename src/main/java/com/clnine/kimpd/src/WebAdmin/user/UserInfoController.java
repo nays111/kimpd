@@ -1,15 +1,15 @@
-package com.softsquared.template.src.user;
+package com.clnine.kimpd.src.WebAdmin.user;
 
-import com.softsquared.template.config.BaseException;
-import com.softsquared.template.config.BaseResponse;
-import com.softsquared.template.utils.JwtService;
-import com.softsquared.template.src.user.models.*;
+import com.clnine.kimpd.config.BaseException;
+import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.WebAdmin.user.models.*;
+import com.clnine.kimpd.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.softsquared.template.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/web-admin")
@@ -115,11 +115,11 @@ public class UserInfoController {
         }
 
         if (parameters.getPassword() == null || parameters.getPassword().length() <= 0) {
-            return new BaseResponse<>(EMPTY_PREV_PASSWORD);
+            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
         }
 
         if (parameters.getNewPassword() == null || parameters.getNewPassword().length() <= 0) {
-            return new BaseResponse<>(EMPTY_NEW_PASSWORD);
+            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
         }
 
         if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() <= 0) {
@@ -179,22 +179,6 @@ public class UserInfoController {
         try {
             userInfoService.deleteUserInfo(userId);
             return new BaseResponse<>(SUCCESS_DELETE_USER);
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-    }
-
-    /**
-     * JWT 검증 API
-     * [GET] /users/jwt
-     * @return BaseResponse<Void>
-     */
-    @GetMapping("/jwt")
-    public BaseResponse<Void> jwt() {
-        try {
-            int userId = jwtService.getUserId();
-            userInfoProvider.retrieveUserInfo(userId);
-            return new BaseResponse<>(SUCCESS_JWT);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
