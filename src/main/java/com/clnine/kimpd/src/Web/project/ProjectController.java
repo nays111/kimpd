@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.project;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.Web.project.models.GetProjectListRes;
 import com.clnine.kimpd.src.Web.project.models.GetProjectsRes;
 import com.clnine.kimpd.src.Web.project.models.PostProjectReq;
 import com.clnine.kimpd.utils.JwtService;
@@ -82,13 +83,30 @@ public class ProjectController {
         }
         try{
             List<GetProjectsRes> getProjectsResList = projectProvider.getProjectsResList(userIdx,page+1,9);
-            return new BaseResponse<>(SUCCESS_READ_PROJECTS,getProjectsResList);
+            return new BaseResponse<>(SUCCESS,getProjectsResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
 
 
     }
+    @ResponseBody
+    @GetMapping("/project-list")
+    public BaseResponse<List<GetProjectListRes>> getProjectList(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            List<GetProjectListRes> getProjectsResList = projectProvider.getProjectListRes(userIdx);
+            return new BaseResponse<>(SUCCESS,getProjectsResList);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
     
 
 

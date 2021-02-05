@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Integer> {
     List<Project> findByUserInfoAndStatus(UserInfo user, String status, Pageable pageable);
-
+    List<Project> findByUserInfoAndStatus(UserInfo user,String status);
 
 }
