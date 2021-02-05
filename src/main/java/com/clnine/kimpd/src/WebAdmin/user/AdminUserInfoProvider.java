@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
-public class UserInfoProvider {
-    private final UserInfoRepository userInfoRepository;
+public class AdminUserInfoProvider {
+    private final AdminUserInfoRepository adminUserInfoRepository;
     private final WebAdminInfoRepository webAdminInfoRepository;
     private final JwtService jwtService;
 
     @Autowired
-    public UserInfoProvider(UserInfoRepository userInfoRepository, WebAdminInfoRepository webAdminInfoRepository, JwtService jwtService) {
-        this.userInfoRepository = userInfoRepository;
+    public AdminUserInfoProvider(AdminUserInfoRepository adminUserInfoRepository, WebAdminInfoRepository webAdminInfoRepository, JwtService jwtService) {
+        this.adminUserInfoRepository = adminUserInfoRepository;
         this.webAdminInfoRepository = webAdminInfoRepository;
         this.jwtService = jwtService;
     }
@@ -31,26 +31,26 @@ public class UserInfoProvider {
      * @return List<UserInfoRes>
      * @throws BaseException
      */
-    public List<GetUserRes> retrieveUserInfoList(String word) throws BaseException {
+    public List<AdminGetUserRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
-        List<UserInfo> userInfoList;
+        List<AdminUserInfo> adminUserInfoList;
         try {
             if (word == null) { // 전체 조회
-                userInfoList = userInfoRepository.findByStatus("ACTIVE");
+                adminUserInfoList = adminUserInfoRepository.findByStatus("ACTIVE");
             } else { // 검색 조회
-                userInfoList = userInfoRepository.findByStatusAndNicknameIsContaining("ACTIVE", word);
+                adminUserInfoList = adminUserInfoRepository.findByStatusAndNicknameIsContaining("ACTIVE", word);
             }
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. UserInfoRes로 변환하여 return
-        return userInfoList.stream().map(userInfo -> {
-            int id = userInfo.getId();
-            String email = userInfo.getEmail();
-            String nickname = userInfo.getNickname();
-            String phoneNumber = userInfo.getPhoneNumber();
-            return new GetUserRes(id, email, nickname, phoneNumber);
+        return adminUserInfoList.stream().map(adminUserInfo -> {
+            int id = adminUserInfo.getId();
+            String email = adminUserInfo.getEmail();
+            String nickname = adminUserInfo.getNickname();
+            String phoneNumber = adminUserInfo.getPhoneNumber();
+            return new AdminGetUserRes(id, email, nickname, phoneNumber);
         }).collect(Collectors.toList());
     }
 
@@ -60,27 +60,27 @@ public class UserInfoProvider {
      * @return UserInfoDetailRes
      * @throws BaseException
      */
-    public GetUserRes retrieveUserInfo(int userId) throws BaseException {
+    public AdminGetUserRes retrieveUserInfo(int userId) throws BaseException {
         // 1. DB에서 userId로 UserInfo 조회
-        UserInfo userInfo = retrieveUserInfoByUserId(userId);
+        AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userId);
 
         // 2. UserInfoRes로 변환하여 return
-        int id = userInfo.getId();
-        String email = userInfo.getEmail();
-        String nickname = userInfo.getNickname();
-        String phoneNumber = userInfo.getPhoneNumber();
-        return new GetUserRes(id, email, nickname, phoneNumber);
+        int id = adminUserInfo.getId();
+        String email = adminUserInfo.getEmail();
+        String nickname = adminUserInfo.getNickname();
+        String phoneNumber = adminUserInfo.getPhoneNumber();
+        return new AdminGetUserRes(id, email, nickname, phoneNumber);
     }
 
     /**
      * 로그인
-     * @param postAdminLoginReq
+     * @param adminPostLoginReq
      * @return PostLoginRes
      * @throws BaseException
      */
-    public PostAdminLoginRes login(PostAdminLoginReq postAdminLoginReq) throws BaseException {
+    public AdminPostLoginRes login(AdminPostLoginReq adminPostLoginReq) throws BaseException {
         // 1. DB에서 email로 UserInfo 조회
-        WebAdmin webAdmin = retrieveUserInfoByWebAdminId(postAdminLoginReq.getId());
+        WebAdmin webAdmin = retrieveUserInfoByWebAdminId(adminPostLoginReq.getId());
 
         // 2. UserInfo에서 password 추출
         String password;
@@ -91,7 +91,7 @@ public class UserInfoProvider {
         }
 
         // 3. 비밀번호 일치 여부 확인
-        if (!postAdminLoginReq.getPassword().equals(password)) {
+        if (!adminPostLoginReq.getPassword().equals(password)) {
             throw new BaseException(WRONG_PASSWORD);
         }
 
@@ -100,7 +100,7 @@ public class UserInfoProvider {
 
         // 4. PostLoginRes 변환하여 return
         String id = webAdmin.getId();
-        return new PostAdminLoginRes(id, jwt);
+        return new AdminPostLoginRes(id, jwt);
     }
 
     /**
@@ -109,22 +109,22 @@ public class UserInfoProvider {
      * @return UserInfo
      * @throws BaseException
      */
-    public UserInfo retrieveUserInfoByUserId(int userId) throws BaseException {
+    public AdminUserInfo retrieveUserInfoByUserId(int userId) throws BaseException {
         // 1. DB에서 UserInfo 조회
-        UserInfo userInfo;
+        AdminUserInfo adminUserInfo;
         try {
-            userInfo = userInfoRepository.findById(userId).orElse(null);
+            adminUserInfo = adminUserInfoRepository.findById(userId).orElse(null);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. 존재하는 회원인지 확인
-        if (userInfo == null || !userInfo.getStatus().equals("ACTIVE")) {
+        if (adminUserInfo == null || !adminUserInfo.getStatus().equals("ACTIVE")) {
             throw new BaseException(NOT_FOUND_USER);
         }
 
         // 3. UserInfo를 return
-        return userInfo;
+        return adminUserInfo;
     }
 
     /**
@@ -133,25 +133,25 @@ public class UserInfoProvider {
      * @return UserInfo
      * @throws BaseException
      */
-    public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
+    public AdminUserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         // 1. email을 이용해서 UserInfo DB 접근
-        List<UserInfo> existsUserInfoList;
+        List<AdminUserInfo> existsAdminUserInfoList;
         try {
-            existsUserInfoList = userInfoRepository.findByEmailAndStatus(email, "ACTIVE");
+            existsAdminUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. 존재하는 UserInfo가 있는지 확인
-        UserInfo userInfo;
-        if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
-            userInfo = existsUserInfoList.get(0);
+        AdminUserInfo adminUserInfo;
+        if (existsAdminUserInfoList != null && existsAdminUserInfoList.size() > 0) {
+            adminUserInfo = existsAdminUserInfoList.get(0);
         } else {
             throw new BaseException(NOT_FOUND_USER);
         }
 
         // 3. UserInfo를 return
-        return userInfo;
+        return adminUserInfo;
     }
 
     //

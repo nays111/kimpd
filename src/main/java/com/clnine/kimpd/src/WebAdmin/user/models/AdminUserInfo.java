@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Data // from lombok
 @Entity // 필수, Class 를 Database Table화 해주는 것이다
 @Table(name = "UserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
-public class UserInfo extends BaseEntity {
+public class AdminUserInfo extends BaseEntity {
     /**
      * 유저 ID
      */
@@ -49,7 +49,7 @@ public class UserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public UserInfo(String email, String password, String nickname, String phoneNumber) {
+    public AdminUserInfo(String email, String password, String nickname, String phoneNumber) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
