@@ -105,6 +105,10 @@ public class CastingProvider {
             int userIdx = userInfo1.getUserIdx();
             String nickname = userInfo1.getNickname();
 
+
+
+
+
             String profileImageURL = userInfo1.getProfileImageURL();
             if(profileImageURL==null){
                 profileImageURL="프로필 사진 없음";
