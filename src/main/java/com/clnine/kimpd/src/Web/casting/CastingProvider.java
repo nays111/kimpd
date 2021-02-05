@@ -107,8 +107,6 @@ public class CastingProvider {
 
 
 
-
-
             String profileImageURL = userInfo1.getProfileImageURL();
             if(profileImageURL==null){
                 profileImageURL="프로필 사진 없음";
