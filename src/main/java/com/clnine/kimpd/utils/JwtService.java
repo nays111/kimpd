@@ -32,6 +32,20 @@ public class JwtService {
     }
 
     /**
+     * WebAdmin JWT 생성
+     * @param userId
+     * @return String
+     */
+    public String createWebAdminJwt(String userId) {
+        Date now = new Date();
+        return Jwts.builder()
+                .claim("userId", userId)
+                .setIssuedAt(now)
+                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+
+    /**
      * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
      * @return String
      */
