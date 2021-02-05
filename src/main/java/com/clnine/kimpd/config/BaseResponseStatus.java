@@ -76,7 +76,8 @@ public enum BaseResponseStatus {
     INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
     INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~7자리로 입력해주세요.)"),
     EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
-
+    EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
+    WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -101,6 +102,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_CHILD_JOB_CATEGORIES(false,3029,"2차 직종 카테고리 리스트 조회에 실패했습니다."),
     FAILED_TO_GET_GENRE_CATEGORIES(false,3030,"장르 카테고리 조회에 실패했습니다."),
     FAILED_TO_GET_PROJECTS_LIST(false,3031,"프로젝트 리스트 조회에 실패하였습니다."),
+    FAILED_TO_GET_SECURE_CODE(false,3032, "인증번호 조회에 실패했습니다."),
 
 
     // 4000 : Database 오류
