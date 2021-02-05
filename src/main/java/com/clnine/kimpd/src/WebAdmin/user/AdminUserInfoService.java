@@ -5,7 +5,6 @@ import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +12,17 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 
 @Service
-public class UserInfoService {
-    private final UserInfoRepository userInfoRepository;
+public class AdminUserInfoService {
+    private final AdminUserInfoRepository adminUserInfoRepository;
     private final WebAdminInfoRepository webAdminInfoRepository;
-    private final UserInfoProvider userInfoProvider;
+    private final AdminUserInfoProvider adminUserInfoProvider;
     private final JwtService jwtService;
 
     @Autowired
-    public UserInfoService(UserInfoRepository userInfoRepository, WebAdminInfoRepository webAdminInfoRepository, UserInfoProvider userInfoProvider, JwtService jwtService) {
-        this.userInfoRepository = userInfoRepository;
+    public AdminUserInfoService(AdminUserInfoRepository userInfoRepository, WebAdminInfoRepository webAdminInfoRepository, AdminUserInfoProvider adminUserInfoProvider, JwtService jwtService) {
+        this.adminUserInfoRepository = userInfoRepository;
         this.webAdminInfoRepository = webAdminInfoRepository;
-        this.userInfoProvider = userInfoProvider;
+        this.adminUserInfoProvider = adminUserInfoProvider;
         this.jwtService = jwtService;
     }
 
@@ -33,11 +32,11 @@ public class UserInfoService {
      * @return PostUserRes
      * @throws BaseException
      */
-    public PostAdminUserRes createUserInfo(PostAdminUserReq postAdminUserReq) throws BaseException {
+    public AdminPostUserRes createUserInfo(AdminPostUserReq postAdminUserReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
-            existsWebAdminInfo = userInfoProvider.retrieveUserInfoByWebAdminId(postAdminUserReq.getId());
+            existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(postAdminUserReq.getId());
         } catch (BaseException exception) {
             // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
             if (exception.getStatus() != NOT_FOUND_USER) {
@@ -72,33 +71,33 @@ public class UserInfoService {
 
         // 5. UserInfoLoginRes로 변환하여 return
         String webAdminId = admin.getId();
-        return new PostAdminUserRes(webAdminId, jwt);
+        return new AdminPostUserRes(webAdminId, jwt);
     }
 
     /**
      * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
-     * @param patchUserPwReq
+     * @param adminPatchUserPwReq
      * @return PatchUserRes
      * @throws BaseException
      */
-    public PatchUserPwRes updateUserInfo(PatchUserPwReq patchUserPwReq) throws BaseException {
+    public AdminPatchUserPwRes updateUserInfo(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
         String password;
 
         try {
-            existsWebAdminInfo = userInfoProvider.retrieveUserInfoByWebAdminId(patchUserPwReq.getUserId());
+            existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchUserPwReq.getUserId());
 
             System.out.println(existsWebAdminInfo);
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchUserPwReq.getPassword());
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchUserPwReq.getPassword());
             System.out.println(password);
             if(!password.equals(existsWebAdminInfo.getPassword()))
                 throw new BaseException(FAILED_TO_PATCH_USER);
             else{
-                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(patchUserPwReq.getNewPassword());
+                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchUserPwReq.getNewPassword());
                 existsWebAdminInfo.setPassword(password);
                 webAdminInfoRepository.save(existsWebAdminInfo);
             }
-            return new PatchUserPwRes(patchUserPwReq.getUserId());
+            return new AdminPatchUserPwRes(adminPatchUserPwReq.getUserId());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_PATCH_USER);
         }
@@ -111,7 +110,7 @@ public class UserInfoService {
      */
     public void deleteUserInfo(int userId) throws BaseException {
         // 1. 존재하는 UserInfo가 있는지 확인 후 저장
-        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserId(userId);
+        AdminUserInfo adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(userId);
 
         // 2-1. 해당 UserInfo를 완전히 삭제
 //        try {
@@ -121,9 +120,9 @@ public class UserInfoService {
 //        }
 
         // 2-2. 해당 UserInfo의 status를 INACTIVE로 설정
-        userInfo.setStatus("INACTIVE");
+        adminUserInfo.setStatus("INACTIVE");
         try {
-            userInfoRepository.save(userInfo);
+            adminUserInfoRepository.save(adminUserInfo);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_DELETE_USER);
         }

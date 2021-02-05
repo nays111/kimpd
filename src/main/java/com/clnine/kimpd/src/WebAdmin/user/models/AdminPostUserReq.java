@@ -4,7 +4,7 @@ import lombok.*;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
-public class PostAdminUserReq {
+public class AdminPostUserReq {
     private String id;
     private String password;
 }
