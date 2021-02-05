@@ -13,15 +13,15 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @RequestMapping("/web-admin")
-public class UserInfoController {
-    private final UserInfoProvider userInfoProvider;
-    private final UserInfoService userInfoService;
+public class AdminUserInfoController {
+    private final AdminUserInfoProvider adminUserInfoProvider;
+    private final AdminUserInfoService adminUserInfoService;
     private final JwtService jwtService;
 
     @Autowired
-    public UserInfoController(UserInfoProvider userInfoProvider, UserInfoService userInfoService, JwtService jwtService) {
-        this.userInfoProvider = userInfoProvider;
-        this.userInfoService = userInfoService;
+    public AdminUserInfoController(AdminUserInfoProvider adminUserInfoProvider, AdminUserInfoService adminUserInfoService, JwtService jwtService) {
+        this.adminUserInfoProvider = adminUserInfoProvider;
+        this.adminUserInfoService = adminUserInfoService;
         this.jwtService = jwtService;
     }
 
@@ -35,10 +35,10 @@ public class UserInfoController {
     @ResponseBody
     @GetMapping("/users") // (GET) 127.0.0.1:9000/web-admin/users
     @CrossOrigin(origins = "*")
-    public BaseResponse<GetUserListRes> getUsers(@RequestParam(required = false) String word) {
+    public BaseResponse<AdminGetUserListRes> getUsers(@RequestParam(required = false) String word) {
         try {
-            List<GetUserRes> getUserResList = userInfoProvider.retrieveUserInfoList(word);
-            GetUserListRes userInfo = new GetUserListRes(getUserResList);
+            List<AdminGetUserRes> adminGetUserResList = adminUserInfoProvider.retrieveUserInfoList(word);
+            AdminGetUserListRes userInfo = new AdminGetUserListRes(adminGetUserResList);
             if (word == null) {
                 return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
             } else {
@@ -58,14 +58,14 @@ public class UserInfoController {
     @ResponseBody
     @GetMapping("/users/{userId}")
     @CrossOrigin(origins = "*")
-    public BaseResponse<GetUserRes> getUser(@PathVariable Integer userId) {
+    public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userId) {
         if (userId == null || userId <= 0) {
             return new BaseResponse<>(EMPTY_USERID);
         }
 
         try {
-            GetUserRes getUserRes = userInfoProvider.retrieveUserInfo(userId);
-            return new BaseResponse<>(SUCCESS_READ_USER, getUserRes);
+            AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userId);
+            return new BaseResponse<>(SUCCESS_READ_USER, adminGetUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -80,7 +80,7 @@ public class UserInfoController {
     @ResponseBody
     @PostMapping("/sign-up")
     @CrossOrigin(origins = "*")
-    public BaseResponse<PostAdminUserRes> postUsers(@RequestBody PostAdminUserReq parameters) {
+    public BaseResponse<AdminPostUserRes> postUsers(@RequestBody AdminPostUserReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0) {
             return new BaseResponse<>(EMPTY_USERID);
@@ -91,8 +91,8 @@ public class UserInfoController {
 
         // 2. Post UserInfo
         try {
-            PostAdminUserRes postAdminUserRes = userInfoService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, postAdminUserRes);
+            AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
+            return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -107,7 +107,7 @@ public class UserInfoController {
     @ResponseBody
     @PatchMapping("/password")
     @CrossOrigin(origins = "*")
-    public BaseResponse<PatchUserPwRes> patchUsers(@RequestBody PatchUserPwReq parameters) {
+    public BaseResponse<AdminPatchUserPwRes> patchUsers(@RequestBody AdminPatchUserPwReq parameters) {
 
 
         if (parameters.getUserId() == null || parameters.getUserId().length() <= 0){
@@ -131,7 +131,7 @@ public class UserInfoController {
         }
 
         try {
-            return new BaseResponse<>(SUCCESS_PATCH_USER, userInfoService.updateUserInfo(parameters));
+            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateUserInfo(parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -146,7 +146,7 @@ public class UserInfoController {
     @ResponseBody
     @PostMapping("/sign-in")
     @CrossOrigin(origins = "*")
-    public BaseResponse<PostAdminLoginRes> login(@RequestBody PostAdminLoginReq parameters) {
+    public BaseResponse<AdminPostLoginRes> login(@RequestBody AdminPostLoginReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0) {
             return new BaseResponse<>(EMPTY_USERID);
@@ -157,8 +157,8 @@ public class UserInfoController {
 
         // 2. Login
         try {
-            PostAdminLoginRes postAdminLoginRes = userInfoProvider.login(parameters);
-            return new BaseResponse<>(SUCCESS_LOGIN, postAdminLoginRes);
+            AdminPostLoginRes adminPostLoginRes = adminUserInfoProvider.login(parameters);
+            return new BaseResponse<>(SUCCESS_LOGIN, adminPostLoginRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -177,7 +177,7 @@ public class UserInfoController {
         }
 
         try {
-            userInfoService.deleteUserInfo(userId);
+            adminUserInfoService.deleteUserInfo(userId);
             return new BaseResponse<>(SUCCESS_DELETE_USER);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
