@@ -4,7 +4,7 @@ import lombok.*;
 
 @Getter
 @AllArgsConstructor
-public class GetUsersRes {
+public class AdminGetUsersRes {
     private final int userId;
     private final String email;
 }
