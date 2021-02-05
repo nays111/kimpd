@@ -1,7 +1,5 @@
 package com.clnine.kimpd.utils;
 
-import com.clnine.kimpd.src.user.models.GetUserPhoneCertification;
-
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
