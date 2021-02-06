@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
 import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS_GET_HOME_RES;
 
 @RestController
@@ -40,7 +41,7 @@ public class BannerController {
             return new BaseResponse<>(exception.getStatus());
         }
         GetHomeRes getHomeRes = new GetHomeRes(getBannersResList,getJobCategoryParentResList);
-        return new BaseResponse<>(SUCCESS_GET_HOME_RES,getHomeRes);
+        return new BaseResponse<>(SUCCESS,getHomeRes);
 
 
     }

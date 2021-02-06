@@ -62,7 +62,7 @@ public class ProjectController {
 
         try{
             projectService.PostProject(postProjectReq,userIdx);
-            return new BaseResponse<>(SUCCESS_POST_PROJECT);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

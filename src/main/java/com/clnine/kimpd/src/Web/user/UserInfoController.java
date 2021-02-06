@@ -219,7 +219,7 @@ public class UserInfoController {
 
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, postUserRes);
+            return new BaseResponse<>(SUCCESS, postUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -239,7 +239,7 @@ public class UserInfoController {
             return new BaseResponse<>(EMPTY_ID);
         }
         if (userInfoProvider.isIdUsable(id) == true) {
-            return new BaseResponse<>(SUCCESS_CHECK_ID);
+            return new BaseResponse<>(SUCCESS);
         } else {
             return new BaseResponse<>(DUPLICATED_USER);
         }
@@ -259,7 +259,7 @@ public class UserInfoController {
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
         if (userInfoProvider.isNicknameUsable(nickname) == true) {
-            return new BaseResponse<>(SUCCESS_CHECK_NICKNAME);
+            return new BaseResponse<>(SUCCESS);
         } else {
             return new BaseResponse<>(DUPLICATED_USER);
         }
@@ -282,7 +282,7 @@ public class UserInfoController {
         int rand = (int) (Math.random() * 899999) + 100000;
         try {
             userInfoService.PostSecureCode(rand, phoneNum);
-            return new BaseResponse<>(SUCCESS_SEND_MESSAGE);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -327,7 +327,7 @@ public class UserInfoController {
         }
         try {
             PostLoginRes postLoginRes = userInfoProvider.login(parameters);
-            return new BaseResponse<>(SUCCESS_LOGIN, postLoginRes);
+            return new BaseResponse<>(SUCCESS, postLoginRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -366,7 +366,7 @@ public class UserInfoController {
         try{
             //todo 아래 부분만 수정
             GetIdRes getIdRes = userInfoProvider.SendId(phoneNumber);
-            return new BaseResponse<>(SUCCESS_SEND_ID_MESSAGE,getIdRes);
+            return new BaseResponse<>(SUCCESS,getIdRes);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -388,7 +388,7 @@ public class UserInfoController {
         }
         try {
             GetNewPasswordRes getNewPasswordRes = userInfoService.patchUserPassword(userEmail);
-            return new BaseResponse<GetNewPasswordRes>(SUCCESS_PATCH_USER_PASSWORD,getNewPasswordRes);
+            return new BaseResponse<GetNewPasswordRes>(SUCCESS,getNewPasswordRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -399,7 +399,7 @@ public class UserInfoController {
     public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word){
         try{
             List<GetUsersRes> getUsersResList = userInfoProvider.getUserInfoList(word);
-            return new BaseResponse<>(SUCCESS_READ_USERS,getUsersResList);
+            return new BaseResponse<>(SUCCESS,getUsersResList);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
