@@ -23,6 +23,11 @@ public class CastingController {
     private final CastingService castingService;
     private final CastingProvider castingProvider;
     private final UserInfoProvider userInfoProvider;
+
+    /**
+     * [2021.02.05] 16-1 캐스팅 상태 건수 조회 API
+     * @return
+     */
     @ResponseBody
     @GetMapping("/castings-count")
     public BaseResponse<CastingCountRes> getCastingsCount(){
@@ -41,7 +46,13 @@ public class CastingController {
         }
     }
 
-
+    /**
+     * [2021.02.07] 16. 캐스팅 리스트 조회 API
+     * @param castingStatus
+     * @param duration
+     * @param page
+     * @return
+     */
     @ResponseBody
     @GetMapping("/castings")
     public BaseResponse<List<GetMyCastingRes>>getCastings(@RequestParam(value="castingStatus",required = false)Integer castingStatus,

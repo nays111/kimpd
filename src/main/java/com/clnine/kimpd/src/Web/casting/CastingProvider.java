@@ -57,7 +57,7 @@ public class CastingProvider {
     public List<GetMyCastingRes> getMyCastingRes(int casterIdx,Integer duration,Integer castingStatus,int page,int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(casterIdx);
         List<Casting> castingList = null;
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"createdAt"));
+        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -73,25 +73,29 @@ public class CastingProvider {
         Timestamp end1 = Timestamp.valueOf(end3);
         Timestamp end2 = Timestamp.valueOf(end6);
         Timestamp now1 = Timestamp.valueOf(now);
+//        Timestamp now1 = new Timestamp(System.currentTimeMillis());
+//        //3개월 전
+//        Timestamp end1 = new Timestamp(System.currentTimeMillis()-2592000000)
+//        //6개월 전
 
 
         if(duration==null){ //전체기간 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatus(userInfo,"ACTIVE",pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusOrderByCastingIdxDesc(userInfo,"ACTIVE",pageable);
             }else{
-                castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatus(userInfo,castingStatus,"ACTIVE",pageable);
+                castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",pageable);
             }
         }else if(duration==1){ //최근 3개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetween(userInfo,"ACTIVE",now1,end1,pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end1,now1,pageable);
             }else{
-                castingList=castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetween(userInfo,castingStatus,"ACTIVE",now1,end1,pageable);
+                castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end1,now1,pageable);
             }
         }else if(duration==2){ //최근 6개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetween(userInfo,"ACTIVE",now1,end2,pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end2,now1,pageable);
             }else{
-                castingList=castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetween(userInfo,castingStatus,"ACTIVE",now1,end1,pageable);
+                castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end2,now1,pageable);
             }
         }
         List<GetMyCastingRes> getMyCastingResList = new ArrayList<>();
