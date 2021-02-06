@@ -104,8 +104,9 @@ public class CastingProvider {
             int castingIdx = casting.getCastingIdx();
             int userIdx = userInfo1.getUserIdx();
             String nickname = userInfo1.getNickname();
-
-
+            if(nickname==null){
+                nickname="닉네임 없음";
+            }
 
             String profileImageURL = userInfo1.getProfileImageURL();
             if(profileImageURL==null){

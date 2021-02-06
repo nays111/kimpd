@@ -3,6 +3,7 @@ package com.clnine.kimpd.src.Web.project;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.project.models.GetProjectListRes;
+import com.clnine.kimpd.src.Web.project.models.GetProjectRes;
 import com.clnine.kimpd.src.Web.project.models.GetProjectsRes;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
@@ -73,6 +74,23 @@ public class ProjectProvider {
         }).collect(Collectors.toList());
     }
 
+
+    public GetProjectRes getProjectRes(int userIdx,int projectIdx) throws BaseException{
+        UserInfo userInfo;
+        try{
+            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
+        }catch(Exception ignored){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
+        }
+        Project project;
+        try{
+            project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
+        }catch (Exception ignored){
+            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }
+        GetProjectRes getProjectRes = new GetProjectRes(project.getProjectIdx(),project.getProjectName(),project.getProjectMaker(),project.getProjectDescription(),project.getProjectStartDate(),project.getProjectEndDate());
+        return getProjectRes;
+    }
 
 
 

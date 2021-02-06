@@ -17,7 +17,6 @@ import java.util.List;
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
-@RequestMapping("/castings")
 @RequiredArgsConstructor
 public class CastingController {
     private final JwtService jwtService;
@@ -25,8 +24,27 @@ public class CastingController {
     private final CastingProvider castingProvider;
     private final UserInfoProvider userInfoProvider;
     @ResponseBody
-    @GetMapping("")
-    public BaseResponse<GetCastingsRes>getCastings(@RequestParam(value="castingStatus",required = false)Integer castingStatus,
+    @GetMapping("/castings-count")
+    public BaseResponse<CastingCountRes> getCastingsCount(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        CastingCountRes castingCountRes;
+        try{
+            castingCountRes = castingProvider.getCastingCount(userIdx);
+            return new BaseResponse<>(SUCCESS,castingCountRes);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    @ResponseBody
+    @GetMapping("/castings")
+    public BaseResponse<List<GetMyCastingRes>>getCastings(@RequestParam(value="castingStatus",required = false)Integer castingStatus,
                                                    @RequestParam(value = "duration",required = false)Integer duration,
                                                    @RequestParam(value="page",required = true)int page){
         int userIdx;
@@ -35,33 +53,18 @@ public class CastingController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        GetUserRes getUserRes;
-        try{
-            getUserRes = userInfoProvider.getUserRes(userIdx);
-        }catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-        CastingCountRes castingCountRes;
-        try{
-            castingCountRes = castingProvider.getCastingCount(userIdx);
-        }catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
+
         List<GetMyCastingRes> getMyCastingResList;
         try{
             getMyCastingResList = castingProvider.getMyCastingRes(userIdx,duration,castingStatus,page,6);
+            return new BaseResponse<>(SUCCESS,getMyCastingResList);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
-
-        GetCastingsRes getCastingsRes = new GetCastingsRes(getUserRes,castingCountRes,getMyCastingResList);
-        return new BaseResponse<>(SUCCESS_READ_USER,getCastingsRes);
-
     }
 
     @ResponseBody
-    @PostMapping("")
+    @PostMapping("/castings")
     public BaseResponse<String> postCasting(@RequestBody PostCastingReq postCastingReq){
         int userIdx;
         try{
