@@ -63,6 +63,11 @@ public class CastingController {
         }
     }
 
+    /**
+     * [2021.02.06] 12. 섭외 요청하기  API
+     * @param postCastingReq
+     * @return
+     */
     @ResponseBody
     @PostMapping("/castings")
     public BaseResponse<String> postCasting(@RequestBody PostCastingReq postCastingReq){
@@ -72,63 +77,97 @@ public class CastingController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        int expertIdx = postCastingReq.getExpertIdx();
+        int expertIdx = postCastingReq.getUserIdx();
 
-        if(postCastingReq.getProjectName()==null||postCastingReq.getProjectName().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_NAME);
-        }
-        if(postCastingReq.getProjectMaker()==null||postCastingReq.getProjectMaker().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_MAKER);
-        }
-        if(postCastingReq.getProjectStartDate()==null||postCastingReq.getProjectStartDate().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_START_DATE);
-        }
-        if(postCastingReq.getProjectEndDate()==null || postCastingReq.getProjectEndDate().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
-        }
-        if(postCastingReq.getProjectDescription()==null || postCastingReq.getProjectDescription().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
-        }
-        if(postCastingReq.getProjectBudget()==null || postCastingReq.getProjectBudget().length()==0){
-            return new BaseResponse<>(EMPTY_PROJECT_BUDGET);
-        }
-        //todo 첨부파일 처리
-        if(postCastingReq.getProjectFileURL()!=null){
-            if(postCastingReq.getProjectFileURL().length()==0){
-                return new BaseResponse<>(EMPTY_PROJECT_FILE_URL);
+
+        /**
+         * 프로젝트를 불러오지 않고 수기로 신규 신청하는 경우
+         */
+        if(postCastingReq.getProjectIdx()==null){
+            if(postCastingReq.getProjectName()==null||postCastingReq.getProjectName().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_NAME);
+            }
+            if(postCastingReq.getProjectMaker()==null||postCastingReq.getProjectMaker().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_MAKER);
+            }
+            if(postCastingReq.getProjectStartDate()==null||postCastingReq.getProjectStartDate().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_START_DATE);
+            }
+            if(postCastingReq.getProjectEndDate()==null || postCastingReq.getProjectEndDate().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
+            }
+            if(postCastingReq.getProjectDescription()==null || postCastingReq.getProjectDescription().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
+            }
+
+            //todo 첨부파일 처리
+            if(postCastingReq.getProjectFileURL()!=null){
+                if(postCastingReq.getProjectFileURL().length()==0){
+                    return new BaseResponse<>(EMPTY_PROJECT_FILE_URL);
+                }
+            }
+            if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_PRICE);
+            }
+            if(postCastingReq.getCastingStartDate()==null || postCastingReq.getCastingStartDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_START_DATE);
+            }
+            if(postCastingReq.getCastingEndDate()==null || postCastingReq.getCastingEndDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_END_DATE);
+            }
+            if(postCastingReq.getCastingPriceDate()==null||postCastingReq.getCastingPriceDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+            }
+            if(postCastingReq.getCastingWork()==null || postCastingReq.getCastingWork().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_WORK);
+            }
+            if(postCastingReq.getCastingMessage()==null || postCastingReq.getCastingMessage().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_MESSAGE);
+            }
+            /**
+             * 프로젝트를 불러오지 않은 채로 수기로 입력하여 섭외 신청을 한 경우
+             * 입력한 프로젝트 정보로 -> 프로젝트 생성
+             * 프로젝트 생성해서 나온 객체를 섭외 엔티티에 저장
+             * int PROJECT(USERIDX, PROJECT 해당) 함수
+             * CASTING(USERIDX, EXPERTIDX, PROJECT, CASTING 해당) 함수수
+             */
+            try{
+                castingService.PostCasting(postCastingReq,userIdx,expertIdx);
+                return new BaseResponse<>(SUCCESS);
+            }catch (BaseException exception){
+                return new BaseResponse<>(exception.getStatus());
+            }
+        }else{
+            /**
+             * 프로젝트를 불러오는 경우
+             * 1. projectIdx 로 프로젝트를 찾아온다.
+             * 2. 찾은 projectIdx로 project 객체 가져온다
+             * 3. project 객체, userIdx, expertIdx로 캐스팅 삽입
+             */
+            if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_PRICE);
+            }
+            if(postCastingReq.getCastingStartDate()==null || postCastingReq.getCastingStartDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_START_DATE);
+            }
+            if(postCastingReq.getCastingEndDate()==null || postCastingReq.getCastingEndDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_END_DATE);
+            }
+            if(postCastingReq.getCastingPriceDate()==null||postCastingReq.getCastingPriceDate().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+            }
+            if(postCastingReq.getCastingWork()==null || postCastingReq.getCastingWork().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_WORK);
+            }
+            if(postCastingReq.getCastingMessage()==null || postCastingReq.getCastingMessage().length()==0){
+                return new BaseResponse<>(EMPTY_CASTING_MESSAGE);
+            }
+            try{
+                castingService.PostCastingByProjectLoaded(postCastingReq,userIdx,expertIdx);
+                return new BaseResponse<>(SUCCESS);
+            }catch (BaseException exception){
+                return new BaseResponse<>(exception.getStatus());
             }
         }
-        if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_PRICE);
-        }
-        if(postCastingReq.getCastingStartDate()==null || postCastingReq.getCastingStartDate().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_START_DATE);
-        }
-        if(postCastingReq.getCastingEndDate()==null || postCastingReq.getCastingEndDate().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_END_DATE);
-        }
-        if(postCastingReq.getCastingPriceDate()==null||postCastingReq.getCastingPriceDate().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
-        }
-        if(postCastingReq.getCastingWork()==null || postCastingReq.getCastingWork().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_WORK);
-        }
-        if(postCastingReq.getCastingMessage()==null || postCastingReq.getCastingMessage().length()==0){
-            return new BaseResponse<>(EMPTY_CASTING_MESSAGE);
-        }
-        /**
-         * 프로젝트를 불러오지 않은 채로 수기로 입력하여 섭외 신청을 한 경우
-         * 입력한 프로젝트 정보로 -> 프로젝트 생성
-         * 프로젝트 생성해서 나온 객체를 섭외 엔티티에 저장
-         * int PROJECT(USERIDX, PROJECT 해당) 함수
-         * CASTING(USERIDX, EXPERTIDX, PROJECT, CASTING 해당) 함수수
-        */
-        try{
-            castingService.PostCasting(postCastingReq,userIdx,expertIdx);
-            return new BaseResponse<>(SUCCESS_POST_CASTING);
-        }catch (BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-
     }
 }

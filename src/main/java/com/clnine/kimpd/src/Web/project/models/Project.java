@@ -39,7 +39,7 @@ public class Project extends BaseEntity {
     @Column(name="projectFileURL")
     private String projectFileURL;
 
-    @Column(name="projectBudget",nullable = false)
+    @Column(name="projectBudget")
     private String projectBudget;
 
     @Column(name="projectSatus")
@@ -51,7 +51,7 @@ public class Project extends BaseEntity {
     public Project(UserInfo userInfo, String projectName,
                    String projectMaker, String projectStartDate,
                    String projectEndDate, String projectFileURL,
-                   String projectBudget, String projectDescription) {
+                   String projectBudget,String projectDescription) {
         this.userInfo = userInfo;
         this.projectName = projectName;
         this.projectBudget = projectBudget;
@@ -61,10 +61,17 @@ public class Project extends BaseEntity {
         this.projectFileURL = projectFileURL;
         this.projectDescription = projectDescription;
     }
+    public Project(UserInfo userInfo, String projectName,
+                   String projectMaker, String projectStartDate,
+                   String projectEndDate, String projectFileURL,
+                   String projectDescription) {
+        this.userInfo = userInfo;
+        this.projectName = projectName;
+        this.projectMaker = projectMaker;
+        this.projectStartDate = projectStartDate;
+        this.projectEndDate = projectEndDate;
+        this.projectFileURL = projectFileURL;
+        this.projectDescription = projectDescription;
+    }
 
-
-//    public Project(UserInfo userInfo, String projectName, String projectMaker, String projectStartDate, String projectEndDate, String projectFileURL, int projectBudget, String projectDescription) {
-//
-//
-//    }
 }
