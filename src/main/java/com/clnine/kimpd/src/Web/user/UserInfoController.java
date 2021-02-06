@@ -263,7 +263,7 @@ public class UserInfoController {
      * [2021.02.01] 4. 휴대폰 인증 번호 전송 API
      * [GET] /users/phone-auth?phoneNum=
      */
-    @GetMapping("/phone-auth")
+    @PostMapping("/phone-auth")
     public BaseResponse<String> phoneAuth(@RequestParam(value = "phoneNum") String phoneNum) throws IOException, ParseException {
         if (phoneNum == null || phoneNum.length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -285,7 +285,6 @@ public class UserInfoController {
     @ResponseBody
     @GetMapping("/phone-auth/check")
     public BaseResponse<Void> phoneAuthCheck(@RequestParam(value = "phoneNum") String phoneNum, @RequestBody GetCertificationCodeReq getCertificationCodeReq) throws BaseException {
-        //body에 인
         //전송된 휴대폰 번호로 Certifiacte 테이블 조회
         if (getCertificationCodeReq.getCode() == null) {
             return new BaseResponse<>(EMPTY_CODE);
