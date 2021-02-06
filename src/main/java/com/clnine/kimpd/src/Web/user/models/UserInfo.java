@@ -37,6 +37,9 @@ public class UserInfo extends BaseEntity {
     @Column(name="phoneNum",nullable = false)
     private String phoneNum;
 
+    @Column(name="city")
+    private String city;
+
     @Column(name="address")
     private String address;
 
@@ -74,7 +77,7 @@ public class UserInfo extends BaseEntity {
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,
-                    String email, String phoneNum, String address,
+                    String email, String phoneNum, String city,String address,
                     int agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
                     String corporationBusinessName, String corporationBusinessNumber,
@@ -84,6 +87,7 @@ public class UserInfo extends BaseEntity {
         this.password = password;
         this.email = email;
         this.phoneNum = phoneNum;
+        this.city = city;
         this.address = address;
         this.agreeAdvertisement = agreeAdvertisement;
         this.privateBusinessName = privateBusinessName;
