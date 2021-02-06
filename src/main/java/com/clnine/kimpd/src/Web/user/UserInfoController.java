@@ -107,6 +107,12 @@ public class UserInfoController {
 //            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
 //        }
         /**
+         * 도시 처리
+         */
+        if(parameters.getCity()==null || parameters.getCity().length()==0){
+            return new BaseResponse<>(EMPTY_CITY);
+        }
+        /**
          * 주소 처리
          */
         if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {

@@ -62,6 +62,7 @@ public class UserInfoService {
         String email = postUserReq.getEmail();
         String phoneNumber = postUserReq.getPhoneNum();
         String password;
+        String city = postUserReq.getCity();
         String address = postUserReq.getAddress();
         int agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
         String privateBusinessName = postUserReq.getPrivateBusinessName();
@@ -86,7 +87,7 @@ public class UserInfoService {
          * userGenreCategory에 userInfo와 genreCategory 를 담는다.
          */
         UserInfo userInfo = new UserInfo(userType,id,password,email,
-                phoneNumber,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
+                phoneNumber,city,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
                 corporationBusinessName,corporationBusinessNumber,nickname);
 
         // 3. 유저 정보 저장

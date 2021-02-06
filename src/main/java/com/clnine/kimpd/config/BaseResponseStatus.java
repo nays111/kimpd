@@ -70,7 +70,7 @@ public enum BaseResponseStatus {
     NO_SELECT_JOB_PARENT_CATEGORY(false,2065,"1차 직종 카테고리를 선택해주세요."),
     NO_SELECT_JOB_CHILD_CATEGORY(false,2066,"2차 직종 카테고리를 선택해주세요."),
     EMPTY_PRIVATE_BUSINESS_NAME(false,2067,"개인 사업자명을 입력해주세요."),
-    INVALID_AGREE_ADVERTISEMENT_CHECK(false,2068,"광고 동의 여부 처리가 잘못되었습니다."),
+    EMPTY_CITY(false,2068,"도시명을 입력해주세요."),
     INVALID_USER_TYPE(false,2069,"잘못된 유저 타입입니다."),
     INVALID_ID(false,2070,"잘못된 ID 형식입니다."),
     INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
