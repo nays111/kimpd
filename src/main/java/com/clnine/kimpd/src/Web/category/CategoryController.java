@@ -23,7 +23,7 @@ public class CategoryController {
         List<GetJobCategoryParentRes> getJobCategoryParentResList;
         try{
             getJobCategoryParentResList = categoryProvider.getJobCategoryParentResList();
-            return new BaseResponse<>(SUCCESS_GET_PARENT_JOB_CATEGORY,getJobCategoryParentResList);
+            return new BaseResponse<>(SUCCESS,getJobCategoryParentResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -34,7 +34,7 @@ public class CategoryController {
         List<GetGenreCategoryRes> getGenreCategoryResList;
         try{
             getGenreCategoryResList = categoryProvider.getGenreCategory();
-            return new BaseResponse<>(SUCCESS_GET_GENRE_CATEGORY,getGenreCategoryResList);
+            return new BaseResponse<>(SUCCESS,getGenreCategoryResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -48,7 +48,7 @@ public class CategoryController {
         List<GetJobCategoryChildRes> getJobCategoryChildResList;
         try{
             getJobCategoryChildResList = categoryProvider.getJobCategoryChild(jobCategoryParentIdx);
-            return new BaseResponse<>(SUCCESS_GET_CHILD_JOB_CATEGORY,getJobCategoryChildResList);
+            return new BaseResponse<>(SUCCESS,getJobCategoryChildResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
