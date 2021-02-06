@@ -39,11 +39,8 @@ public class AdminUserInfoController {
         try {
             List<AdminGetUserRes> adminGetUserResList = adminUserInfoProvider.retrieveUserInfoList(word);
             AdminGetUserListRes userInfo = new AdminGetUserListRes(adminGetUserResList);
-            if (word == null) {
-                return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
-            } else {
-                return new BaseResponse<>(SUCCESS_READ_SEARCH_USERS, userInfo);
-            }
+
+            return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -56,7 +53,7 @@ public class AdminUserInfoController {
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/{userIdx}")
     @CrossOrigin(origins = "*")
     public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userId) {
         if (userId == null || userId <= 0) {

@@ -35,22 +35,27 @@ public class AdminUserInfoProvider {
         // 1. DB에서 전체 UserInfo 조회
         List<AdminUserInfo> adminUserInfoList;
         try {
-            if (word == null) { // 전체 조회
-                adminUserInfoList = adminUserInfoRepository.findByStatus("ACTIVE");
-            } else { // 검색 조회
-                adminUserInfoList = adminUserInfoRepository.findByStatusAndNicknameIsContaining("ACTIVE", word);
-            }
+            adminUserInfoList = adminUserInfoRepository.findByStatus("ACTIVE");
+
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. UserInfoRes로 변환하여 return
         return adminUserInfoList.stream().map(adminUserInfo -> {
-            int id = adminUserInfo.getId();
+            int userIdx = adminUserInfo.getUserIdx();
+            String userType = null;
+            if(adminUserInfo.getUserType() == 1 || adminUserInfo.getUserType() == 2){
+                userType = "일반";
+            }
+            else{
+                userType = "전문가";
+            }
+            String id = adminUserInfo.getId();
             String email = adminUserInfo.getEmail();
-            String nickname = adminUserInfo.getNickname();
-            String phoneNumber = adminUserInfo.getPhoneNumber();
-            return new AdminGetUserRes(id, email, nickname, phoneNumber);
+            String phoneNum = adminUserInfo.getPhoneNum();
+            String address = adminUserInfo.getAddress();
+            return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, address);
         }).collect(Collectors.toList());
     }
 
@@ -63,13 +68,20 @@ public class AdminUserInfoProvider {
     public AdminGetUserRes retrieveUserInfo(int userId) throws BaseException {
         // 1. DB에서 userId로 UserInfo 조회
         AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userId);
-
         // 2. UserInfoRes로 변환하여 return
-        int id = adminUserInfo.getId();
+        int userIdx = adminUserInfo.getUserIdx();
+        String userType = null;
+        if(adminUserInfo.getUserType() == 1 || adminUserInfo.getUserType() == 2){
+            userType = "일반";
+        }
+        else{
+            userType = "전문가";
+        }
+        String id = adminUserInfo.getId();
         String email = adminUserInfo.getEmail();
-        String nickname = adminUserInfo.getNickname();
-        String phoneNumber = adminUserInfo.getPhoneNumber();
-        return new AdminGetUserRes(id, email, nickname, phoneNumber);
+        String phoneNum = adminUserInfo.getPhoneNum();
+        String address = adminUserInfo.getAddress();
+        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, address);
     }
 
     /**
@@ -127,34 +139,6 @@ public class AdminUserInfoProvider {
         return adminUserInfo;
     }
 
-    /**
-     * 회원 조회
-     * @param email
-     * @return UserInfo
-     * @throws BaseException
-     */
-    public AdminUserInfo retrieveUserInfoByEmail(String email) throws BaseException {
-        // 1. email을 이용해서 UserInfo DB 접근
-        List<AdminUserInfo> existsAdminUserInfoList;
-        try {
-            existsAdminUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_USER);
-        }
-
-        // 2. 존재하는 UserInfo가 있는지 확인
-        AdminUserInfo adminUserInfo;
-        if (existsAdminUserInfoList != null && existsAdminUserInfoList.size() > 0) {
-            adminUserInfo = existsAdminUserInfoList.get(0);
-        } else {
-            throw new BaseException(NOT_FOUND_USER);
-        }
-
-        // 3. UserInfo를 return
-        return adminUserInfo;
-    }
-
-    //
     public WebAdmin retrieveUserInfoByWebAdminId(String userId) throws BaseException {
         // 1. DB에서 UserInfo 조회
         WebAdmin adminInfo;
