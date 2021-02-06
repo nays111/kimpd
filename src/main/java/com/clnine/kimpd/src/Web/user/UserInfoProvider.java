@@ -205,7 +205,7 @@ public class UserInfoProvider {
 //       Date DAY3BEFORE =  formatter.parse(day3before);
         LocalDateTime now = LocalDateTime.now();
         Timestamp t1 = new Timestamp(System.currentTimeMillis());
-        Timestamp t2 = new Timestamp(System.currentTimeMillis() - 180000);
+        Timestamp t2 = new Timestamp(System.currentTimeMillis() - 180000); //3분
         System.out.println(t1);
         System.out.println(t2);
 
