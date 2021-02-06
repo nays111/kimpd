@@ -6,8 +6,10 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AdminGetUserRes {
-    private final int userId;
+    private final int userIdx;
+    private final String userType;
+    private final String id;
     private final String email;
-    private final String nickname;
-    private final String phoneNumber;
+    private final String phoneNum;
+    private final String address;
 }

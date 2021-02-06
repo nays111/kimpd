@@ -15,33 +15,39 @@ public class AdminUserInfo extends BaseEntity {
      * 유저 ID
      */
     @Id // PK를 의미하는 어노테이션
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "userIdx", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int userIdx;
+
+    /**
+     * 유저 타입
+     */
+    @Column(name = "userType", nullable = false)
+    private int userType;
+
+    /**
+     * 아이디
+     */
+    @Column(name = "id", nullable = false)
+    private String id;
 
     /**
      * 이메일
      */
-    @Column(name = "email", nullable = false, length = 100)
+    @Column(name = "email", nullable = false)
     private String email;
-
-    /**
-     * 비밀번호
-     */
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    /**
-     * 닉네임
-     */
-    @Column(name = "nickname", nullable = false, length = 30)
-    private String nickname;
 
     /**
      * 전화번호
      */
-    @Column(name = "phoneNumber", length = 30)
-    private String phoneNumber;
+    @Column(name = "phoneNum", nullable = false)
+    private String phoneNum;
+
+    /**
+     * 주소
+     */
+    @Column(name = "address")
+    private String address;
 
     /**
      * 상태
@@ -49,10 +55,12 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(String email, String password, String nickname, String phoneNumber) {
+    public AdminUserInfo(int userIdx, int userType, String id, String email, String phoneNum, String address) {
+        this.userIdx = userIdx;
+        this.userType = userType;
+        this.id = id;
         this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
+        this.phoneNum = phoneNum;
+        this.address = address;
     }
 }
