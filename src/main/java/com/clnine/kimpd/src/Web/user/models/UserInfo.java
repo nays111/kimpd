@@ -58,7 +58,7 @@ public class UserInfo extends BaseEntity {
     private String corporationBusinessNumber;//법인 사업자번호
 
     @Column(name="nickname")
-    private String nickname;//닉네임
+    private String nickname="";//닉네임
 
     /**
      * 전문가 전용 컬럼
@@ -66,11 +66,13 @@ public class UserInfo extends BaseEntity {
     @Column(name="profileImageURL")
     private String profileImageURL;//프로필이미지
     @Column(name="introduce")
-    private String introduce;
+    private String introduce="";
     @Column(name="career")
     private String career;
     @Column(name="etc")
     private String etc;
+    @Column(name="minimumCastingPrice")
+    private String minimumCastingPRice;
     @Column(name="agreeShowDB")
     private int agreeShowDB=1;
 

@@ -14,4 +14,6 @@ public interface ProjectRepository extends CrudRepository<Project, Integer> {
     List<Project> findByUserInfoAndStatus(UserInfo user,String status);
     Project findByProjectIdxAndStatus(int projectIdx,String status);
 
+
+    int countAllByUserInfoAndStatus(UserInfo userinfo,String status);
 }

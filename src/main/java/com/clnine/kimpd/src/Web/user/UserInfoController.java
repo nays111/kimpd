@@ -289,7 +289,7 @@ public class UserInfoController {
     }
 
     @ResponseBody
-    @GetMapping("/phone-auth/check")
+    @GetMapping("/phone-auth")
     public BaseResponse<Void> phoneAuthCheck(@RequestParam(value = "phoneNum") String phoneNum, @RequestBody GetCertificationCodeReq getCertificationCodeReq) throws BaseException {
         //전송된 휴대폰 번호로 Certifiacte 테이블 조회
         if (getCertificationCodeReq.getCode() == null) {
@@ -396,9 +396,13 @@ public class UserInfoController {
     }
 
     @GetMapping("/experts")
-    public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word){
+    public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word,
+                                                      @RequestParam(required = false) Integer jobCategoryParentIdx,
+                                                      @RequestParam(required = false) Integer jobCategoryChildIdx,
+                                                      @RequestParam(required = false) Integer genreCategoryIdx,
+                                                      @RequestParam(required = false) String city){
         try{
-            List<GetUsersRes> getUsersResList = userInfoProvider.getUserInfoList(word);
+            List<GetUsersRes> getUsersResList = userInfoProvider.findExperts(word,jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city);
             return new BaseResponse<>(SUCCESS,getUsersResList);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

@@ -12,6 +12,8 @@ import com.clnine.kimpd.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
@@ -307,13 +310,34 @@ public class UserInfoProvider {
             for (int j = 0; j < reviewList.size(); j++) {
                 sum += reviewList.get(j).getStar();
             }
-            //todo 소수점 두자리로
-            double average = Math.round((sum/count)*100)/100.0;
 
-            GetUsersRes getUsersRes = new GetUsersRes(userIdx, nickname, profileImageURL, jobCategoryParentNameList, introduce, count, average);
-            getUsersResList.add(getUsersRes);
+            //double average = Math.round((sum/count)*100)/100.0;
+
+            //GetUsersRes getUsersRes = new GetUsersRes(userIdx, profileImageURL, nickname, introduce, average, count);
+            //getUsersResList.add(getUsersRes);
         }
 
         return getUsersResList;
+    }
+
+    public List<GetUsersRes> findExperts(String word,Integer jobCategoryParentIdx,Integer jobCategoryChildIdx, Integer genreCategoryIdx, String city) throws BaseException{
+
+//        try{
+            List<Object[]> objects = userInfoRepository.findExpert(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word);
+            System.out.println(objects.size());
+
+            List<GetUsersRes> getUsersResList = objects.stream().map(getUsersRes-> new GetUsersRes(
+                    (Integer) getUsersRes[0],
+                    (String) getUsersRes[1],
+                    (String) getUsersRes[2],
+                    (String) getUsersRes[3],
+                    (BigDecimal) getUsersRes[4],
+                    (Integer) getUsersRes[5]
+            )).collect(Collectors.toList());
+
+            return getUsersResList;
+//        }catch (Exception ignored) {
+//            throw new BaseException(FAILED_TO_GET_USER);
+//        }
     }
 }
