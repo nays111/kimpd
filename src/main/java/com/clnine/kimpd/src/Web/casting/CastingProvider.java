@@ -117,7 +117,7 @@ public class CastingProvider {
                 profileImageURL="프로필 사진 없음";
             }
             String introduce = userInfo1.getIntroduce();
-            if(introduce==null){
+            if(introduce==""){
                 introduce="소개 없음";
             }
             int castingStatus1 = casting.getCastingStatus();
