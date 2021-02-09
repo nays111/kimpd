@@ -105,6 +105,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_GENRE_CATEGORIES(false,3030,"장르 카테고리 조회에 실패했습니다."),
     FAILED_TO_GET_PROJECTS_LIST(false,3031,"프로젝트 리스트 조회에 실패하였습니다."),
     FAILED_TO_GET_SECURE_CODE(false,3032, "인증번호 조회에 실패했습니다."),
+    FAILED_TO_RECASTING(false,3033,"재섭외 요청에 실패했습니다."),
 
 
     // 4000 : Database 오류

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -25,7 +26,8 @@ public class UserInfoController {
     private final MailService mailService;
 
     @Autowired
-    public UserInfoController(UserInfoProvider userInfoProvider, UserInfoService userInfoService, JwtService jwtService, MailService mailService) {
+    public UserInfoController(UserInfoProvider userInfoProvider, UserInfoService userInfoService,
+                              JwtService jwtService, MailService mailService) {
         this.userInfoProvider = userInfoProvider;
         this.userInfoService = userInfoService;
         this.jwtService = jwtService;
@@ -408,6 +410,12 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+
+//    @GetMapping("/corp-state")
+//    public int getCorpState(@RequestParam(required = true)String corpId) throws RemoteException {
+//        return barobillService.GetCorpState(corpId);
+//    }
 
 
 }

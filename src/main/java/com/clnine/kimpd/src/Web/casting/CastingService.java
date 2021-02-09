@@ -3,6 +3,7 @@ package com.clnine.kimpd.src.Web.casting;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
+import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
@@ -22,6 +23,14 @@ public class CastingService {
     private final UserInfoRepository userInfoRepository;
     private final CastingRepository castingRepository;
     private final CastingProvider castingProvider;
+
+    /**
+     * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
+     * @param postCastingReq
+     * @param userIdx
+     * @param expertIdx
+     * @throws BaseException
+     */
     @Transactional
     public void PostCasting(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException {
 
@@ -89,7 +98,13 @@ public class CastingService {
         }
     }
 
-
+    /**
+     * 프로젝트 불러오기 한 이후 섭외 신청을 하는 경우
+     * @param postCastingReq
+     * @param userIdx
+     * @param expertIdx
+     * @throws BaseException
+     */
     public void PostCastingByProjectLoaded(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException{
         UserInfo userInfo;
         try{
@@ -148,4 +163,35 @@ public class CastingService {
     }
 
 
+    /**
+     * 재섭외 요청 하기
+     * CASTING-STATUS 를 변경
+     */
+    public void patchCasting(int castingIdx, PatchCastingReq patchCastingReq) throws BaseException {
+        Casting casting;
+        try{
+            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
+        }catch (Exception ignored){
+            throw new BaseException(FAILED_TO_GET_CASTING);
+        }
+        String castingPrice = patchCastingReq.getCastingPrice();
+        String castingStartDate = patchCastingReq.getCastingStartDate();
+        String castingEndDate = patchCastingReq.getCastingEndDate();
+        String castingPriceDate = patchCastingReq.getCastingPriceDate();
+        String castingWork = patchCastingReq.getCastingWork();
+        String castingMessage = patchCastingReq.getCastingMessage();
+
+        casting.setCastingPrice(castingPrice);
+        casting.setCastingStartDate(castingStartDate);
+        casting.setCastingEndDate(castingEndDate);
+        casting.setCastingPriceDate(castingPriceDate);
+        casting.setCastingWork(castingWork);
+        casting.setCastingMessage(castingMessage);
+        casting.setCastingStatus(1); //재섭외 요청을 하게되면 다시 섭외중 상태로 변경됨
+        try{
+            castingRepository.save(casting);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_RECASTING);
+        }
+    }
 }
