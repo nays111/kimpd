@@ -37,6 +37,9 @@ public class UserInfo extends BaseEntity {
     @Column(name="phoneNum",nullable = false)
     private String phoneNum;
 
+    @Column(name="city")
+    private String city;
+
     @Column(name="address")
     private String address;
 
@@ -55,7 +58,7 @@ public class UserInfo extends BaseEntity {
     private String corporationBusinessNumber;//법인 사업자번호
 
     @Column(name="nickname")
-    private String nickname;//닉네임
+    private String nickname="";//닉네임
 
     /**
      * 전문가 전용 컬럼
@@ -63,18 +66,20 @@ public class UserInfo extends BaseEntity {
     @Column(name="profileImageURL")
     private String profileImageURL;//프로필이미지
     @Column(name="introduce")
-    private String introduce;
+    private String introduce="";
     @Column(name="career")
     private String career;
     @Column(name="etc")
     private String etc;
+    @Column(name="minimumCastingPrice")
+    private String minimumCastingPRice;
     @Column(name="agreeShowDB")
     private int agreeShowDB=1;
 
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,
-                    String email, String phoneNum, String address,
+                    String email, String phoneNum, String city,String address,
                     int agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
                     String corporationBusinessName, String corporationBusinessNumber,
@@ -84,6 +89,7 @@ public class UserInfo extends BaseEntity {
         this.password = password;
         this.email = email;
         this.phoneNum = phoneNum;
+        this.city = city;
         this.address = address;
         this.agreeAdvertisement = agreeAdvertisement;
         this.privateBusinessName = privateBusinessName;

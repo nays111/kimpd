@@ -18,6 +18,7 @@ public class PostUserReq {
     private String email;
     private int agreeAdvertisement;
     private String phoneNum;
+    private String city;
     private String address;
     //todo 인증번호 (certificateCode 회원가입할 떄 처리할지?)
     //private int certifiacteCode;

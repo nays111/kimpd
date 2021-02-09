@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class GetProjectsRes {
+public class GetProjectRes {
     private final int projectIdx;
     private final String projectName;
+    private final String projectMaker;
     private final String projectDescription;
     private final String projectStartDate;
     private final String projectEndDate;
-    private final String projectBudget;
 }

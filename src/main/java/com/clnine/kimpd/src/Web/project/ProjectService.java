@@ -33,11 +33,12 @@ public class ProjectService {
         String projectMaker = postProjectReq.getProjectMaker();
         String projectStartDate = postProjectReq.getProjectStartDate();
         String projectEndDate = postProjectReq.getProjectEndDate();
+        String projectManager = postProjectReq.getProjectManager();
         String projectDescription = postProjectReq.getProjectDescription();
         String projectFileURL = postProjectReq.getProjectFileURL();
         String projectBudget = postProjectReq.getProjectBudget();
 
-        Project project = new Project(userInfo, projectName, projectMaker, projectStartDate, projectEndDate, projectFileURL, projectBudget, projectDescription);
+        Project project = new Project(userInfo, projectName, projectMaker, projectStartDate, projectEndDate, projectManager,projectFileURL, projectBudget, projectDescription);
         System.out.println(userInfo.getUserIdx());
         try {
             projectRepository.save(project);
