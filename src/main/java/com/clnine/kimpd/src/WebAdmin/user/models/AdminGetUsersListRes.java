@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class AdminGetUserListRes {
-    List<AdminGetUserRes> userInfo;
+public class AdminGetUsersListRes {
+    List<AdminGetUsersRes> userInfo;
 }

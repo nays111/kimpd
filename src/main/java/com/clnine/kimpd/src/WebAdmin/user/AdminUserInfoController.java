@@ -33,12 +33,12 @@ public class AdminUserInfoController {
      * @return BaseResponse<GetUserListRes>
      */
     @ResponseBody
-    @GetMapping("/users") // (GET) 127.0.0.1:9000/web-admin/users
+    @GetMapping("/users") // (GET) 127.0.0.1:8080/web-admin/users
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetUserListRes> getUsers(@RequestParam(required = false) String word) {
+    public BaseResponse<AdminGetUsersListRes> getUsers(@RequestParam(required = false) String word) {
         try {
-            List<AdminGetUserRes> adminGetUserResList = adminUserInfoProvider.retrieveUserInfoList(word);
-            AdminGetUserListRes userInfo = new AdminGetUserListRes(adminGetUserResList);
+            List<AdminGetUsersRes> adminGetUsersResList = adminUserInfoProvider.retrieveUserInfoList(word);
+            AdminGetUsersListRes userInfo = new AdminGetUsersListRes(adminGetUsersResList);
 
             return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
         } catch (BaseException exception) {
@@ -48,20 +48,20 @@ public class AdminUserInfoController {
 
     /**
      * 회원 조회 API
-     * [GET] /users/:userId
-     * @PathVariable userId
+     * [GET] /users/:userIdx
+     * @PathVariable userIdx
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
     @GetMapping("/users/{userIdx}")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userId) {
-        if (userId == null || userId <= 0) {
+    public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userIdx) {
+        if (userIdx== null || userIdx <= 0) {
             return new BaseResponse<>(EMPTY_USERID);
         }
 
         try {
-            AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userId);
+            AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userIdx);
             return new BaseResponse<>(SUCCESS_READ_USER, adminGetUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -90,6 +90,46 @@ public class AdminUserInfoController {
         try {
             AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 회원 정보 수정 API
+     * [PATCH] /users/{userIdx}
+     * @RequestBody PatchUserReq
+     * * @PathVariable userIdx
+     * @return BaseResponse<PatchUserRes>
+     */
+    @ResponseBody
+    @PatchMapping("/users")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<Void> patchUsers(@RequestBody AdminPatchUserReq parameters) {
+
+        if (parameters.getUserIdx() <= 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+
+        if (parameters.getUserType() == null || parameters.getUserType().length() <= 0){
+            return new BaseResponse<>(EMPTY_USER_TYPE);
+        }
+
+        if (parameters.getId() == null || parameters.getId().length() <= 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+
+        if (parameters.getEmail() == null || parameters.getEmail().length() <= 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+
+        if (parameters.getStatus() == null || parameters.getStatus().length() <= 0) {
+            return new BaseResponse<>(EMPTY_USER_STATUS);
+        }
+
+        try {
+            adminUserInfoService.updateUserInfo(parameters);
+            return new BaseResponse<>(SUCCESS_PATCH_USER);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -128,7 +168,7 @@ public class AdminUserInfoController {
         }
 
         try {
-            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateUserInfo(parameters));
+            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateAdminInfo(parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

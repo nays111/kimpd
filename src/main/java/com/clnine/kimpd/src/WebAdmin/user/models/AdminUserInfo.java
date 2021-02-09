@@ -44,10 +44,76 @@ public class AdminUserInfo extends BaseEntity {
     private String phoneNum;
 
     /**
-     * 주소
+     * 도시
      */
-    @Column(name = "address")
-    private String address;
+    @Column(name = "city")
+    private String city;
+
+    /**
+     * 별명
+     */
+    @Column(name = "nickname")
+    private String nickname;
+
+    /**
+     * 프로필 이미지
+     */
+    @Column(name = "profileImageURL")
+    private String profileImageURL;
+
+    /**
+     * 전문가 소개
+     */
+    @Column(name = "introuduce")
+    private String introuduce;
+
+    /**
+     * 주요 경력
+     */
+    @Column(name = "career")
+    private String career;
+
+    /**
+     * 기타 요청사항
+     */
+    @Column(name = "etc")
+    private String etc;
+
+    /**
+     * 최소 섭외 비용
+     */
+    @Column(name = "minimumCastingPrice")
+    private String minimumCastingPrice;
+
+    /**
+     * 개인 사업명
+     */
+    @Column(name = "privateBusinessName")
+    private String privateBusinessName;
+
+    /**
+     * 사업자 등록번호
+     */
+    @Column(name = "businessNumber")
+    private String businessNumber;
+
+    /**
+     * 사업자 등록 이미지
+     */
+    @Column(name = "businessImageURL")
+    private String businessImageURL;
+
+    /**
+     * 법인 사업자명
+     */
+    @Column(name = "corporationBusinessName")
+    private String corporationBusinessName;
+
+    /**
+     * 법인 사업자 번호
+     */
+    @Column(name = "corporationBusinessNumber")
+    private String corporationBusinessNumber;
 
     /**
      * 상태
@@ -55,12 +121,28 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(int userIdx, int userType, String id, String email, String phoneNum, String address) {
+    public AdminUserInfo(int userIdx, int userType, String id, String email, String phoneNum, String city,
+                         String nickname, String profileImageURL, String introduce, String career, String etc,
+                         String minimumCastingPrice, String privateBusinessName, String businessNumber,
+                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
+                         String status) {
         this.userIdx = userIdx;
         this.userType = userType;
         this.id = id;
         this.email = email;
         this.phoneNum = phoneNum;
-        this.address = address;
+        this.city = city;
+        this.nickname = nickname;
+        this.profileImageURL = profileImageURL;
+        this.introuduce = introduce;
+        this.career = career;
+        this.etc = etc;
+        this.minimumCastingPrice = minimumCastingPrice;
+        this.privateBusinessName = privateBusinessName;
+        this.businessNumber = businessNumber;
+        this.businessImageURL = businessImageURL;
+        this.corporationBusinessName = corporationBusinessName;
+        this.corporationBusinessNumber = corporationBusinessNumber;
+        this.status = status;
     }
 }

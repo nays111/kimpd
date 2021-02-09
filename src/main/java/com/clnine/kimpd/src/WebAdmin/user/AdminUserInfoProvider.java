@@ -31,11 +31,11 @@ public class AdminUserInfoProvider {
      * @return List<UserInfoRes>
      * @throws BaseException
      */
-    public List<AdminGetUserRes> retrieveUserInfoList(String word) throws BaseException {
+    public List<AdminGetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<AdminUserInfo> adminUserInfoList;
         try {
-            adminUserInfoList = adminUserInfoRepository.findByStatus("ACTIVE");
+            adminUserInfoList = adminUserInfoRepository.findAll();
 
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
@@ -54,22 +54,22 @@ public class AdminUserInfoProvider {
             String id = adminUserInfo.getId();
             String email = adminUserInfo.getEmail();
             String phoneNum = adminUserInfo.getPhoneNum();
-            String address = adminUserInfo.getAddress();
-            return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, address);
+            String city = adminUserInfo.getCity();
+            String status = adminUserInfo.getStatus();
+            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, city, status);
         }).collect(Collectors.toList());
     }
 
     /**
      * 회원 조회
-     * @param userId
+     * @param userIdx
      * @return UserInfoDetailRes
      * @throws BaseException
      */
-    public AdminGetUserRes retrieveUserInfo(int userId) throws BaseException {
+    public AdminGetUserRes retrieveUserInfo(int userIdx) throws BaseException {
         // 1. DB에서 userId로 UserInfo 조회
-        AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userId);
+        AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userIdx);
         // 2. UserInfoRes로 변환하여 return
-        int userIdx = adminUserInfo.getUserIdx();
         String userType = null;
         if(adminUserInfo.getUserType() == 1 || adminUserInfo.getUserType() == 2){
             userType = "일반";
@@ -80,8 +80,23 @@ public class AdminUserInfoProvider {
         String id = adminUserInfo.getId();
         String email = adminUserInfo.getEmail();
         String phoneNum = adminUserInfo.getPhoneNum();
-        String address = adminUserInfo.getAddress();
-        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, address);
+        String city = adminUserInfo.getCity();
+        String nickname = adminUserInfo.getNickname();
+        String profileImageURL = adminUserInfo.getProfileImageURL();
+        String introduce = adminUserInfo.getIntrouduce();
+        String career = adminUserInfo.getCareer();
+        String etc = adminUserInfo.getEtc();
+        String minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
+        String privateBusinessName = adminUserInfo.getPrivateBusinessName();
+        String businessNumber = adminUserInfo.getBusinessNumber();
+        String businessImageURL = adminUserInfo.getBusinessImageURL();
+        String corporationBusinessName = adminUserInfo.getCorporationBusinessName();
+        String corporationBusinessNumber = adminUserInfo.getCorporationBusinessNumber();
+        String status = adminUserInfo.getStatus();
+
+        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, city, nickname, profileImageURL,
+                introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber,
+                businessImageURL, corporationBusinessName, corporationBusinessNumber, status);
     }
 
     /**
@@ -117,25 +132,20 @@ public class AdminUserInfoProvider {
 
     /**
      * 회원 조회
-     * @param userId
+     * @param userIdx
      * @return UserInfo
      * @throws BaseException
      */
-    public AdminUserInfo retrieveUserInfoByUserId(int userId) throws BaseException {
+    public AdminUserInfo retrieveUserInfoByUserId(int userIdx) throws BaseException {
         // 1. DB에서 UserInfo 조회
         AdminUserInfo adminUserInfo;
         try {
-            adminUserInfo = adminUserInfoRepository.findById(userId).orElse(null);
+            adminUserInfo = adminUserInfoRepository.findById(userIdx).orElse(null);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
-        // 2. 존재하는 회원인지 확인
-        if (adminUserInfo == null || !adminUserInfo.getStatus().equals("ACTIVE")) {
-            throw new BaseException(NOT_FOUND_USER);
-        }
-
-        // 3. UserInfo를 return
+        // 2. UserInfo를 return
         return adminUserInfo;
     }
 
