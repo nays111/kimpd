@@ -1,5 +1,6 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
+import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.utils.AES128;
@@ -76,18 +77,59 @@ public class AdminUserInfoService {
 
     /**
      * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     * @param adminPatchUserReq
+     * @return void
+     * @throws BaseException
+     */
+    public void updateUserInfo(AdminPatchUserReq adminPatchUserReq) throws BaseException {
+        AdminUserInfo adminUserInfo = null;
+        int userType = 0;
+
+        try {
+            adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
+            if (!adminPatchUserReq.getUserType().equals("전문가")) {
+                userType = 1;
+            }
+            else{
+                userType = 3;
+            }
+            adminUserInfo.setUserType(userType);
+            adminUserInfo.setId(adminPatchUserReq.getId());
+            adminUserInfo.setEmail(adminPatchUserReq.getEmail());
+            adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
+            adminUserInfo.setCity(adminPatchUserReq.getCity());
+            adminUserInfo.setNickname(adminPatchUserReq.getNickname());
+            adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
+            adminUserInfo.setIntrouduce(adminPatchUserReq.getIntroduce());
+            adminUserInfo.setCareer(adminPatchUserReq.getCareer());
+            adminUserInfo.setEtc(adminPatchUserReq.getEtc());
+            adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
+            adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
+            adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
+            adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
+            adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
+            adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
+            adminUserInfo.setStatus(adminPatchUserReq.getStatus());
+            adminUserInfoRepository.save(adminUserInfo);
+            return ;
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_PATCH_USER);
+        }
+    }
+
+    /**
+     * admin 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
      * @param adminPatchUserPwReq
      * @return PatchUserRes
      * @throws BaseException
      */
-    public AdminPatchUserPwRes updateUserInfo(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
+    public AdminPatchUserPwRes updateAdminInfo(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
         String password;
 
         try {
             existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchUserPwReq.getUserId());
 
-            System.out.println(existsWebAdminInfo);
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchUserPwReq.getPassword());
             System.out.println(password);
             if(!password.equals(existsWebAdminInfo.getPassword()))

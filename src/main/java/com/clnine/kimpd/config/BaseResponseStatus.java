@@ -34,6 +34,8 @@ public enum BaseResponseStatus {
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
+    EMPTY_USER_TYPE(false, 2002, "유저 타입 값을 확인해주세요."),
+    EMPTY_USER_STATUS(false, 2003, "유저 상태 값을 확인해주세요."),
     EMPTY_JWT(false, 2010, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2011, "유효하지 않은 JWT입니다."),
     EMPTY_EMAIL(false, 2020, "이메일을 입력해주세요."),
