@@ -161,11 +161,18 @@ public class CastingProvider {
         String projectEndDate = casting.getProject().getProjectEndDate();
         String projectManager = casting.getProject().getProjectManager();
         String projectDescription = casting.getProject().getProjectDescription();
+        String projectFileURL = casting.getProject().getProjectFileURL();
+        if(projectFileURL==null){
+            projectFileURL="업로드한 프로젝트 파일이 없습니다.";
+        }
         String castingPrice = casting.getCastingPrice();
+        String castingStartDate = casting.getCastingStartDate();
+        String castingEndDate = casting.getCastingEndDate();
         String castingPriceDate = casting.getCastingPriceDate();
+        String castingWork = casting.getCastingWork();
         String castingMessage = casting.getCastingMessage();
 
-        GetCastingRes getCastingRes = new GetCastingRes(castingIdx,projectIdx,projectName,projectMaker,projectStartDate,projectEndDate,projectManager,projectDescription,castingPrice,castingPriceDate,castingMessage);
+        GetCastingRes getCastingRes = new GetCastingRes(castingIdx,projectIdx,projectName,projectMaker,projectStartDate,projectEndDate,projectManager,projectDescription,projectFileURL,castingPrice,castingStartDate,castingEndDate,castingPriceDate,castingWork,castingMessage);
         return getCastingRes;
     }
 
