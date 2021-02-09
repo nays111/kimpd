@@ -9,7 +9,6 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class GetExpertsRes {
 
-
     int total;
     ArrayList<GetUsersRes> getUsersRes;
 }

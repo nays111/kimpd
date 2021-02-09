@@ -1,6 +1,7 @@
 package com.clnine.kimpd.src.Web.user.models;
 
 import com.clnine.kimpd.config.BaseEntity;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import static com.clnine.kimpd.config.secret.Secret.aligoSender;
 @Getter
 @NoArgsConstructor
 @Table(name="Certification")
+@Data
 public class Certification extends BaseEntity {
 
     @Id

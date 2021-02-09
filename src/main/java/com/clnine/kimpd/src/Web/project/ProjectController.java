@@ -2,6 +2,8 @@ package com.clnine.kimpd.src.Web.project;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.Web.project.models.GetProjectListRes;
+import com.clnine.kimpd.src.Web.project.models.GetProjectRes;
 import com.clnine.kimpd.src.Web.project.models.GetProjectsRes;
 import com.clnine.kimpd.src.Web.project.models.PostProjectReq;
 import com.clnine.kimpd.utils.JwtService;
@@ -48,8 +50,14 @@ public class ProjectController {
         if(postProjectReq.getProjectEndDate()==null||postProjectReq.getProjectEndDate().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
         }
-        //todo 첨부파일 처리 어떻게 할지?
 
+        if(postProjectReq.getProjectFileURL()!=null){
+            //todo 첨부파일 정규식 처리
+        }
+
+        if(postProjectReq.getProjectManager()==null||postProjectReq.getProjectManager().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
+        }
 
         if(postProjectReq.getProjectDescription()==null||postProjectReq.getProjectDescription().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
@@ -60,7 +68,7 @@ public class ProjectController {
 
         try{
             projectService.PostProject(postProjectReq,userIdx);
-            return new BaseResponse<>(SUCCESS_POST_PROJECT);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -82,13 +90,58 @@ public class ProjectController {
         }
         try{
             List<GetProjectsRes> getProjectsResList = projectProvider.getProjectsResList(userIdx,page+1,9);
-            return new BaseResponse<>(SUCCESS_READ_PROJECTS,getProjectsResList);
+            return new BaseResponse<>(SUCCESS,getProjectsResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
 
 
     }
+
+    /**
+     * [2021.02.05] 14. 프로젝트 리스트 조회 API (섭외 신청할 떄)
+     * projectIdx, projectName 만 리턴
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/project-list")
+    public BaseResponse<List<GetProjectListRes>> getProjectList(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            List<GetProjectListRes> getProjectsResList = projectProvider.getProjectListRes(userIdx);
+            return new BaseResponse<>(SUCCESS,getProjectsResList);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * [2021.02.06] 15. 프로젝트 불러오기 API (섭외 신청할 때)
+     * @param projectIdx
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/project-list/{projectIdx}")
+    public BaseResponse<GetProjectRes> getProjectWhenCasting(@PathVariable(required = true,value = "projectIdx")int projectIdx){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            GetProjectRes getProjectRes = projectProvider.getProjectRes(userIdx,projectIdx);
+            return new BaseResponse<>(SUCCESS,getProjectRes);
+        } catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
     
 
 
