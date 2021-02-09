@@ -201,4 +201,27 @@ public class CastingController {
         }
 
     }
+
+    /**
+     * [2021.02.09] 18. 재섭외 요청
+     * @param castingIdx
+     * @return
+     */
+    @ResponseBody
+    @PatchMapping("/castings/{castingIdx}/re-casting")
+    public BaseResponse<String> patchCastingStatus(@PathVariable(required = true, value = "castingIdx")int castingIdx,
+                                                   @RequestBody(required = true)PatchCastingReq patchCastingReq){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            castingService.patchCasting(castingIdx,patchCastingReq);
+            return new BaseResponse<>(SUCCESS);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 }
