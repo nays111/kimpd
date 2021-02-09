@@ -18,6 +18,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
+@CrossOrigin
 public class ExpertController {
     private final ExpertProvider expertProvider;
 

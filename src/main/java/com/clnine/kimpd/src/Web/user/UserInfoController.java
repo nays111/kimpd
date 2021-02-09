@@ -18,6 +18,7 @@ import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 
 @RestController
+@CrossOrigin
 @RequestMapping(value = "/users")
 public class UserInfoController {
     private final UserInfoProvider userInfoProvider;
