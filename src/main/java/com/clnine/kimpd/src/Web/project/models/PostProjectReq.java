@@ -11,7 +11,7 @@ public class PostProjectReq {
     private String projectMaker;
     private String projectStartDate;
     private String projectEndDate;
-    //private String projectUserName;
+    private String projectManager;
     private String projectDescription;
     private String projectFileURL;
     private String projectBudget;

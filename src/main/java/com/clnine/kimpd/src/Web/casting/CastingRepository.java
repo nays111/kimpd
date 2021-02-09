@@ -29,4 +29,7 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
 //    List<Casting> findAllByUserInfoAndStatusAndCreatedAt(UserInfo userInfo);
 //    List<Casting> findAllByUserInfoAndCastingStatusAndStatus(UserInfo userInfo,int castingStatus,String status);
 
+
+    //castingIdx로 섭외 상세 내역 조회
+    Casting findAllByCastingIdxAndStatus(int castingIdx,String status);
 }

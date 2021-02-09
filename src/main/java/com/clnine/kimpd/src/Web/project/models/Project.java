@@ -33,6 +33,9 @@ public class Project extends BaseEntity {
     @Column(name="projectEndDate",nullable = false)
     private String projectEndDate;
 
+    @Column(name="projectManager")
+    private String projectManager;
+
     @Column(name="projectDescription",nullable = false)
     private String projectDescription;
 
@@ -43,21 +46,23 @@ public class Project extends BaseEntity {
     private String projectBudget;
 
     @Column(name="projectSatus")
-    private int projectStatus=1;
+    private int projectStatus=1; //프로젝트 완료 여부
 
     @Column(name="status")
-    private String status="ACTIVE";
+    private String status="ACTIVE"; //프로젝트 삭제 여부
 
     public Project(UserInfo userInfo, String projectName,
                    String projectMaker, String projectStartDate,
-                   String projectEndDate, String projectFileURL,
-                   String projectBudget,String projectDescription) {
+                   String projectEndDate, String projectManager,
+                   String projectFileURL, String projectBudget,
+                   String projectDescription) {
         this.userInfo = userInfo;
         this.projectName = projectName;
         this.projectBudget = projectBudget;
         this.projectMaker = projectMaker;
         this.projectEndDate = projectEndDate;
         this.projectStartDate = projectStartDate;
+        this.projectManager = projectManager;
         this.projectFileURL = projectFileURL;
         this.projectDescription = projectDescription;
     }

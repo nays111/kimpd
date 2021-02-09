@@ -50,8 +50,14 @@ public class ProjectController {
         if(postProjectReq.getProjectEndDate()==null||postProjectReq.getProjectEndDate().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
         }
-        //todo 첨부파일 처리 어떻게 할지?
 
+        if(postProjectReq.getProjectFileURL()!=null){
+            //todo 첨부파일 정규식 처리
+        }
+
+        if(postProjectReq.getProjectManager()==null||postProjectReq.getProjectManager().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
+        }
 
         if(postProjectReq.getProjectDescription()==null||postProjectReq.getProjectDescription().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);

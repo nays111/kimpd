@@ -2,10 +2,7 @@ package com.clnine.kimpd.src.Web.casting;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.src.Web.casting.models.CastingCountRes;
-import com.clnine.kimpd.src.Web.casting.models.GetCastingsRes;
-import com.clnine.kimpd.src.Web.casting.models.GetMyCastingRes;
-import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
+import com.clnine.kimpd.src.Web.casting.models.*;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.GetUserRes;
 import com.clnine.kimpd.utils.JwtService;
@@ -180,5 +177,28 @@ public class CastingController {
                 return new BaseResponse<>(exception.getStatus());
             }
         }
+    }
+
+    /**
+     * [2021.02.09] 17.섭외 상세내역 조회 API
+     * @param castingIdx
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/castings/{castingIdx}")
+    public BaseResponse<GetCastingRes> getCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            GetCastingRes getCastingRes  = castingProvider.getCastingRes(castingIdx);
+            return new BaseResponse<>(SUCCESS,getCastingRes);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+
     }
 }
