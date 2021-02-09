@@ -15,6 +15,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class CastingController {
     private final JwtService jwtService;
     private final CastingService castingService;
