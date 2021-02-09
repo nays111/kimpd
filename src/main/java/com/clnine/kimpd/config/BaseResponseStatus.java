@@ -78,6 +78,8 @@ public enum BaseResponseStatus {
     EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
     EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
     WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
+    EMPTY_PROJECT_MANAGER(false,2076,"프로젝트 담당자를 입력해주세요."),
+
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),

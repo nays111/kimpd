@@ -1,9 +1,7 @@
 package com.clnine.kimpd.src.Web.casting;
 
 import com.clnine.kimpd.config.BaseException;
-import com.clnine.kimpd.src.Web.casting.models.Casting;
-import com.clnine.kimpd.src.Web.casting.models.CastingCountRes;
-import com.clnine.kimpd.src.Web.casting.models.GetMyCastingRes;
+import com.clnine.kimpd.src.Web.casting.models.*;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
@@ -148,4 +146,28 @@ public class CastingProvider {
         return getMyCastingResList;
 
     }
+
+    public GetCastingRes getCastingRes(int castingIdx) throws BaseException{
+        Casting casting;
+        try{
+            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_CASTING);
+        }
+        int projectIdx = casting.getProject().getProjectIdx();
+        String projectName = casting.getProject().getProjectName();
+        String projectMaker = casting.getProject().getProjectMaker();
+        String projectStartDate = casting.getProject().getProjectStartDate();
+        String projectEndDate = casting.getProject().getProjectEndDate();
+        String projectManager = casting.getProject().getProjectManager();
+        String projectDescription = casting.getProject().getProjectDescription();
+        String castingPrice = casting.getCastingPrice();
+        String castingPriceDate = casting.getCastingPriceDate();
+        String castingMessage = casting.getCastingMessage();
+
+        GetCastingRes getCastingRes = new GetCastingRes(castingIdx,projectIdx,projectName,projectMaker,projectStartDate,projectEndDate,projectManager,projectDescription,castingPrice,castingPriceDate,castingMessage);
+        return getCastingRes;
+    }
+
+
 }
