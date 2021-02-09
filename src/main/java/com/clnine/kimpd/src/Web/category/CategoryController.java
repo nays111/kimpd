@@ -14,6 +14,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class CategoryController {
     private final CategoryProvider categoryProvider;
 

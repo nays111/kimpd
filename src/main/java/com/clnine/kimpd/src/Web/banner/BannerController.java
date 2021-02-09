@@ -7,10 +7,7 @@ import com.clnine.kimpd.src.Web.banner.models.GetHomeRes;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.category.models.GetJobCategoryParentRes;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +17,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS_GET_HOME_RES;
 @RestController
 @RequestMapping(value="/banners")
 @RequiredArgsConstructor
+@CrossOrigin
 public class BannerController {
     private final BannerProvider bannerProvider;
     private final CategoryProvider categoryProvider;

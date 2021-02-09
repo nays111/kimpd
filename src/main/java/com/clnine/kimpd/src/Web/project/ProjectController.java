@@ -17,6 +17,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
+@CrossOrigin
 public class ProjectController {
     private final JwtService jwtService;
     private final ProjectService projectService;
