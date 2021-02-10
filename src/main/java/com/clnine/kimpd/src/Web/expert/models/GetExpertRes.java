@@ -13,7 +13,7 @@ public class GetExpertRes {
     private final String profileImageURL;
     private final String nickname;
     private final String city;
-    //private final String jobCategoryParentName; -> 직종이 여러개일 수 있는데 어떻게할지 아직 미정
+    private final String jobCategoryParentName; //-> 직종이 여러개일 수 있는데 어떻게할지 아직 미정
     private final Double reviewAverage;
     private final int reviewCount;
     private final String introduce;

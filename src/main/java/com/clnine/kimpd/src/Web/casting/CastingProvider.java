@@ -2,6 +2,9 @@ package com.clnine.kimpd.src.Web.casting;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.Web.casting.models.*;
+import com.clnine.kimpd.src.Web.category.CategoryProvider;
+import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
+import com.clnine.kimpd.src.Web.category.models.UserJobCategory;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
@@ -25,6 +28,8 @@ import static com.clnine.kimpd.config.BaseResponseStatus.NOT_FOUND_CASTING;
 public class CastingProvider {
     private final CastingRepository castingRepository;
     private final UserInfoProvider userInfoProvider;
+    private final CategoryProvider categoryProvider;
+
     public Casting retrieveCastingInfoByUserExpertProject(UserInfo user, UserInfo expert, Project project) throws BaseException{
         List<Casting> existsCastingList;
         try{
@@ -41,6 +46,12 @@ public class CastingProvider {
         return casting;
     }
 
+    /**
+     * 섭외 요청 - 섭외 횟수 조회 (섭외중:3건, 섭외완료3건, 섭외거절3건, 프로젝트완료3건)
+     * @param userIdx
+     * @return
+     * @throws BaseException
+     */
     public CastingCountRes getCastingCount(int userIdx)throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         int castingGoing = castingRepository.countAllByUserInfoAndAndCastingStatusAndStatus(userInfo,1,"ACTIVE");
@@ -60,21 +71,14 @@ public class CastingProvider {
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
         Calendar cal3 = Calendar.getInstance();
-        String now = null;
-        String end3 = null;
-        String end6 = null;
-        now = formatter.format(cal.getTime());
+        String now = formatter.format(cal.getTime());
         cal2.add(Calendar.MONTH,-3);
         cal3.add(Calendar.MONTH,-6);
-        end3 = formatter.format(cal2.getTime());
-        end6 = formatter.format(cal3.getTime());
+        String end3 = formatter.format(cal2.getTime());
+        String end6 = formatter.format(cal3.getTime());
         Timestamp end1 = Timestamp.valueOf(end3);
         Timestamp end2 = Timestamp.valueOf(end6);
         Timestamp now1 = Timestamp.valueOf(now);
-//        Timestamp now1 = new Timestamp(System.currentTimeMillis());
-//        //3개월 전
-//        Timestamp end1 = new Timestamp(System.currentTimeMillis()-2592000000)
-//        //6개월 전
 
 
         if(duration==null){ //전체기간 조회
@@ -110,6 +114,8 @@ public class CastingProvider {
                 nickname="닉네임 없음";
             }
 
+            String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo1);
+
             String profileImageURL = userInfo1.getProfileImageURL();
             if(profileImageURL==null){
                 profileImageURL="프로필 사진 없음";
@@ -139,7 +145,9 @@ public class CastingProvider {
             String castingPrice = casting.getCastingPrice();
 
 
-            GetMyCastingRes getMyCastingRes = new GetMyCastingRes(userIdx,nickname,profileImageURL,introduce,castingIdx,castingStatusString,castingTerm,projectName,castingPrice);
+            GetMyCastingRes getMyCastingRes = new GetMyCastingRes(userIdx,nickname,profileImageURL,userMainJobCategoryChildName,
+                    introduce,castingIdx,castingStatusString,castingTerm,projectName,castingPrice);
+
             getMyCastingResList.add(getMyCastingRes);
         }
 
@@ -147,6 +155,12 @@ public class CastingProvider {
 
     }
 
+    /**
+     * 섭외 상세내역 조회
+     * @param castingIdx
+     * @return
+     * @throws BaseException
+     */
     public GetCastingRes getCastingRes(int castingIdx) throws BaseException{
         Casting casting;
         try{

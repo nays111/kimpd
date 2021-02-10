@@ -10,7 +10,7 @@ public class GetMyCastingRes {
     String nickname;
     String profileImageURL;
     //카테고리 이름 여러개중 어떤게 띄어져야하나
-    //String categoryJobName;
+    String categoryJobName;
     String introduce;
     int castingIdx;
     String castingStatus;
