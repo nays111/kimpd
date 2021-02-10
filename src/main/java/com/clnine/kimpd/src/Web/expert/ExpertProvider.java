@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.expert;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.expert.models.GetExpertRes;
 import com.clnine.kimpd.src.Web.expert.models.GetPortfolioListRes;
 import com.clnine.kimpd.src.Web.expert.models.Portfolio;
@@ -26,6 +27,7 @@ public class ExpertProvider {
     private final ProjectRepository projectRepository;
     private final ReviewRepository reviewRepository;
     private final PortfolioRepository portfolioRepository;
+    private final CategoryProvider categoryProvider;
     public GetExpertRes getExpertRes(int userIdx) throws BaseException {
         UserInfo userInfo;
         try {
@@ -38,7 +40,7 @@ public class ExpertProvider {
         String city = userInfo.getCity();
         String introduce = userInfo.getIntroduce();
         String career = userInfo.getCareer();
-        //todo 포트폴리오 부분 추가로 하기
+        String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
         String etc = userInfo.getEtc();
         int projectCount = projectRepository.countAllByUserInfoAndStatus(userInfo, "ACTIVE");
         int reviewCount = reviewRepository.countAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
@@ -69,7 +71,7 @@ public class ExpertProvider {
         }
         double average = Math.round((sum / reviewCount) * 10) / 10.0;
 
-        GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
+        GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, userMainJobCategoryChildName,average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
         return getExpertRes;
     }
 

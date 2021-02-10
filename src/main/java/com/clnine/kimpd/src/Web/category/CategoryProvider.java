@@ -2,9 +2,11 @@ package com.clnine.kimpd.src.Web.category;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.Web.category.models.*;
+import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ public class CategoryProvider {
     private final JobCategoryParentRepository jobCategoryParentRepository;
     private final JobCategoryChildRepository jobCategoryChildRepository;
     private final GenreCategoryRepository genreCategoryRepository;
+    private final UserJobCategoryRepository userJobCategoryRepository;
 
     public List<GetJobCategoryParentRes> getJobCategoryParentResList() throws BaseException {
         List<JobCategoryParent> jobCategoryParentList;
@@ -65,6 +68,24 @@ public class CategoryProvider {
             String genreCategoryName = genreCategory.getGenreCategoryName();
             return new GetGenreCategoryRes(genreCategoryIdx,genreCategoryName);
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * 대표 2차 직종만 들고오기
+     * @param userInfo
+     * @return
+     * @throws BaseException
+     */
+    public String getMainJobCategoryChild(UserInfo userInfo) throws BaseException{
+
+        List<UserJobCategory> userJobCategoryList = new ArrayList<>();
+        try{
+            userJobCategoryList= userJobCategoryRepository.findByUserInfo(userInfo);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_CHILD_JOB_CATEGORIES);
+        }
+        String mainJobCategoryChildName = userJobCategoryList.get(0).getJobCategoryChild().getJobCategoryChildName();
+        return mainJobCategoryChildName;
     }
 }
 
