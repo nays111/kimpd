@@ -32,6 +32,12 @@ public class AdminUserInfo extends BaseEntity {
     private String id;
 
     /**
+     * 비밀번호
+     */
+    @Column(name="password",nullable = false)
+    private String password;
+
+    /**
      * 이메일
      */
     @Column(name = "email", nullable = false)
@@ -65,7 +71,7 @@ public class AdminUserInfo extends BaseEntity {
      * 전문가 소개
      */
     @Column(name = "introuduce")
-    private String introuduce;
+    private String introduce;
 
     /**
      * 주요 경력
@@ -121,20 +127,19 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(int userIdx, int userType, String id, String email, String phoneNum, String city,
+    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String city,
                          String nickname, String profileImageURL, String introduce, String career, String etc,
                          String minimumCastingPrice, String privateBusinessName, String businessNumber,
-                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
-                         String status) {
-        this.userIdx = userIdx;
+                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber, String status) {
         this.userType = userType;
         this.id = id;
+        this.password = password;
         this.email = email;
         this.phoneNum = phoneNum;
         this.city = city;
         this.nickname = nickname;
         this.profileImageURL = profileImageURL;
-        this.introuduce = introduce;
+        this.introduce = introduce;
         this.career = career;
         this.etc = etc;
         this.minimumCastingPrice = minimumCastingPrice;

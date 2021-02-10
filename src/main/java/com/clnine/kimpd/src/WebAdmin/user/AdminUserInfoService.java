@@ -1,13 +1,15 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
-import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
@@ -33,7 +35,7 @@ public class AdminUserInfoService {
      * @return PostUserRes
      * @throws BaseException
      */
-    public AdminPostUserRes createUserInfo(AdminPostUserReq postAdminUserReq) throws BaseException {
+    public AdminPostAdminRes createAdminInfo(AdminPostAdminReq postAdminUserReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
@@ -72,7 +74,92 @@ public class AdminUserInfoService {
 
         // 5. UserInfoLoginRes로 변환하여 return
         String webAdminId = admin.getId();
-        return new AdminPostUserRes(webAdminId, jwt);
+        return new AdminPostAdminRes(webAdminId, jwt);
+    }
+
+    /**
+     * 회원 등록 API
+     * @param postUserReq
+     * @return PostUserRes
+     * @throws BaseException
+     */
+    public AdminPostUserRes createUserInfo(AdminPostUserReq postUserReq) throws BaseException {
+        AdminUserInfo existUserInfo = null;
+        try {
+            // 1-1. 이미 존재하는 회원이 있는지 조회
+            existUserInfo = adminUserInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
+        } catch (BaseException exception) {
+            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
+            if (exception.getStatus() != NOT_FOUND_USER) {
+                throw exception;
+            }
+        }
+        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
+        if (existUserInfo != null) {
+            throw new BaseException(DUPLICATED_USER);
+        }
+
+        // 2. 유저 정보 생성
+        Random random = new Random();
+        StringBuffer buffer = new StringBuffer();
+        int index;
+        char password;
+
+        //랜덤한 임시 비밀번호 생성
+        char[] charPw=new char[] {
+                '0','1','2','3','4','5','6','7','8','9',
+                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+        };
+
+        char[] charSpPw=new char[] {
+                '!','@','#','$','%','^','&','*','?','~','_'
+        };
+
+        for(int i=0;i<8;i++) {
+            index = random.nextInt(charPw.length);
+            password = charPw[index];
+            buffer.append(password);
+        }
+        for(int i=0;i<2;i++) {
+            index = random.nextInt(charSpPw.length);
+            password = charSpPw[index];
+            buffer.append(password);
+        }
+        String newPassword = buffer.toString();
+        String hashPassword;
+        try {
+            hashPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+        int userType = postUserReq.getUserType();
+        String id = postUserReq.getId();
+        String email = postUserReq.getEmail();
+        String phoneNum = postUserReq.getPhoneNum();
+        String city = postUserReq.getCity();
+        String nickname = postUserReq.getNickname();
+        String profileImageURL = postUserReq.getProfileImageURL();
+        String introduce = postUserReq.getIntroduce();
+        String career = postUserReq.getCareer();
+        String etc = postUserReq.getEtc();
+        String minimumCastingPrice = postUserReq.getMinimumCastingPrice();
+        String privateBusinessName = postUserReq.getPrivateBusinessName();
+        String businessNumber = postUserReq.getBusinessNumber();
+        String businessImageURL = postUserReq.getBusinessImageURL();
+        String corporationBusinessName = postUserReq.getCorporationBusinessName();
+        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
+        AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, city, nickname, profileImageURL,
+                introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
+                corporationBusinessNumber, "ACTIVE");
+
+        // 3. 유저 정보 저장
+        try {
+            userInfo = adminUserInfoRepository.save(userInfo);
+        } catch (Exception exception) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+
+        return new AdminPostUserRes(userInfo.getId(), newPassword);
     }
 
     /**
@@ -87,28 +174,90 @@ public class AdminUserInfoService {
 
         try {
             adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
-            if (!adminPatchUserReq.getUserType().equals("전문가")) {
+
+            if (adminPatchUserReq.getUserType().equals("일반")) {
                 userType = 1;
             }
-            else{
+            else if(adminPatchUserReq.getUserType().equals("제작사-개인")){
+                userType = 2;
+            }
+            else if(adminPatchUserReq.getUserType().equals("제작사-법인")){
                 userType = 3;
             }
+            else if(adminPatchUserReq.getUserType().equals("전문가-일반")){
+                userType = 4;
+            }
+            else if(adminPatchUserReq.getUserType().equals("전문가-개인")){
+                userType = 5;
+            }
+            else if(adminPatchUserReq.getUserType().equals("전문가-법인")){
+                userType = 6;
+            }
+
             adminUserInfo.setUserType(userType);
             adminUserInfo.setId(adminPatchUserReq.getId());
             adminUserInfo.setEmail(adminPatchUserReq.getEmail());
             adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
-            adminUserInfo.setCity(adminPatchUserReq.getCity());
-            adminUserInfo.setNickname(adminPatchUserReq.getNickname());
-            adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
-            adminUserInfo.setIntrouduce(adminPatchUserReq.getIntroduce());
-            adminUserInfo.setCareer(adminPatchUserReq.getCareer());
-            adminUserInfo.setEtc(adminPatchUserReq.getEtc());
-            adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
-            adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
-            adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
-            adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
-            adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
-            adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
+            if(adminPatchUserReq.getCity().equals(""))
+                adminUserInfo.setCity(null);
+            else
+                adminUserInfo.setCity(adminPatchUserReq.getCity());
+
+            if(adminPatchUserReq.getNickname().equals(""))
+                adminUserInfo.setNickname(null);
+            else
+                adminUserInfo.setNickname(adminPatchUserReq.getNickname());
+
+            if(adminPatchUserReq.getProfileImageURL().equals(""))
+                adminUserInfo.setProfileImageURL(null);
+            else
+                adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
+
+            if(adminPatchUserReq.getIntroduce().equals(""))
+                adminUserInfo.setIntroduce(null);
+            else
+                adminUserInfo.setIntroduce(adminPatchUserReq.getIntroduce());
+
+            if(adminPatchUserReq.getCareer().equals(""))
+                adminUserInfo.setCareer(null);
+            else
+                adminUserInfo.setCareer(adminPatchUserReq.getCareer());
+
+            if(adminPatchUserReq.getEtc().equals(""))
+                adminUserInfo.setEtc(null);
+            else
+                adminUserInfo.setEtc(adminPatchUserReq.getEtc());
+
+            if(adminPatchUserReq.getMinimumCastingPrice().equals(""))
+                adminUserInfo.setMinimumCastingPrice(null);
+            else
+                adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
+
+            if(adminPatchUserReq.getPrivateBusinessName().equals(""))
+                adminUserInfo.setPrivateBusinessName(null);
+            else
+                adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
+
+            if(adminPatchUserReq.getBusinessNumber().equals(""))
+                adminUserInfo.setBusinessNumber(null);
+            else
+                adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
+
+            if(adminPatchUserReq.getBusinessImageURL().equals(""))
+                adminUserInfo.setBusinessImageURL(null);
+            else
+                adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
+
+            if(adminPatchUserReq.getCorporationBusinessName().equals(""))
+                adminUserInfo.setCorporationBusinessName(null);
+            else
+                adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
+
+            if(adminPatchUserReq.getCorporationBusinessNumber().equals(""))
+                adminUserInfo.setCorporationBusinessNumber(null);
+            else
+                adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
+
             adminUserInfo.setStatus(adminPatchUserReq.getStatus());
             adminUserInfoRepository.save(adminUserInfo);
             return ;
