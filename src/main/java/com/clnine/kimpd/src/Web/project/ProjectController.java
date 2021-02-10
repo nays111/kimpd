@@ -2,10 +2,7 @@ package com.clnine.kimpd.src.Web.project;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.src.Web.project.models.GetProjectListRes;
-import com.clnine.kimpd.src.Web.project.models.GetProjectRes;
-import com.clnine.kimpd.src.Web.project.models.GetProjectsRes;
-import com.clnine.kimpd.src.Web.project.models.PostProjectReq;
+import com.clnine.kimpd.src.Web.project.models.*;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -69,6 +66,32 @@ public class ProjectController {
 
         try{
             projectService.PostProject(postProjectReq,userIdx);
+            return new BaseResponse<>(SUCCESS);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+
+    }
+
+    /**
+     * [2021.02.10] 25.프로젝트 수정 API
+     * @param projectIdx
+     * @param patchProjectReq
+     * @return
+     */
+
+    @ResponseBody
+    @PatchMapping("/project/{projectIdx}")
+    public BaseResponse<String> updateProject(@PathVariable(required = true,value="projectIdx")int projectIdx,
+                                              @RequestBody(required = true) PatchProjectReq patchProjectReq){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            projectService.UpdateProject(patchProjectReq,projectIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
