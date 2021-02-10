@@ -69,7 +69,20 @@ public class ProjectService {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_PROJECT);
         }
+    }
 
-
+    public void DeleteProject(int projectIdx)throws BaseException{
+        Project project;
+        try{
+            project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }
+        project.setStatus("INACTIVE");
+        try{
+            projectRepository.save(project);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_PROJECT);
+        }
     }
 }

@@ -81,7 +81,7 @@ public class ProjectController {
      */
 
     @ResponseBody
-    @PatchMapping("/project/{projectIdx}")
+    @PatchMapping("/projects/{projectIdx}")
     public BaseResponse<String> updateProject(@PathVariable(required = true,value="projectIdx")int projectIdx,
                                               @RequestBody(required = true) PatchProjectReq patchProjectReq){
         int userIdx;
@@ -97,6 +97,29 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
 
+    }
+
+    /**
+     * [2021.02.11] 26.프로젝트 삭제 API
+     * @param projectIdx
+     * @return
+     */
+
+    @ResponseBody
+    @PatchMapping("/projects/{projectIdx}/status")
+    public BaseResponse<String> deleteProject(@PathVariable(required = true,value="projectIdx")int projectIdx){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            projectService.DeleteProject(projectIdx);
+            return new BaseResponse<>(SUCCESS);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
     @ResponseBody
