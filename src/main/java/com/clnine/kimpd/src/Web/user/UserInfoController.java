@@ -36,7 +36,7 @@ public class UserInfoController {
     }
 
     /**
-     * 회원가입 API
+     * 1. 회원가입 API
      * [POST] /users
      *
      * @return BaseResponse<PostUserRes>
@@ -291,6 +291,14 @@ public class UserInfoController {
         }
     }
 
+    /**
+     * [2021.02.11] 5. 휴대폰 인증 번호 검증 API
+     * @param phoneNum
+     * @param getCertificationCodeReq
+     * @return
+     * @throws BaseException
+     */
+
     @ResponseBody
     @GetMapping("/phone-auth")
     public BaseResponse<Void> phoneAuthCheck(@RequestParam(value = "phoneNum") String phoneNum, @RequestBody GetCertificationCodeReq getCertificationCodeReq) throws BaseException {
@@ -398,19 +406,7 @@ public class UserInfoController {
 
     }
 
-    @GetMapping("/experts")
-    public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word,
-                                                      @RequestParam(required = false) Integer jobCategoryParentIdx,
-                                                      @RequestParam(required = false) Integer jobCategoryChildIdx,
-                                                      @RequestParam(required = false) Integer genreCategoryIdx,
-                                                      @RequestParam(required = false) String city){
-        try{
-            List<GetUsersRes> getUsersResList = userInfoProvider.findExperts(word,jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city);
-            return new BaseResponse<>(SUCCESS,getUsersResList);
-        }catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-    }
+
 
 
 //    @GetMapping("/corp-state")
@@ -418,5 +414,21 @@ public class UserInfoController {
 //        return barobillService.GetCorpState(corpId);
 //    }
 
+
+    @GetMapping("")
+    public BaseResponse<GetMyUserInfoRes> getMyUserInfo(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            GetMyUserInfoRes getMyUserInfoRes = userInfoProvider.getMyInfo(userIdx);
+            return new BaseResponse<GetMyUserInfoRes>(SUCCESS,getMyUserInfoRes);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 
 }

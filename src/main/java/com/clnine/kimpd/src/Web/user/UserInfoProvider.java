@@ -340,4 +340,69 @@ public class UserInfoProvider {
 //            throw new BaseException(FAILED_TO_GET_USER);
 //        }
     }
+
+
+
+    public GetMyUserInfoRes getMyInfo(int userIdx) throws BaseException {
+        UserInfo userInfo;
+        try {
+            userInfo = userInfoRepository.findById(userIdx).orElse(null);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
+
+        /**
+         * 공통 컬럼
+         */
+        String profileImageURL = userInfo.getProfileImageURL();
+        String nickname = userInfo.getNickname();
+        String id = userInfo.getId();
+        String phoneNum = userInfo.getPhoneNum();
+        String email = userInfo.getEmail();
+
+        /**
+         * 개인 사업자용
+         */
+        String privateBusinessName = userInfo.getPrivateBusinessName();
+        String businessNumber = userInfo.getBusinessNumber();
+        String businessImageURL = userInfo.getBusinessImageURL();
+
+        /**
+         * 법인 사업자용
+         */
+        String corpBusinessName = userInfo.getCorporationBusinessName();
+        String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
+        GetMyUserInfoRes getMyUserInfoRes = null;
+        if (userInfo.getUserType() == 1 || userInfo.getUserType() == 4) {
+            //getMyUserInfoRes = new GetMyUserInfoRes(userIdx,profileImageURL,id,nickname,phoneNum,email);
+        //}
+            getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
+                    .profileImagerURL(profileImageURL)
+                    .id(id).nickname(nickname)
+                    .phoneNum(phoneNum)
+                    .email(email).build();
+        } else if (userInfo.getUserType() == 2 || userInfo.getUserType() == 5) {
+            getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
+                    .profileImagerURL(profileImageURL)
+                    .id(id).nickname(nickname)
+                    .phoneNum(phoneNum)
+                    .email(email)
+                    .privateBusinessName(privateBusinessName)
+                    .businessNumber(businessNumber)
+                    .businessImageURL(businessImageURL).build();
+        } else if (userInfo.getUserType() == 3 || userInfo.getUserType() == 6) {
+            getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
+                    .profileImagerURL(profileImageURL)
+                    .id(id).nickname(nickname)
+                    .phoneNum(phoneNum)
+                    .email(email)
+                    .corpBusinessName(corpBusinessName)
+                    .corpBusinessNumber(corpBusinessNumber)
+                    .businessImageURL(businessImageURL).build();
+        }
+
+        return getMyUserInfoRes;
+    }
+
+
 }
