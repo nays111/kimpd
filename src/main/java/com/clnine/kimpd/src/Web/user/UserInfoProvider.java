@@ -3,22 +3,16 @@ package com.clnine.kimpd.src.Web.user;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
-import com.clnine.kimpd.src.Web.category.models.UserJobCategory;
-import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
-import com.clnine.kimpd.src.Web.review.models.review;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
@@ -325,6 +319,8 @@ public class UserInfoProvider {
 
         return getMyUserInfoRes;
     }
+
+
 
 
 }

@@ -2,10 +2,7 @@ package com.clnine.kimpd.src.Web.user.models;
 
 import com.clnine.kimpd.config.BaseEntity;
 import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;

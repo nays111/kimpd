@@ -71,6 +71,7 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
             "         left join GenreCategory GC on UGC.genreCategoryIdx = GC.genreCategoryIdx\n" +
             "where UI.status = \"ACTIVE\"\n" +
             "  and (UI.userType = 4 or UI.userType = 5 or UI.userType = 6)\n" +
+            "  and UI.agreeShowDB=1\n" +
             "  and UJC.jobCategoryParentIdx = ifnull(?, UJC.jobCategoryParentIdx)\n" +
             "  and UJC.jobCategoryChildIdx = ifnull(?, UJC.jobCategoryChildIdx)\n" +
             "  and UGC.genreCategoryIdx = ifnull(?, UGC.genreCategoryIdx)\n" +
@@ -133,6 +134,7 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
             "         left join GenreCategory GC on UGC.genreCategoryIdx = GC.genreCategoryIdx\n" +
             "where UI.status = \"ACTIVE\"\n" +
             "  and (UI.userType = 4 or UI.userType = 5 or UI.userType = 6)\n" +
+            "  and UI.agreeShowDB=1\n" +
             "  and UJC.jobCategoryParentIdx = ifnull(?, UJC.jobCategoryParentIdx)\n" +
             "  and UJC.jobCategoryChildIdx = ifnull(?, UJC.jobCategoryChildIdx)\n" +
             "  and UGC.genreCategoryIdx = ifnull(?, UGC.genreCategoryIdx)\n" +
@@ -194,6 +196,7 @@ public interface UserInfoRepository extends CrudRepository<UserInfo, Integer> {
             "         left join GenreCategory GC on UGC.genreCategoryIdx = GC.genreCategoryIdx\n" +
             "where UI.status = \"ACTIVE\"\n" +
             "  and (UI.userType = 4 or UI.userType = 5 or UI.userType = 6)\n" +
+            "  and UI.agreeShowDB=1\n" +
             "  and UJC.jobCategoryParentIdx = ifnull(?, UJC.jobCategoryParentIdx)\n" +
             "  and UJC.jobCategoryChildIdx = ifnull(?, UJC.jobCategoryChildIdx)\n" +
             "  and UGC.genreCategoryIdx = ifnull(?, UGC.genreCategoryIdx)\n" +

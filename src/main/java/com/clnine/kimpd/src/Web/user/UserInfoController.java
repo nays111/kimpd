@@ -432,4 +432,26 @@ public class UserInfoController {
         }
     }
 
+    /**
+     * [2021.02.12] 전문가 전환 API
+     * @param patchUserTypeReq
+     * @return
+     */
+    @PatchMapping("/type")
+    @ResponseBody
+    public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
+            return new BaseResponse<String>(SUCCESS);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 }
