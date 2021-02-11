@@ -2,16 +2,11 @@ package com.clnine.kimpd.src.Web.expert;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.expert.models.GetExpertRes;
-import com.clnine.kimpd.src.Web.project.ProjectRepository;
-import com.clnine.kimpd.src.Web.project.models.GetProjectRes;
+import com.clnine.kimpd.src.Web.expert.models.GetExpertsRes;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
-import com.clnine.kimpd.src.Web.user.UserInfoRepository;
-import com.clnine.kimpd.src.Web.user.models.GetUsersRes;
-import com.clnine.kimpd.src.Web.user.models.UserInfo;
+import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,14 +38,29 @@ public class ExpertController {
         }
     }
 
+    /**
+     * [2021.02.11] 전문가 리스트 조회(검색) API
+     * @param word
+     * @param jobCategoryParentIdx
+     * @param jobCategoryChildIdx
+     * @param genreCategoryIdx
+     * @param city
+     * @param minimumCastingPrice
+     * @param page
+     * @param sort
+     * @return
+     */
     @GetMapping("/experts")
-    public BaseResponse<List<GetUsersRes>> getExperts(@RequestParam(required = false) String word,
+    public BaseResponse<GetExpertsRes> getExperts(@RequestParam(required = false) String word,
                                                       @RequestParam(required = false) Integer jobCategoryParentIdx,
                                                       @RequestParam(required = false) Integer jobCategoryChildIdx,
                                                       @RequestParam(required = false) Integer genreCategoryIdx,
-                                                      @RequestParam(required = false) String city){
+                                                      @RequestParam(required = false) String city,
+                                                      @RequestParam(required = false) String minimumCastingPrice,
+                                                      @RequestParam(required = true)int page,
+                                                      @RequestParam(required = true)int sort){
         try{
-            List<GetUsersRes> getUsersResList = userInfoProvider.findExperts(word,jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city);
+            GetExpertsRes getUsersResList = expertProvider.findExperts(word,jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,minimumCastingPrice,page,sort);
             return new BaseResponse<>(SUCCESS,getUsersResList);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

@@ -375,7 +375,6 @@ public class UserInfoController {
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
         try{
-            //todo 아래 부분만 수정
             GetIdRes getIdRes = userInfoProvider.SendId(phoneNumber);
             return new BaseResponse<>(SUCCESS,getIdRes);
         }catch (BaseException exception) {
@@ -407,14 +406,16 @@ public class UserInfoController {
     }
 
 
-
-
 //    @GetMapping("/corp-state")
 //    public int getCorpState(@RequestParam(required = true)String corpId) throws RemoteException {
 //        return barobillService.GetCorpState(corpId);
 //    }
 
 
+    /**
+     * [2021.02.11] 마이페이지 조회 API
+     * @return
+     */
     @GetMapping("")
     public BaseResponse<GetMyUserInfoRes> getMyUserInfo(){
         int userIdx;

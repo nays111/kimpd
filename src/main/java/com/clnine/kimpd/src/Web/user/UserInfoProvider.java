@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
 import com.clnine.kimpd.src.Web.category.models.UserJobCategory;
+import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
 import com.clnine.kimpd.src.Web.review.models.review;
 import com.clnine.kimpd.src.Web.user.models.*;
@@ -13,14 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -267,80 +263,6 @@ public class UserInfoProvider {
         }
         return new GetIdRes(id);
     }
-
-    //전문가이면서
-    public List<GetUsersRes> getUserInfoList(String word) throws BaseException {
-        List<UserInfo> userInfoList;
-
-
-        //userInfo를 가지고 userJobCategory 리스트
-        //userJobCategory를 가지고 jobCategory 에 가서 jobCategoryName;
-        try {
-            if (word == null) {
-                userInfoList = userInfoRepository.findByStatusAndUserType("ACTIVE", 2);
-            } else {
-                userInfoList = userInfoRepository.findByUserTypeAndStatusAndNicknameIsContainingOrIntroduceIsContaining(2, "ACTIVE", word, word);
-            }
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_USER);
-        }
-        ArrayList<GetUsersRes> getUsersResList = new ArrayList<>();
-        for (int i = 0; i < userInfoList.size(); i++) {
-            UserInfo userInfo = userInfoList.get(i);
-            int userIdx = userInfo.getUserIdx();
-            String nickname = userInfo.getNickname();
-            String introduce = userInfo.getIntroduce();
-            String profileImageURL = userInfo.getProfileImageURL();
-            List<UserJobCategory> userJobCategoryList = userJobCategoryRepository.findByUserInfo(userInfo);
-            ArrayList<String> jobCategoryParentNameList = new ArrayList<>();
-            for (int j = 0; j < userJobCategoryList.size(); j++) {
-                String categoryName = userJobCategoryList.get(j).getJobCategoryParent().getJobCategoryName();
-                jobCategoryParentNameList.add(categoryName);
-            }
-
-            //UserInfo 있으니깐 UserInfo 로 JobCategoryParent를 찾아냄
-            //jobCategoryParent가  찾아냈으니깐 거기서 parentName가져온다.
-
-            Integer count = reviewRepository.countAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
-            if (count == null) {
-                count = 0;
-            }
-            List<review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
-            double sum = 0;
-            for (int j = 0; j < reviewList.size(); j++) {
-                sum += reviewList.get(j).getStar();
-            }
-
-            //double average = Math.round((sum/count)*100)/100.0;
-
-            //GetUsersRes getUsersRes = new GetUsersRes(userIdx, profileImageURL, nickname, introduce, average, count);
-            //getUsersResList.add(getUsersRes);
-        }
-
-        return getUsersResList;
-    }
-
-    public List<GetUsersRes> findExperts(String word,Integer jobCategoryParentIdx,Integer jobCategoryChildIdx, Integer genreCategoryIdx, String city) throws BaseException{
-
-//        try{
-            List<Object[]> objects = userInfoRepository.findExpert(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word);
-            System.out.println(objects.size());
-
-            List<GetUsersRes> getUsersResList = objects.stream().map(getUsersRes-> new GetUsersRes(
-                    (Integer) getUsersRes[0],
-                    (String) getUsersRes[1],
-                    (String) getUsersRes[2],
-                    (String) getUsersRes[3],
-                    (BigDecimal) getUsersRes[4],
-                    (Integer) getUsersRes[5]
-            )).collect(Collectors.toList());
-
-            return getUsersResList;
-//        }catch (Exception ignored) {
-//            throw new BaseException(FAILED_TO_GET_USER);
-//        }
-    }
-
 
 
     public GetMyUserInfoRes getMyInfo(int userIdx) throws BaseException {
