@@ -1,13 +1,30 @@
 package com.clnine.kimpd.src.Web.user.models;
 
 import com.clnine.kimpd.config.BaseEntity;
+import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
+
+@SqlResultSetMapping(
+        name="findExpert",
+        classes = @ConstructorResult(
+                targetClass = GetUsersRes.class,
+                columns = {
+                        @ColumnResult(name="userIdx",type=Integer.class),
+                        @ColumnResult(name="profileImageURL",type=String.class),
+                        @ColumnResult(name="nickname",type=String.class),
+                        @ColumnResult(name="introduce",type=String.class),
+                        @ColumnResult(name="reviewAverage",type= BigDecimal.class),
+                        @ColumnResult(name="reviewCount",type=Integer.class),
+                }
+        )
+)
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @EqualsAndHashCode(callSuper = false)
 @Data // from lombok

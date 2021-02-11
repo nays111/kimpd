@@ -1,14 +1,15 @@
-package com.clnine.kimpd.src.Web.user.models;
+package com.clnine.kimpd.src.Web.expert.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
 public class GetExpertsRes {
 
     int total;
-    ArrayList<GetUsersRes> getUsersRes;
+    List<GetUsersRes> getUsersRes;
 }

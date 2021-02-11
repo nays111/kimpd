@@ -1,4 +1,4 @@
-package com.clnine.kimpd.src.Web.user.models;
+package com.clnine.kimpd.src.Web.expert.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,13 +10,14 @@ import java.util.ArrayList;
 @Getter
 @AllArgsConstructor
 public class GetUsersRes {
-    private final Integer userIdx;
+    private final int userIdx;
     private final String profileImageURL;
     private final String nickname;
 
-    //private final ArrayList<String> jobCategoryParentName;
+    private final String jobCategoryChildName;
     private final String introduce;
-    private final BigDecimal reviewAverage;
-    private final Integer reviewCount;
+    private final float reviewAverage;
+    private final int reviewCount;
+
 
 }
