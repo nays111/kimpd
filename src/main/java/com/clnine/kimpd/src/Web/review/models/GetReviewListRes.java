@@ -10,7 +10,7 @@ public class GetReviewListRes {
     private final int reviewerUserIdx;
     private final String reviewNickname;
     private final String reviewUserImageProfile;
-    private final int star;
+    private final double star;
     private final String description;
     private final String reviewMadeTime;
 }

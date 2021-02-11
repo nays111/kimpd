@@ -18,8 +18,8 @@ public class Review extends BaseEntity {
     @Column(name="reviewIdx",nullable = false,updatable = false)
     private int reviewIdx;
 
-    @Column(name="star",length = 1)
-    private int star;
+    @Column(name="star")
+    private float star;
 
     @Column(name="description")
     private String description;
@@ -39,4 +39,10 @@ public class Review extends BaseEntity {
 
     private String status="ACTIVE";
 
+    public Review(float star, String description, UserInfo userInfo, UserInfo expertInfo) {
+        this.star = star;
+        this.description = description;
+        this.evaluateUserInfo = userInfo;
+        this.evaluatedUserInfo = expertInfo;
+    }
 }

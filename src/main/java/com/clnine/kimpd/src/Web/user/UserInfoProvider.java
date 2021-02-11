@@ -293,13 +293,13 @@ public class UserInfoProvider {
             //getMyUserInfoRes = new GetMyUserInfoRes(userIdx,profileImageURL,id,nickname,phoneNum,email);
         //}
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
-                    .profileImagerURL(profileImageURL)
+                    .profileImageURL(profileImageURL)
                     .id(id).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email).build();
         } else if (userInfo.getUserType() == 2 || userInfo.getUserType() == 5) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
-                    .profileImagerURL(profileImageURL)
+                    .profileImageURL(profileImageURL)
                     .id(id).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
@@ -308,7 +308,7 @@ public class UserInfoProvider {
                     .businessImageURL(businessImageURL).build();
         } else if (userInfo.getUserType() == 3 || userInfo.getUserType() == 6) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
-                    .profileImagerURL(profileImageURL)
+                    .profileImageURL(profileImageURL)
                     .id(id).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
