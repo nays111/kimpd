@@ -37,7 +37,6 @@ public class ReviewService {
         } catch (Exception ignored) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
-        System.out.println(userInfo.getUserIdx());
         Casting casting;
         try{
             casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
