@@ -46,7 +46,7 @@ public class SmsService {
         sms.put("msg", message); // 메세지 내용
         sms.put("receiver", phoneNum); // 수신번호
         sms.put("sender", aligoSender); // 발신번호
-        sms.put("testmode_yn", "N"); // Y 인경우 실제문자 전송X , 자동취소(환불) 처리
+        sms.put("testmode_yn", "Y"); // Y 인경우 실제문자 전송X , 자동취소(환불) 처리
 
         /******************** 전송정보 ********************/
         String result = getResponseString(sms_url, sms);

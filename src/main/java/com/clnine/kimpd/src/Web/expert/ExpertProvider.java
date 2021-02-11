@@ -62,7 +62,7 @@ public class ExpertProvider {
             GetPortfolioListRes getPortfolioList = new GetPortfolioListRes(portfolioURL);
             getPortfolioListResList.add(getPortfolioList);
         }
-        double sum = 0;
+        float sum = 0;
         List<Review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
         List<GetReviewListRes> getReviewListResList = new ArrayList<>();
         for (int i = 0; i < reviewList.size(); i++) {
@@ -70,7 +70,7 @@ public class ExpertProvider {
             int reviewerUserIdx = reviewList.get(i).getEvaluateUserInfo().getUserIdx();
             String reviewNickname = reviewList.get(i).getEvaluateUserInfo().getNickname();
             String reviewUserImageProfile = reviewList.get(i).getEvaluateUserInfo().getProfileImageURL();
-            int star = reviewList.get(i).getStar();
+            float star = reviewList.get(i).getStar();
             String description = reviewList.get(i).getDescription();
             sum += star;
             Date reviewCreatedAt = reviewList.get(i).getCreatedAt();
@@ -80,7 +80,7 @@ public class ExpertProvider {
             GetReviewListRes getReviewListRes = new GetReviewListRes(reviewIdx, reviewerUserIdx, reviewNickname, reviewUserImageProfile, star, description, reviewMadeTime);
             getReviewListResList.add(getReviewListRes);
         }
-        double average = Math.round((sum / reviewCount) * 10) / 10.0;
+        float average = (float) (Math.round((sum / reviewCount) * 10) / 10.0);
 
         GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, userMainJobCategoryChildName,average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
         return getExpertRes;

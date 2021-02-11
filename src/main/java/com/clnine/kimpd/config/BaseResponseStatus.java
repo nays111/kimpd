@@ -79,7 +79,8 @@ public enum BaseResponseStatus {
     EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
     WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
     EMPTY_PROJECT_MANAGER(false,2076,"프로젝트 담당자를 입력해주세요."),
-
+    EMPTY_REVIEW_DESCRIPTION(false,2077,"후기를 입력해주세요"),
+    WRONG_REVIEW_STAR(false,2078,"올바른 별점을 입력해주세요."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -106,7 +107,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_PROJECTS_LIST(false,3031,"프로젝트 리스트 조회에 실패하였습니다."),
     FAILED_TO_GET_SECURE_CODE(false,3032, "인증번호 조회에 실패했습니다."),
     FAILED_TO_RECASTING(false,3033,"재섭외 요청에 실패했습니다."),
-
+    FAILED_TO_POST_REVIEW(false,3034,"댓글 등록에 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

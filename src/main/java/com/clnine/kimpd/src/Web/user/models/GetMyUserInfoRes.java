@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder
 public class GetMyUserInfoRes {
     private final int userIdx;
-    private final String profileImagerURL;
+    private final String profileImageURL;
     private final String id;
     private final String nickname;
     private final String phoneNum;
