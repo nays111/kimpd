@@ -9,20 +9,16 @@ import com.clnine.kimpd.src.Web.expert.models.*;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
 import com.clnine.kimpd.src.Web.review.models.GetReviewListRes;
-import com.clnine.kimpd.src.Web.review.models.review;
+import com.clnine.kimpd.src.Web.review.models.Review;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_USER;
@@ -67,7 +63,7 @@ public class ExpertProvider {
             getPortfolioListResList.add(getPortfolioList);
         }
         double sum = 0;
-        List<review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
+        List<Review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
         List<GetReviewListRes> getReviewListResList = new ArrayList<>();
         for (int i = 0; i < reviewList.size(); i++) {
             int reviewIdx = reviewList.get(i).getReviewIdx();
@@ -130,7 +126,7 @@ public class ExpertProvider {
             if (count == null) {
                 count = 0;
             }
-            List<review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
+            List<Review> reviewList = reviewRepository.findAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
             double sum = 0;
             for (int j = 0; j < reviewList.size(); j++) {
                 sum += reviewList.get(j).getStar();

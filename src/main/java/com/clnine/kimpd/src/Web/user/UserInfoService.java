@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
@@ -226,6 +227,54 @@ public class UserInfoService {
         }
     }
 
+
+    public void changeUserTypeToExpert(int userIdx, PatchUserTypeReq patchUserTypeReq)throws BaseException{
+        UserInfo userInfo;
+        try {
+            userInfo = userInfoRepository.findById(userIdx).orElse(null);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
+
+        List<Integer> jobParentCategoryIdxList = patchUserTypeReq.getJobParentCategoryIdx();
+        List<Integer> jobChildCategoryIdxList = patchUserTypeReq.getJobChildCategoryIdx();
+        try{
+            if(jobChildCategoryIdxList!=null && jobParentCategoryIdxList!=null){
+                for(int i=0;i<jobParentCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+                    UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
+                    userJobCategoryRepository.save(userJobCategory);
+                }
+            }
+        }catch(Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_JOB_CATEGORY);
+        }
+
+        List<Integer> genreCategoryIdxList = patchUserTypeReq.getGenreCategoryIdx();
+        try{
+            if(genreCategoryIdxList!=null){
+                for(int i=0;i<genreCategoryIdxList.size();i++){
+                    GenreCategory genreCategory = genreCategoryRepository.findAllByGenreCategoryIdx(genreCategoryIdxList.get(i));
+                    UserGenreCategory userGenreCategory = new UserGenreCategory(userInfo,genreCategory);
+                    userGenreCategoryRepository.save(userGenreCategory);
+                }
+            }
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
+        }
+
+        userInfo.setAgreeShowDB(patchUserTypeReq.getAgreeShowDB());
+        if(userInfo.getUserType()==1){
+            userInfo.setUserType(4);
+        }else if(userInfo.getUserType()==2){
+            userInfo.setUserType(5);
+        }else if(userInfo.getUserType()==3){
+            userInfo.setUserType(6);
+        }
+        userInfoRepository.save(userInfo);
+
+    }
 
 
 

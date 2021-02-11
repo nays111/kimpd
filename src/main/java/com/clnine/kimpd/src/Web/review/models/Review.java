@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Data
 @Table(name="Review")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-public class review extends BaseEntity {
+public class Review extends BaseEntity {
 
     @Id
     @Column(name="reviewIdx",nullable = false,updatable = false)
