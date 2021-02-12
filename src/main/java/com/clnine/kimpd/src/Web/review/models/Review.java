@@ -16,6 +16,7 @@ public class Review extends BaseEntity {
 
     @Id
     @Column(name="reviewIdx",nullable = false,updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reviewIdx;
 
     @Column(name="star")
