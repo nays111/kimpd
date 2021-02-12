@@ -106,11 +106,6 @@ public class AdminUserInfoController {
     @PatchMapping("/users")
     @CrossOrigin(origins = "*")
     public BaseResponse<Void> patchUsers(@RequestBody AdminPatchUserReq parameters) {
-
-        if (parameters.getUserIdx() <= 0) {
-            return new BaseResponse<>(EMPTY_USERID);
-        }
-
         if (parameters.getUserType() == null || parameters.getUserType().length() <= 0){
             return new BaseResponse<>(EMPTY_USER_TYPE);
         }
@@ -161,7 +156,7 @@ public class AdminUserInfoController {
 //        if (adminUserInfoProvider.isPhoneNumUseable(parameters.getPhoneNum()) == false) {
 //            return new BaseResponse<>(DUPLICATED_USER);
 //        }
-
+//
 //        if(parameters.getUserType().equals("전문가-일반") || parameters.getUserType().equals("전문가-개인") || parameters.getUserType().equals("전문가-법인")){
 //            if(parameters.getNickname() == null){
 //                return new BaseResponse<>(EMPTY_NICKNAME);

@@ -148,9 +148,13 @@ public class AdminUserInfoService {
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
         String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
+        int agreeShowDB = 0;
+        if(userType == 4 || userType == 5 || userType == 6){
+            agreeShowDB = 1;
+        }
         AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
-                corporationBusinessNumber, "ACTIVE");
+                corporationBusinessNumber, agreeShowDB, "ACTIVE");
 
         // 3. 유저 정보 저장
         try {
@@ -171,10 +175,16 @@ public class AdminUserInfoService {
     public void updateUserInfo(AdminPatchUserReq adminPatchUserReq) throws BaseException {
         AdminUserInfo adminUserInfo = null;
         int userType = 0;
+        int agreeShowDB = 0;
 
         try {
             adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
 
+            if(!adminPatchUserReq.getId().equals(adminUserInfo.getId())){
+                if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
+                    throw new BaseException(DUPLICATED_USER);
+                }
+            }
             if (adminPatchUserReq.getUserType().equals("일반")) {
                 userType = 1;
             }
@@ -186,74 +196,81 @@ public class AdminUserInfoService {
             }
             else if(adminPatchUserReq.getUserType().equals("전문가-일반")){
                 userType = 4;
+                agreeShowDB = 1;
             }
             else if(adminPatchUserReq.getUserType().equals("전문가-개인")){
                 userType = 5;
+                agreeShowDB = 1;
             }
             else if(adminPatchUserReq.getUserType().equals("전문가-법인")){
                 userType = 6;
+                agreeShowDB = 1;
             }
 
             adminUserInfo.setUserType(userType);
+            adminUserInfo.setAgreeShowDB(agreeShowDB);
             adminUserInfo.setId(adminPatchUserReq.getId());
             adminUserInfo.setEmail(adminPatchUserReq.getEmail());
             adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
-            if(adminPatchUserReq.getCity().equals(""))
+            if(adminPatchUserReq.getCity() == null || adminPatchUserReq.getCity().length() == 0) {
                 adminUserInfo.setCity(null);
-            else
+            }
+            else {
                 adminUserInfo.setCity(adminPatchUserReq.getCity());
+            }
 
-            if(adminPatchUserReq.getNickname().equals(""))
+            if(adminPatchUserReq.getNickname() == null || adminPatchUserReq.getNickname().length() == 0)
                 adminUserInfo.setNickname(null);
             else
                 adminUserInfo.setNickname(adminPatchUserReq.getNickname());
 
-            if(adminPatchUserReq.getProfileImageURL().equals(""))
+            if(adminPatchUserReq.getProfileImageURL() == null || adminPatchUserReq.getProfileImageURL().length() == 0)
                 adminUserInfo.setProfileImageURL(null);
             else
                 adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
 
-            if(adminPatchUserReq.getIntroduce().equals(""))
+            if(adminPatchUserReq.getIntroduce() == null || adminPatchUserReq.getIntroduce().length() == 0)
                 adminUserInfo.setIntroduce(null);
             else
                 adminUserInfo.setIntroduce(adminPatchUserReq.getIntroduce());
 
-            if(adminPatchUserReq.getCareer().equals(""))
+            if(adminPatchUserReq.getCareer() == null || adminPatchUserReq.getCareer().length() == 0)
                 adminUserInfo.setCareer(null);
             else
                 adminUserInfo.setCareer(adminPatchUserReq.getCareer());
 
-            if(adminPatchUserReq.getEtc().equals(""))
+            if(adminPatchUserReq.getEtc() == null || adminPatchUserReq.getEtc().length() == 0)
                 adminUserInfo.setEtc(null);
             else
                 adminUserInfo.setEtc(adminPatchUserReq.getEtc());
 
-            if(adminPatchUserReq.getMinimumCastingPrice().equals(""))
+            if(adminPatchUserReq.getMinimumCastingPrice() == null || adminPatchUserReq.getMinimumCastingPrice().length() == 0)
                 adminUserInfo.setMinimumCastingPrice(null);
             else
                 adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
 
-            if(adminPatchUserReq.getPrivateBusinessName().equals(""))
+            if(adminPatchUserReq.getPrivateBusinessName() == null || adminPatchUserReq.getPrivateBusinessName().length() == 0)
                 adminUserInfo.setPrivateBusinessName(null);
             else
                 adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
 
-            if(adminPatchUserReq.getBusinessNumber().equals(""))
+            if(adminPatchUserReq.getBusinessNumber() == null || adminPatchUserReq.getBusinessNumber().length() == 0)
                 adminUserInfo.setBusinessNumber(null);
             else
                 adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
 
-            if(adminPatchUserReq.getBusinessImageURL().equals(""))
+            if(adminPatchUserReq.getBusinessImageURL() == null || adminPatchUserReq.getBusinessImageURL().length() == 0)
                 adminUserInfo.setBusinessImageURL(null);
             else
                 adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
 
-            if(adminPatchUserReq.getCorporationBusinessName().equals(""))
+            if(adminPatchUserReq.getCorporationBusinessName() == null || adminPatchUserReq.getCorporationBusinessName().length() == 0)
                 adminUserInfo.setCorporationBusinessName(null);
             else
                 adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
 
-            if(adminPatchUserReq.getCorporationBusinessNumber().equals(""))
+
+            if(adminPatchUserReq.getCorporationBusinessNumber() == null || adminPatchUserReq.getCorporationBusinessNumber().length() == 0)
                 adminUserInfo.setCorporationBusinessNumber(null);
             else
                 adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
