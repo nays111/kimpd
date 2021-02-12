@@ -43,7 +43,7 @@ public class MessageProvider {
         String senderNickname = message.getSender().getNickname();
         String description = message.getDescription();
         Date sendTimeDateForm = message.getCreatedAt();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.mm.dd[hh:mm]");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
         String sendTime = simpleDateFormat.format(sendTimeDateForm);
 
         GetMessageRes getMessageRes = new GetMessageRes(messageIdx, senderNickname, sendTime, description);
@@ -78,7 +78,7 @@ public class MessageProvider {
             String senderNickname = sender.getNickname(); //쪽지 보낸 사람 닉네임
             String senderJobName = categoryProvider.getMainJobCategoryChild(sender);//쪽지 보낸 사람 직종 이름
             Date sendTimeDateForm = message.getCreatedAt();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.mm.dd[hh:mm]");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
             String description = message.getDescription();
             GetMessagesRes getMessagesRes = new GetMessagesRes(messageIdx,senderNickname,senderJobName,sendTime,description);

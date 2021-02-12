@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.casting.models;
 
 import com.clnine.kimpd.config.BaseEntity;
 import com.clnine.kimpd.src.Web.project.models.Project;
+import com.clnine.kimpd.src.Web.review.models.Review;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,11 @@ public class Casting extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="userIdx",referencedColumnName = "userIdx")
     private UserInfo userInfo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="reviewIdx")
+    private Review review;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="projectIdx")

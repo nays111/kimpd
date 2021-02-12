@@ -2,11 +2,12 @@ package com.clnine.kimpd.src.Web.message.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Access;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class PostMessageReq {
-    private final String description;
+    private  String description;
 }
