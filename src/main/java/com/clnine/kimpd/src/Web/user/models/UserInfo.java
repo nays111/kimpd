@@ -8,38 +8,21 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 
-@SqlResultSetMapping(
-        name="findExpert",
-        classes = @ConstructorResult(
-                targetClass = GetUsersRes.class,
-                columns = {
-                        @ColumnResult(name="userIdx",type=Integer.class),
-                        @ColumnResult(name="profileImageURL",type=String.class),
-                        @ColumnResult(name="nickname",type=String.class),
-                        @ColumnResult(name="introduce",type=String.class),
-                        @ColumnResult(name="reviewAverage",type= BigDecimal.class),
-                        @ColumnResult(name="reviewCount",type=Integer.class),
-                }
-        )
-)
-@NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
-@EqualsAndHashCode(callSuper = false)
-@Data // from lombok
-@Entity // 필수, Class 를 Database Table화 해주는 것이다
-@Table(name = "UserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
+@Entity
+@Data
+@Table(name="UserInfo")
+@NoArgsConstructor
 public class UserInfo extends BaseEntity {
-    /**
-     * 유저 인덱스
-     */
-    @Id // PK를 의미하는 어노테이션
-    @Column(name = "userIdx", nullable = false, updatable = false)
+
+    @Id
+    @Column(name="userIdx",nullable = false,updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userIdx;
 
     @Column(name="userType",nullable = false)
     private int userType;
 
-    @Column(name="id",nullable = false)
+    @Column(name="id",nullable = false,length = 20)
     private String id;
 
     @Column(name="password",nullable = false)
@@ -79,17 +62,23 @@ public class UserInfo extends BaseEntity {
      */
     @Column(name="profileImageURL")
     private String profileImageURL;//프로필이미지
+
     @Column(name="introduce")
     private String introduce="";
+
     @Column(name="career")
     private String career;
+
     @Column(name="etc")
     private String etc;
+
     @Column(name="minimumCastingPrice")
     private String minimumCastingPRice;
+
     @Column(name="agreeShowDB")
     private int agreeShowDB=1;
 
+    @Column(name="status")
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,

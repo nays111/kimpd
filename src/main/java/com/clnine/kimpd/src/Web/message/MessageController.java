@@ -55,12 +55,12 @@ public class MessageController {
 
     /**
      * 쪽지 삭제 API
-     * @param patchMessageStatusReqList
+     * @param patchMessageStatusReq
      * @return
      */
     @ResponseBody
     @PatchMapping("/messages/status")
-    public BaseResponse<String> deleteMessage(@RequestBody List<PatchMessageStatusReq> patchMessageStatusReqList){
+    public BaseResponse<String> deleteMessage(@RequestBody PatchMessageStatusReq patchMessageStatusReq){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
@@ -68,7 +68,7 @@ public class MessageController {
             return new BaseResponse<>(exception.getStatus());
         }
         try{
-            messageService.deleteMessage(patchMessageStatusReqList);
+            messageService.deleteMessage(patchMessageStatusReq);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

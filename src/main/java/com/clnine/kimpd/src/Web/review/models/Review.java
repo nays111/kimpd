@@ -1,6 +1,7 @@
 package com.clnine.kimpd.src.Web.review.models;
 
 import com.clnine.kimpd.config.BaseEntity;
+import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -24,6 +25,10 @@ public class Review extends BaseEntity {
 
     @Column(name="description")
     private String description;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="castingIdx")
+//    private Casting casting;
 
     /**
      * 평가한 사람

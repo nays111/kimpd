@@ -47,6 +47,7 @@ public class ReviewService {
         float star = postReviewReq.getStar();
         String description = postReviewReq.getDescription();
         Review review = new Review(star,description,userInfo,expertInfo);
+        casting.setReview(review);
 
         try{
             reviewRepository.save(review);

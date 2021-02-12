@@ -1,5 +1,6 @@
 package com.clnine.kimpd.src.Web.review;
 
+import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.review.models.Review;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import org.springframework.data.repository.CrudRepository;
@@ -12,5 +13,5 @@ public interface ReviewRepository extends CrudRepository<Review,Integer> {
 
     int countAllByEvaluatedUserInfoAndStatus(UserInfo userInfo,String status);
     List<Review> findAllByEvaluatedUserInfoAndStatus(UserInfo userInfo, String status);
-
+    //Review findByCastingAndStatus(Casting casting, String status);
 }

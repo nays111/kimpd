@@ -2,11 +2,12 @@ package com.clnine.kimpd.src.Web.message.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class PatchMessageStatusReq {
-    int messageIdx;
+    List<Integer> messageIdx;
 }

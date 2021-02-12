@@ -31,13 +31,20 @@ public class MessageService {
         } catch (Exception ignored) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
-        Message message = new Message(senderInfo,receiverInfo,postMessageReq.getDescription());
+        String description = postMessageReq.getDescription();
+        Message message = new Message(senderInfo,receiverInfo,description);
         messageRepository.save(message);
     }
 
-    public void deleteMessage(List<PatchMessageStatusReq> patchMessageStatusReqList) throws BaseException{
-        for(int i=0;i<patchMessageStatusReqList.size();i++){
-            int messageIdx = patchMessageStatusReqList.get(i).getMessageIdx();
+    public void deleteMessage(PatchMessageStatusReq patchMessageStatusReq) throws BaseException{
+
+        //System.out.println(patchMessageStatusReqList.size());
+        //System.out.println(patchMessageStatusReqList.get(0).getMessageIdx());
+
+
+        for(int i=0;i<patchMessageStatusReq.getMessageIdx().size();i++){
+            int messageIdx = patchMessageStatusReq.getMessageIdx().get(i);
+            System.out.println(messageIdx);
             Message message;
             try{
                 message = messageRepository.findByMessageIdxAndStatus(messageIdx,"ACTIVE");

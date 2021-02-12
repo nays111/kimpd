@@ -9,7 +9,7 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = false)
 @Data // from lombok
 @Entity // 필수, Class 를 Database Table화 해주는 것이다
-@Table(name = "UserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
+@Table(name = "AdminUserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
 public class AdminUserInfo extends BaseEntity {
     /**
      * 유저 ID
