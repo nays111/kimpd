@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_CASTING;
+import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_CONTRACT;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class ContractProvider {
         try{
             contract = contractRepository.findByCastingAndStatus(casting,"ACTIVE");
         }catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_CASTING);
+            throw new BaseException(FAILED_TO_GET_CONTRACT);
         }
         GetContractRes getContractRes = new GetContractRes(contract.getContractIdx(), contract.getContractFileURL());
         return getContractRes;
