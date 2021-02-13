@@ -1,5 +1,7 @@
 package com.clnine.kimpd.src.Web.review;
 
+import com.baroservice.api.BarobillApiService;
+import com.baroservice.ws.CorpState;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.review.models.GetMyReviewsRes;
@@ -8,6 +10,7 @@ import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -19,6 +22,7 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final JwtService jwtService;
     private final ReviewProvider reviewProvider;
+    private final BarobillApiService barobillApiService;
 
     /**
      * 평가하기 API
@@ -72,4 +76,6 @@ public class ReviewController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+
 }
