@@ -1,10 +1,13 @@
 package com.clnine.kimpd.src.Web.user;
 
+import com.baroservice.api.BarobillApiService;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.user.models.*;
+import com.clnine.kimpd.utils.BarobillService;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.utils.MailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,26 +17,23 @@ import java.text.ParseException;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.secret.Secret.barbobillCorpNum;
+import static com.clnine.kimpd.config.secret.Secret.barobillCertyKey;
 import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/users")
+@RequiredArgsConstructor
 public class UserInfoController {
     private final UserInfoProvider userInfoProvider;
     private final UserInfoService userInfoService;
     private final JwtService jwtService;
     private final MailService mailService;
+    private final BarobillApiService barobillApiService;
 
-    @Autowired
-    public UserInfoController(UserInfoProvider userInfoProvider, UserInfoService userInfoService,
-                              JwtService jwtService, MailService mailService) {
-        this.userInfoProvider = userInfoProvider;
-        this.userInfoService = userInfoService;
-        this.jwtService = jwtService;
-        this.mailService = mailService;
-    }
+
 
     /**
      * 1. 회원가입 API
@@ -406,10 +406,31 @@ public class UserInfoController {
     }
 
 
-//    @GetMapping("/corp-state")
-//    public int getCorpState(@RequestParam(required = true)String corpId) throws RemoteException {
-//        return barobillService.GetCorpState(corpId);
-//    }
+    /**
+     * 사업자 인증 API
+     * @param corpNum
+     * @return
+     * @throws RemoteException
+     */
+    @GetMapping("/corp-auth")
+    public BaseResponse<String> getCorpState(@RequestParam(value="corpNum",required = true)String corpNum) throws RemoteException {
+        if(corpNum==null || corpNum.length()==0){
+            return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+        }
+        if(corpNum.length()>13 || corpNum.length()<10){
+            return  new BaseResponse<>(WRONG_CORP_NUM);
+        }
+
+        int result = barobillApiService.taxInvoice.checkCorpIsMember(barobillCertyKey,barbobillCorpNum,corpNum);
+
+
+
+        if(result>=1){
+            return new BaseResponse<>(SUCCESS);
+        }else{
+            return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);
+        }
+    }
 
 
     /**
@@ -426,7 +447,7 @@ public class UserInfoController {
         }
         try{
             GetMyUserInfoRes getMyUserInfoRes = userInfoProvider.getMyInfo(userIdx);
-            return new BaseResponse<GetMyUserInfoRes>(SUCCESS,getMyUserInfoRes);
+            return new BaseResponse<>(SUCCESS, getMyUserInfoRes);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -453,5 +474,8 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+
+
 
 }

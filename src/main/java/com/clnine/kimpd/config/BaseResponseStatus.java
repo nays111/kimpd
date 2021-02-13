@@ -83,7 +83,7 @@ public enum BaseResponseStatus {
     WRONG_REVIEW_STAR(false,2078,"올바른 별점을 입력해주세요."),
     EMPTY_MESSAGE_DESCRIPTION(false,2079,"메시지를 입력해주세요."),
     TOO_LONG_MESSAGE_DESCRIPTION(false,2080,"메시지 길이가 너무 깁니다"),
-
+    WRONG_CORP_NUM(false,2081,"사업자 번호 입력 형식이 틀립니다."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -114,9 +114,12 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_CONTRACT(false,3035,"계약서를 불러오는데 실패했습니다"),
     NOT_FOUND_MESSAGE(false,3036,"존재하지 않는 메시지입니다."),
     FAILED_TO_GET_REPORT_CATEGORIES(false,3037,"신고 카테고리 조회에 실패했습니다."),
+    FAILED_TO_GET_CORP_AUTHENTICATION(false,3038,"사업자 인증에 실패했습니다."),
+
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");
+
 
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
