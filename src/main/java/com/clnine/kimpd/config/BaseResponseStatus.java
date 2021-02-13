@@ -1,7 +1,5 @@
 package com.clnine.kimpd.config;
-
 import lombok.Getter;
-
 /**
  * 에러 코드 관리
  */
@@ -34,8 +32,6 @@ public enum BaseResponseStatus {
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
-    EMPTY_USER_TYPE(false, 2002, "유저 타입 값을 확인해주세요."),
-    EMPTY_USER_STATUS(false, 2003, "유저 상태 값을 확인해주세요."),
     EMPTY_JWT(false, 2010, "JWT를 입력해주세요."),
     INVALID_JWT(false, 2011, "유효하지 않은 JWT입니다."),
     EMPTY_EMAIL(false, 2020, "이메일을 입력해주세요."),
@@ -72,12 +68,24 @@ public enum BaseResponseStatus {
     NO_SELECT_JOB_PARENT_CATEGORY(false,2065,"1차 직종 카테고리를 선택해주세요."),
     NO_SELECT_JOB_CHILD_CATEGORY(false,2066,"2차 직종 카테고리를 선택해주세요."),
     EMPTY_PRIVATE_BUSINESS_NAME(false,2067,"개인 사업자명을 입력해주세요."),
-    INVALID_AGREE_ADVERTISEMENT_CHECK(false,2068,"광고 동의 여부 처리가 잘못되었습니다."),
+    EMPTY_CITY(false,2068,"도시명을 입력해주세요."),
     INVALID_USER_TYPE(false,2069,"잘못된 유저 타입입니다."),
     INVALID_ID(false,2070,"잘못된 ID 형식입니다."),
     INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
     INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~7자리로 입력해주세요.)"),
     EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
+    EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
+    WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
+    EMPTY_PROJECT_MANAGER(false,2076,"프로젝트 담당자를 입력해주세요."),
+    EMPTY_REVIEW_DESCRIPTION(false,2077,"후기를 입력해주세요"),
+    WRONG_REVIEW_STAR(false,2078,"올바른 별점을 입력해주세요."),
+    EMPTY_MESSAGE_DESCRIPTION(false,2079,"메시지를 입력해주세요."),
+    TOO_LONG_MESSAGE_DESCRIPTION(false,2080,"메시지 길이가 너무 깁니다"),
+
+
+
+    //2500 : admin 오류
+    EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -103,19 +111,20 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_CHILD_JOB_CATEGORIES(false,3029,"2차 직종 카테고리 리스트 조회에 실패했습니다."),
     FAILED_TO_GET_GENRE_CATEGORIES(false,3030,"장르 카테고리 조회에 실패했습니다."),
     FAILED_TO_GET_PROJECTS_LIST(false,3031,"프로젝트 리스트 조회에 실패하였습니다."),
-
-
+    FAILED_TO_GET_SECURE_CODE(false,3032, "인증번호 조회에 실패했습니다."),
+    FAILED_TO_RECASTING(false,3033,"재섭외 요청에 실패했습니다."),
+    FAILED_TO_POST_REVIEW(false,3034,"평가에 실패했습니다."),
+    FAILED_TO_GET_CONTRACT(false,3035,"계약서를 불러오는데 실패했습니다"),
+    NOT_FOUND_MESSAGE(false,3036,"존재하지 않는 메시지입니다."),
+    FAILED_TO_GET_REPORT_CATEGORIES(false,3037,"신고 카테고리 조회에 실패했습니다."),
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");
-
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
-
     private final boolean isSuccess;
     private final int code;
     private final String message;
-
     private BaseResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;

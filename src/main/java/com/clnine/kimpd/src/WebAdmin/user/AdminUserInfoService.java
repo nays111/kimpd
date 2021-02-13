@@ -5,6 +5,7 @@ import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
+import com.clnine.kimpd.utils.MailService;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,14 +20,17 @@ public class AdminUserInfoService {
     private final AdminUserInfoRepository adminUserInfoRepository;
     private final WebAdminInfoRepository webAdminInfoRepository;
     private final AdminUserInfoProvider adminUserInfoProvider;
+    private final MailService mailService;
     private final JwtService jwtService;
 
     @Autowired
-    public AdminUserInfoService(AdminUserInfoRepository userInfoRepository, WebAdminInfoRepository webAdminInfoRepository, AdminUserInfoProvider adminUserInfoProvider, JwtService jwtService) {
+    public AdminUserInfoService(AdminUserInfoRepository userInfoRepository, WebAdminInfoRepository webAdminInfoRepository,
+                                AdminUserInfoProvider adminUserInfoProvider, JwtService jwtService, MailService mailService) {
         this.adminUserInfoRepository = userInfoRepository;
         this.webAdminInfoRepository = webAdminInfoRepository;
         this.adminUserInfoProvider = adminUserInfoProvider;
         this.jwtService = jwtService;
+        this.mailService = mailService;
     }
 
     /**
@@ -105,27 +109,7 @@ public class AdminUserInfoService {
         int index;
         char password;
 
-        //랜덤한 임시 비밀번호 생성
-        char[] charPw=new char[] {
-                '0','1','2','3','4','5','6','7','8','9',
-                'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-        };
-
-        char[] charSpPw=new char[] {
-                '!','@','#','$','%','^','&','*','?','~','_'
-        };
-
-        for(int i=0;i<8;i++) {
-            index = random.nextInt(charPw.length);
-            password = charPw[index];
-            buffer.append(password);
-        }
-        for(int i=0;i<2;i++) {
-            index = random.nextInt(charSpPw.length);
-            password = charSpPw[index];
-            buffer.append(password);
-        }
-        String newPassword = buffer.toString();
+        String newPassword = mailService.sendPwFindMail(postUserReq.getEmail());
         String hashPassword;
         try {
             hashPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
