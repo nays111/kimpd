@@ -35,4 +35,12 @@ public class Report extends BaseEntity {
 
     @Column(name="status")
     private String status="ACTIVE";
+
+    public Report(UserInfo reportUserInfo, UserInfo reportedUserInfo,
+                  ReportCategory reportCategory, String description) {
+        this.reportUserInfo = reportUserInfo;
+        this.reportedUserInfo = reportedUserInfo;
+        this.reportCategory = reportCategory;
+        this.reportDescription = description;
+    }
 }
