@@ -121,6 +121,7 @@ public enum BaseResponseStatus {
     FAIlED_TO_GET_NOTICE(false,3041,"공지사항 조회에 실패했습니다."),
     FAIlED_TO_GET_FAQ(false,3042,"FAQ 조회에 실패했습니다"),
     FAILED_TO_GET_INQUIRY_CATEGORIES(false,3043,"1:1문의 카테고리를 불러오는데 실패했습니다."),
+    FAILED_TO_GET_INQUIRIES(false,3044,"1:1문의 내역을 불러오는데 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

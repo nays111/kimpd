@@ -4,6 +4,7 @@ package com.clnine.kimpd.src.Web.inquiry;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryCategoryRes;
+import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryListRes;
 import com.clnine.kimpd.src.Web.inquiry.models.PostInquiryReq;
 import com.clnine.kimpd.src.Web.report.models.GetReportCategoryRes;
 import com.clnine.kimpd.src.Web.report.models.PostReportReq;
@@ -58,6 +59,20 @@ public class InquiryController {
         }
         try{
             inquiryService.postInquiry(userIdx,postInquiryReq);
+            return new BaseResponse<>(SUCCESS);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 1:1문의 내역 리스트 조회 API
+     * @param page
+     * @return
+     */
+    public BaseResponse<List<GetInquiryListRes>> getInquiryList(@RequestParam(required = true,value = "page")int page){
+        try{
+            inquiryProvider.getInquiryListRes(page,10);
             return new BaseResponse<>(SUCCESS);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
