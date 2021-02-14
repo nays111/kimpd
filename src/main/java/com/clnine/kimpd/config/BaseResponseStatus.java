@@ -85,6 +85,9 @@ public enum BaseResponseStatus {
     TOO_LONG_MESSAGE_DESCRIPTION(false,2080,"메시지 길이가 너무 깁니다"),
     WRONG_CORP_NUM(false,2081,"사업자 번호 입력 형식이 틀립니다."),
     EMPTY_REPORT_DESCRIPTION(false,2082,"신고 사유를 적어주세요."),
+    EMPTY_INQUIRY_CATEGORY_SELECTED(false,2083,"1:1문의 카테고리를 선택해주세요."),
+    EMPTY_INQUIRY_TITLE(false,2084,"1:1문의 제목을 입력해주세요."),
+    EMPTY_INQUIRY_DESCRIPTION(false,2085,"1:1문의 내용을 입력해주세요."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -122,6 +125,7 @@ public enum BaseResponseStatus {
     FAIlED_TO_GET_FAQ(false,3042,"FAQ 조회에 실패했습니다"),
     FAILED_TO_GET_INQUIRY_CATEGORIES(false,3043,"1:1문의 카테고리를 불러오는데 실패했습니다."),
     FAILED_TO_GET_INQUIRIES(false,3044,"1:1문의 내역을 불러오는데 실패했습니다."),
+    FAILED_TO_POST_INQUIRY(false,3045,"1:1문의 접수에 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

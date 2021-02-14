@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @CrossOrigin
@@ -33,6 +33,12 @@ public class InquiryController {
     @ResponseBody
     @GetMapping("/inquiry-categories")
     public BaseResponse<List<GetInquiryCategoryRes>> getInquiryCategory() throws BaseException{
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
         List<GetInquiryCategoryRes> getInquiryCategoryResList;
         try{
             getInquiryCategoryResList = inquiryProvider.getInquiryCategoryList();
@@ -57,6 +63,23 @@ public class InquiryController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(postInquiryReq.getInquiryCategoryIdx()==null){
+            return new BaseResponse<>(EMPTY_INQUIRY_CATEGORY_SELECTED);
+        }
+        if(postInquiryReq.getInquiryTitle()==null || postInquiryReq.getInquiryTitle().length()==0){
+            return new BaseResponse<>(EMPTY_INQUIRY_TITLE);
+        }
+        if(postInquiryReq.getInquiryDescription()==null || postInquiryReq.getInquiryDescription().length()==0){
+            return new BaseResponse<>(EMPTY_INQUIRY_DESCRIPTION);
+        }
+        //todo 첨부파일 validation
+//        if(postInquiryReq.getInquiryFileList()!=null) {
+//            if (postInquiryReq.getInquiryFileList().size() == 0) {
+//                return new BaseResponse<>(EMPTY_INQUIRY_DESCRIPTION);
+//            }
+//        }
+
+
         try{
             inquiryService.postInquiry(userIdx,postInquiryReq);
             return new BaseResponse<>(SUCCESS);
@@ -70,10 +93,12 @@ public class InquiryController {
      * @param page
      * @return
      */
+    @ResponseBody
+    @GetMapping("/inquiries")
     public BaseResponse<List<GetInquiryListRes>> getInquiryList(@RequestParam(required = true,value = "page")int page){
         try{
-            inquiryProvider.getInquiryListRes(page,10);
-            return new BaseResponse<>(SUCCESS);
+            List<GetInquiryListRes> getInquiryListResList = inquiryProvider.getInquiryListRes(page,10);
+            return new BaseResponse<>(SUCCESS,getInquiryListResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
