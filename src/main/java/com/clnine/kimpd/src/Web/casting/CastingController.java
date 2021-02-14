@@ -78,15 +78,16 @@ public class CastingController {
      * @return
      */
     @ResponseBody
-    @PostMapping("/castings")
-    public BaseResponse<String> postCasting(@RequestBody PostCastingReq postCastingReq){
+    @PostMapping("/experts/{userIdx}/castings")
+    public BaseResponse<String> postCasting(@RequestBody PostCastingReq postCastingReq,
+                                            @PathVariable(required = true,value = "userIdx")int expertIdx){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        int expertIdx = postCastingReq.getUserIdx();
+        //int expertIdx = postCastingReq.getUserIdx();
 
 
         /**
