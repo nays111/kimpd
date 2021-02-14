@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
+import static com.clnine.kimpd.config.BaseResponseStatus.FAIlED_TO_GET_NOTICE;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class NoticeProvider {
         try{
             noticeList = noticeRepository.findAllByStatus("ACTIVE",pageable);
         }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_PROJECTS);
+            throw new BaseException(FAIlED_TO_GET_NOTICE);
         }
 
         List<GetNoticesRes> getNoticesResList = new ArrayList<>();

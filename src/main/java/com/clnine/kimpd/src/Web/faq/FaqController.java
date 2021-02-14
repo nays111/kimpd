@@ -1,7 +1,8 @@
-package com.clnine.kimpd.src.Web.notice;
+package com.clnine.kimpd.src.Web.faq;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.Web.faq.models.GetFaqsRes;
 import com.clnine.kimpd.src.Web.notice.models.GetNoticesRes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,23 +15,18 @@ import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
 @RequiredArgsConstructor
 @RequestMapping
 @CrossOrigin
-public class NoticeController {
-    private final NoticeProvider noticeProvider;
+public class FaqController {
 
-    /**
-     * 공지사항 조회 API
-     * @param page
-     * @return
-     */
+    private final FaqProvider faqProvider;
+
     @ResponseBody
-    @GetMapping("/notices")
-    public BaseResponse<List<GetNoticesRes>> getNoticesRes(@RequestParam(required = true) int page){
+    @GetMapping("/faqs")
+    public BaseResponse<List<GetFaqsRes>> getNoticesRes(@RequestParam(required = true) int page){
         try{
-            List<GetNoticesRes> getNoticesResList = noticeProvider.getNoticeList(page,8);
-            return new BaseResponse<>(SUCCESS,getNoticesResList);
+            List<GetFaqsRes> getFaqsResList = faqProvider.getFaqList(page,5);
+            return new BaseResponse<>(SUCCESS,getFaqsResList);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
 }
