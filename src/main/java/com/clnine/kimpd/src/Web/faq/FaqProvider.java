@@ -38,9 +38,8 @@ public class FaqProvider {
         for(int i=0;i<faqList.size();i++){
             int faqIdx = faqList.get(i).getFaqIdx();//1
             String faqQuestion = faqList.get(i).getFaqQuestion();//2
+            faqQuestion = "Q."+faqQuestion;
             String faqAnswer = faqList.get(i).getFaqAnswer();//3
-
-
             GetFaqsRes getFaqsRes = new GetFaqsRes(faqIdx,faqQuestion,faqAnswer);
             getFaqsResList.add(getFaqsRes);
         }

@@ -1,8 +1,10 @@
 package com.clnine.kimpd.src.Web.inquiry.models;
 
 import com.clnine.kimpd.config.BaseEntity;
+import com.clnine.kimpd.src.Web.report.models.ReportCategory;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,12 +23,15 @@ public class Inquiry extends BaseEntity {
     @Column(name="inquiryTitle")
     private String inquiryTitle;
 
-    //todo 질문 유형 테이블 컬럼 FK추가
     @Column(name="inquiryDescription")
     private String inquiryDescription;
 
-    @Column(name="inquiryAnswer")
+    @Column(name="inquiryAnswer",nullable = true)
     private String inquiryAnswer;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="inquiryCategoryIdx")
+    private InquiryCategory inquiryCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="userIdx")
@@ -34,4 +39,12 @@ public class Inquiry extends BaseEntity {
 
     @Column(name="status")
     private String status = "ACTIVE";
+
+    @Builder
+    public Inquiry(String title, String description, InquiryCategory inquiryCategory, UserInfo userInfo) {
+        this.inquiryTitle =title;
+        this.inquiryDescription = description;
+        this.inquiryCategory = inquiryCategory;
+        this.userInfo = userInfo;
+    }
 }
