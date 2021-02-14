@@ -437,11 +437,11 @@ public class UserInfoController {
      * [2021.02.11] 마이페이지 조회 API
      * @return
      */
-    @GetMapping("")
-    public BaseResponse<GetMyUserInfoRes> getMyUserInfo(){
-        int userIdx;
+    @GetMapping("/{userIdx}")
+    public BaseResponse<GetMyUserInfoRes> getMyUserInfo(@PathVariable(required = true,value = "userIdx")int userIdx){
+        int userIdxJWT;
         try{
-            userIdx = jwtService.getUserIdx();
+            userIdxJWT = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -458,12 +458,13 @@ public class UserInfoController {
      * @param patchUserTypeReq
      * @return
      */
-    @PatchMapping("/type")
+    @PatchMapping("/{userIdx}/type")
     @ResponseBody
-    public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq){
-        int userIdx;
+    public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq,
+                                                       @PathVariable(required = true,value = "userIdx")int userIdx){
+        int userIdxJWT;
         try{
-            userIdx = jwtService.getUserIdx();
+            userIdxJWT = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

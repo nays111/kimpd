@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class PostCastingReq {
-    private int userIdx;
     private Integer projectIdx;
     private String projectName;
     private String projectMaker;
