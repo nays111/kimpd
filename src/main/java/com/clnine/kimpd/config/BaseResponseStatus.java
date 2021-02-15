@@ -88,6 +88,7 @@ public enum BaseResponseStatus {
     EMPTY_INQUIRY_CATEGORY_SELECTED(false,2083,"1:1문의 카테고리를 선택해주세요."),
     EMPTY_INQUIRY_TITLE(false,2084,"1:1문의 제목을 입력해주세요."),
     EMPTY_INQUIRY_DESCRIPTION(false,2085,"1:1문의 내용을 입력해주세요."),
+    WRONG_CASTING_STATUS(false,2086,"올바른 상태 변경을 해주세요."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -101,7 +102,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_PROJECTS(false,3018,"프로젝트를 불러오는데 실패하였습니다."),
     FAILED_TO_POST_CASTING(false,3019,"섭외 신청에 실패하였습니다."),
     ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT(false,3020,"이미 해당 프로젝트에 대해 해당 유저에게 섭외 요청을 보낸적이 있습니다."),
-    FAILED_TO_GET_CASTING(false,3021,"캐스팅 정보 조회에 실패하였습니다."),
+    FAILED_TO_GET_CASTING(false,3021,"섭외 정보 조회에 실패하였습니다."),
     NOT_FOUND_CASTING(false,3022,"존재하지 않는 캐스팅입니다."),
     FAILED_TO_SEND_MESSAGE(false,3023,"메시지 전송에 실패하였습니다."),
     FAILED_TO_POST_SECURE_CODE(false,3024,"인증번호를 저장 못했습니다."),
@@ -126,6 +127,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_INQUIRY_CATEGORIES(false,3043,"1:1문의 카테고리를 불러오는데 실패했습니다."),
     FAILED_TO_GET_INQUIRIES(false,3044,"1:1문의 내역을 불러오는데 실패했습니다."),
     FAILED_TO_POST_INQUIRY(false,3045,"1:1문의 접수에 실패했습니다."),
+    FAILED_TO_UPDATE_CASTING_STATUS(false,3046,"섭외 상태 변경에 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
+import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
@@ -193,5 +194,28 @@ public class CastingService {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_RECASTING);
         }
+    }
+
+    /**
+     * 섭외수락 or 섭외거절 or 작업완료
+     * @param state
+     * @param patchCastingStatusReq
+     * @throws BaseException
+     */
+    public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq) throws BaseException{
+        Casting casting;
+        try{
+            casting = castingRepository.findAllByCastingIdxAndStatus(patchCastingStatusReq.getCastingIdx(), "ACTIVE");
+        }catch (Exception ignored){
+            throw new BaseException(FAILED_TO_GET_CASTING);
+        }
+        casting.setCastingStatus(state);
+        try{
+            castingRepository.save(casting);
+        }catch (Exception ignored){
+            throw new BaseException(FAILED_TO_UPDATE_CASTING_STATUS);
+        }
+
+
     }
 }
