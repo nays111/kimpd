@@ -5,15 +5,14 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class GetMyCastingRes {
-    int userIdx; //전문가 인덱스
-    String nickname;
+public class GetMyReceivedCastingRes {
+    int userIdx; //섭외 요청 보낸사람인덱스
+    String nickname; //todo 여기 제작사가 들어가야대는거같은데 다시 확인
     String profileImageURL;
-    String categoryJobName;
-    String introduce;
+    String projectName;
     int castingIdx;
     String castingStatus;
     String castingTerm;
-    String projectName;
+    String castingDate;
     String castingPrice;
 }
