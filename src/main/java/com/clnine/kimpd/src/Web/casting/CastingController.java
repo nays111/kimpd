@@ -45,6 +45,29 @@ public class CastingController {
     }
 
     /**
+     * 캐스팅 받은 횟수 조회 API
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/received-castings-count")
+    public BaseResponse<CastingCountRes> getReceivedCastingsCount(){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        CastingCountRes castingCountRes;
+        try{
+            castingCountRes = castingProvider.getReceivedCastingCount(userIdx);
+            return new BaseResponse<>(SUCCESS,castingCountRes);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    /**
      * [2021.02.07] 16. 캐스팅 리스트 조회 API
      * @param castingStatus
      * @param duration
@@ -71,6 +94,45 @@ public class CastingController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 받은 캐스팅 리스트 조회 API
+     * @param castingStatus
+     * @param duration
+     * @param page
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/received-castings")
+    public BaseResponse<List<GetMyReceivedCastingRes>>getReceivedCastings(@RequestParam(value="castingStatus",required = false)Integer castingStatus,
+                                                          @RequestParam(value = "duration",required = false)Integer duration,
+                                                          @RequestParam(value="page",required = true)int page){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+
+        List<GetMyReceivedCastingRes> getMyReceivedCastingResList;
+        try{
+            getMyReceivedCastingResList = castingProvider.getMyReceivedCastingRes(userIdx,duration,castingStatus,page,6);
+            return new BaseResponse<>(SUCCESS,getMyReceivedCastingResList);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * [2021.02.06] 12. 섭외 요청하기  API
