@@ -31,7 +31,10 @@ public enum BaseResponseStatus {
     SUCCESS_GET_CHILD_JOB_CATEGORY(true,1030,"2차 직종 카테고리 조회에 성공하였습니다."),
 
     // 1500 : admin 성공
-    SUCCESS_READ_BANNERS(true,1500,"배너 조회에 성공하였습니다."),
+    SUCCESS_READ_BANNERS(true,1500,"광고 조회에 성공하였습니다."),
+    SUCCESS_PATCH_BANNERS(true, 1501, "광고 수정에 성공하였습니다."),
+    SUCCESS_POST_BANNERS(true, 1502, "광고 등록에 성공하였습니다."),
+
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -89,7 +92,12 @@ public enum BaseResponseStatus {
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
-    EMPTY_BANNER_IDX(false, 2501, "베너 인덱스가 비었습니다."),
+    EMPTY_BANNER_IDX(false, 2501, "광고 인덱스가 비었습니다."),
+    EMPTY_BANNER_LINK(false, 2502, "광고 링크가 비었습니다."),
+    EMPTY_BANNER_START_DATE(false, 2503, "광고 시작일이 비었습니다."),
+    EMPTY_BANNER_END_DATE(false, 2504, "광고 종료일이 비었습니다."),
+    EMPTY_BANNER_IMAGE(false, 2505, "광고 이미지가 비었습니다."),
+    NOT_VALID_START_DATE(false, 2506, "광고 시작일이 광고 종료일보다 늦을 수 없습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -124,6 +132,8 @@ public enum BaseResponseStatus {
 
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
+    FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),
+    FAILED_TO_POST_BANNER(false,3502,"광고 등록에 실패하였습니다."),
 
 
     // 4000 : Database 오류
