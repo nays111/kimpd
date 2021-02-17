@@ -21,6 +21,9 @@ public class Alarm extends BaseEntity {
     @JoinColumn(name="userIdx")
     private UserInfo userInfo;
 
+    @Column(name="alarmMessage")
+    private String alarmMessage;
+
     @Column(name="status")
     private String status = "ACTIVE";
 }

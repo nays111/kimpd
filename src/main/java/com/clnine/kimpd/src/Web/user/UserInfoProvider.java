@@ -2,11 +2,13 @@ package com.clnine.kimpd.src.Web.user;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +20,16 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
 
 @Service
+@RequiredArgsConstructor
 public class UserInfoProvider {
     private final UserInfoRepository userInfoRepository;
     private final JwtService jwtService;
     private final ReviewRepository reviewRepository;
     private final UserJobCategoryRepository userJobCategoryRepository;
     private final CertificateRepository certificateRepository;
+    private final CategoryProvider categoryProvider;
 
-    @Autowired
-    public UserInfoProvider(UserInfoRepository userInfoRepository,
-                            JwtService jwtService,
-                            ReviewRepository reviewRepository,
-                            UserJobCategoryRepository userJobCategoryRepository,
-                            CertificateRepository certificateRepository) {
-        this.userInfoRepository = userInfoRepository;
-        this.jwtService = jwtService;
-        this.reviewRepository = reviewRepository;
-        this.userJobCategoryRepository = userJobCategoryRepository;
-        this.certificateRepository = certificateRepository;
-    }
+
 
     /**
      * 로그인
@@ -83,12 +76,18 @@ public class UserInfoProvider {
         }
         int userType = userInfo.getUserType();
         String stringUserType = null;
+
+        GetUserRes getUserRes=null;
+
         if (userType == 1 || userType==2 || userType==3) {
             stringUserType = "일반회원";
+            getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, stringUserType);
         } else if (userType == 4 || userType ==5 || userType==6) {
             stringUserType = "전문가회원";
+            String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
+            getUserRes = new GetUserRes(userIdx,nickname,profileImageURL,stringUserType,jobCategoryChildName);
         }
-        GetUserRes getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, stringUserType);
+
         return getUserRes;
     }
 
