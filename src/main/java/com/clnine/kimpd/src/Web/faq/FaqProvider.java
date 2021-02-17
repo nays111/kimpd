@@ -26,7 +26,7 @@ public class FaqProvider {
     private final FaqRepository faqRepository;
 
     public List<GetFaqsRes> getFaqList(int page, int size) throws BaseException {
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"faqIdx"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"faqIdx"));
         List<Faq> faqList;
         try{
             faqList = faqRepository.findAllByStatus("ACTIVE",pageable);
