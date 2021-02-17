@@ -11,4 +11,5 @@ public class GetMessagesRes {
     private final String senderJobName;
     private final String sendTime;
     private final String description;
+    private final int readStatus;
 }
