@@ -11,6 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,14 +45,14 @@ public class ProjectProvider {
         String projectFileURL = project.getProjectFileURL();
         String projectBudget = project.getProjectBudget();
         GetMyProjectRes getMyProjectRes = new GetMyProjectRes(projectIdx,projectName,projectMaker,
-                projectStartDate,projectEndDate,projectManager,projectBudget,
-                projectDescription,projectFileURL);
+                projectStartDate,projectEndDate,projectManager,
+                projectDescription,projectFileURL,projectBudget);
         return getMyProjectRes;
     }
 
 
 
-    public List<GetProjectsRes> getProjectsResList(int userIdx,int page,int size) throws BaseException{
+    public List<GetProjectsRes> getProjectsResList(int userIdx,Integer duration,int page,int size) throws BaseException{
         UserInfo userInfo;
         try{
             userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
@@ -57,26 +60,48 @@ public class ProjectProvider {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
         Pageable pageable = PageRequest.of(page-1,size,Sort.by(Sort.Direction.DESC,"projectIdx"));
+        SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+        Calendar cal = Calendar.getInstance();
+        Calendar cal2 = Calendar.getInstance();
+        Calendar cal3 = Calendar.getInstance();
+        String now = formatter.format(cal.getTime());
+        cal2.add(Calendar.MONTH,-3);
+        cal3.add(Calendar.MONTH,-6);
+        String end3 = formatter.format(cal2.getTime());
+        String end6 = formatter.format(cal3.getTime());
+        Timestamp end1 = Timestamp.valueOf(end3);
+        Timestamp end2 = Timestamp.valueOf(end6);
+        Timestamp now1 = Timestamp.valueOf(now);
 
-
-        List<Project> projectList;
-        try{
+        List<Project> projectList = null;
+        if(duration==null){
             projectList = projectRepository.findByUserInfoAndStatus(userInfo,"ACTIVE",pageable);
-
-        }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }else if(duration==1){
+            projectList = projectRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,"ACTIVE",end1,now1,pageable);
+        }else if(duration==2){
+            projectList = projectRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,"ACTIVE",end2,now1,pageable);
         }
+
+
         return projectList.stream().map(project -> {
             int projectIdx = project.getProjectIdx();
             String projectName = project.getProjectName();
             String projectDescription = project.getProjectDescription();
-            String projectStartDate = project.getProjectStartDate();
-            String projectEndDate = project.getProjectEndDate();
-            String projectBudget = project.getProjectBudget();
-            return new GetProjectsRes(projectIdx,projectName,projectDescription,projectStartDate,projectEndDate,projectBudget);
+
+            String projectDate = "20"+project.getProjectStartDate()+"~"+"20"+project.getProjectEndDate();
+            projectDate = projectDate.replace("/",".");
+            String projectBudget = project.getProjectBudget()+"원";
+            return new GetProjectsRes(projectIdx,projectName,projectDescription,projectDate,projectBudget);
         }).collect(Collectors.toList());
 
     }
+
+    /**
+     * 섭외 신청할 떄 프로젝트 리스트 조회 (인덱스랑 이름만 리턴)
+     * @param userIdx
+     * @return
+     * @throws BaseException
+     */
     public List<GetProjectListRes> getProjectListRes(int userIdx) throws BaseException{
         UserInfo userInfo;
         try{

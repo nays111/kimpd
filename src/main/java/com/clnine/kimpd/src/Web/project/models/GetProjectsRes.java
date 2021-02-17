@@ -9,7 +9,6 @@ public class GetProjectsRes {
     private final int projectIdx;
     private final String projectName;
     private final String projectDescription;
-    private final String projectStartDate;
-    private final String projectEndDate;
+    private final String projectDate;
     private final String projectBudget;
 }
