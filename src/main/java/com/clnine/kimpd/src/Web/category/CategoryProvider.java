@@ -87,5 +87,22 @@ public class CategoryProvider {
         String mainJobCategoryChildName = userJobCategoryList.get(0).getJobCategoryChild().getJobCategoryChildName();
         return mainJobCategoryChildName;
     }
+
+    public List<String> getJobCategoryChildName(UserInfo userInfo) throws BaseException{
+
+        List<UserJobCategory> userJobCategoryList = new ArrayList<>();
+        try{
+            userJobCategoryList= userJobCategoryRepository.findByUserInfo(userInfo);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_CHILD_JOB_CATEGORIES);
+        }
+        List<String> jobCategoryChildNameList = new ArrayList<>();
+        for(int i=0;i<userJobCategoryList.size();i++){
+            String jobCategoryChildName = userJobCategoryList.get(i).getJobCategoryChild().getJobCategoryChildName();
+            jobCategoryChildNameList.add(jobCategoryChildName);
+        }
+
+        return jobCategoryChildNameList;
+    }
 }
 

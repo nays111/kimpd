@@ -51,7 +51,8 @@ public class ExpertProvider {
         String city = userInfo.getCity();
         String introduce = userInfo.getIntroduce();
         String career = userInfo.getCareer();
-        String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
+        List<String> userJobCategoryChildName = categoryProvider.getJobCategoryChildName(userInfo);
+
         String etc = userInfo.getEtc();
         int projectCount = projectRepository.countAllByUserInfoAndStatus(userInfo, "ACTIVE");
         int reviewCount = reviewRepository.countAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
@@ -82,7 +83,7 @@ public class ExpertProvider {
         }
         float average = (float) (Math.round((sum / reviewCount) * 10) / 10.0);
 
-        GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, userMainJobCategoryChildName,average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
+        GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, userJobCategoryChildName,average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
         return getExpertRes;
     }
 
