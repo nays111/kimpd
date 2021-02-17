@@ -26,7 +26,7 @@ public class ProjectController {
      * @return
      */
     @ResponseBody
-    @GetMapping("/project/{projectIdx}")
+    @GetMapping("/projects/{projectIdx}")
     public BaseResponse<GetMyProjectRes> getMyProject(@PathVariable(value="projectIdx")int projectIdx){
         int userIdx;
         try{
@@ -148,8 +148,8 @@ public class ProjectController {
     @ResponseBody
     @GetMapping("/projects")
     public BaseResponse<List<GetProjectsRes>> getProjects(
-
-                                                          @RequestParam int page
+                                                          @RequestParam int page,
+                                                          @RequestParam(value = "duration", required = false) Integer duration
                                                           ){
         //jwt 검증
         int userIdx;
@@ -159,7 +159,7 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
         try{
-            List<GetProjectsRes> getProjectsResList = projectProvider.getProjectsResList(userIdx,page+1,9);
+            List<GetProjectsRes> getProjectsResList = projectProvider.getProjectsResList(userIdx,duration,page,9);
             return new BaseResponse<>(SUCCESS,getProjectsResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
