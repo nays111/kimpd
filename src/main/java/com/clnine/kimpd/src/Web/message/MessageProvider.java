@@ -66,7 +66,7 @@ public class MessageProvider {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
 
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"createdAt"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"createdAt"));
         List<GetMessagesRes> getMessagesResList = new ArrayList<>();
 
         //String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);

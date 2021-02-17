@@ -95,7 +95,7 @@ public class CastingProvider {
     public List<GetMyCastingRes> getMyCastingRes(int casterIdx,Integer duration,Integer castingStatus,int page,int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(casterIdx);
         List<Casting> castingList = null;
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -196,7 +196,7 @@ public class CastingProvider {
     public List<GetMyReceivedCastingRes> getMyReceivedCastingRes(int expertIdx,Integer duration,Integer castingStatus,int page,int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
         List<Casting> castingList = null;
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();

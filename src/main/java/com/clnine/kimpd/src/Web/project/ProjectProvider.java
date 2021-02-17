@@ -56,7 +56,7 @@ public class ProjectProvider {
         }catch(Exception ignored){
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
         }
-        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"projectIdx"));
+        Pageable pageable = PageRequest.of(page-1,size,Sort.by(Sort.Direction.DESC,"projectIdx"));
 
 
         List<Project> projectList;

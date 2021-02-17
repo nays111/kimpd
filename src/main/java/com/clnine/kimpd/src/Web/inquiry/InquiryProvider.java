@@ -49,7 +49,7 @@ public class InquiryProvider {
     }
 
     public List<GetInquiryListRes> getInquiryListRes(int page,int size) throws BaseException{
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"inquiryIdx"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"inquiryIdx"));
         List<Inquiry> inquiryList;
         try{
             inquiryList = inquiryRepository.findAllByStatus("ACTIVE",pageable);

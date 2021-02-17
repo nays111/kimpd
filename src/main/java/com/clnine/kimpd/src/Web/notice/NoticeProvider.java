@@ -25,7 +25,7 @@ public class NoticeProvider {
 
 
     public List<GetNoticesRes> getNoticeList(int page,int size) throws BaseException {
-        Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"noticeIdx"));
+        Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"noticeIdx"));
         List<Notice> noticeList;
         try{
             noticeList = noticeRepository.findAllByStatus("ACTIVE",pageable);
