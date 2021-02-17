@@ -1,14 +1,32 @@
 package com.clnine.kimpd.src.Web.user.models;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor
 public class GetUserRes {
-    private final int userIdx;
-    private final String nickname;
-    private final String profileImageURL;
-    private final String userType;
+    private int userIdx;
+    private String nickname;
+    private String profileImageURL;
+    private String userType;
+    private String jobCategoryChildName;
 
+    @Builder
+    public GetUserRes(int userIdx, String nickname, String profileImageURL, String userType, String jobCategoryChildName) {
+        this.userIdx = userIdx;
+        this.nickname = nickname;
+        this.profileImageURL = profileImageURL;
+        this.userType = userType;
+        this.jobCategoryChildName = jobCategoryChildName;
+    }
+    @Builder
+    public GetUserRes(int userIdx, String nickname, String profileImageURL, String userType) {
+        this.userIdx = userIdx;
+        this.nickname = nickname;
+        this.profileImageURL = profileImageURL;
+        this.userType = userType;
+    }
 }

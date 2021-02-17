@@ -21,6 +21,29 @@ public class ProjectController {
     private final ProjectProvider projectProvider;
 
     /**
+     * 프로젝트 상세조회 API
+     * @param projectIdx
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/project/{projectIdx}")
+    public BaseResponse<GetMyProjectRes> getMyProject(@PathVariable(value="projectIdx")int projectIdx){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            GetMyProjectRes getMyProjectRes = projectProvider.getMyProject(projectIdx);
+            return new BaseResponse<>(SUCCESS,getMyProjectRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+
+    /**
      * [2021.02.01] 24. 프로젝트 추가 API
      * [POST] /projects
      * @param postProjectReq
