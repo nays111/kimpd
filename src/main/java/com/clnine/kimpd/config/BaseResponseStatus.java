@@ -128,6 +128,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_INQUIRIES(false,3044,"1:1문의 내역을 불러오는데 실패했습니다."),
     FAILED_TO_POST_INQUIRY(false,3045,"1:1문의 접수에 실패했습니다."),
     FAILED_TO_UPDATE_CASTING_STATUS(false,3046,"섭외 상태 변경에 실패했습니다."),
+    FAILED_TO_SEND_ALARM(false,3047,"알림 전송에 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

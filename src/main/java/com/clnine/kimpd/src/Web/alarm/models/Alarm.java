@@ -24,6 +24,14 @@ public class Alarm extends BaseEntity {
     @Column(name="alarmMessage")
     private String alarmMessage;
 
+    @Column(name="readStatus")
+    private int readStatus=0;
+
     @Column(name="status")
     private String status = "ACTIVE";
+
+    public Alarm(UserInfo userInfo, String alarmMessage) {
+        this.userInfo = userInfo;
+        this.alarmMessage =  alarmMessage;
+    }
 }

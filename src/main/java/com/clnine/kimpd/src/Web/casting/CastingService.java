@@ -2,6 +2,8 @@ package com.clnine.kimpd.src.Web.casting;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.Web.alarm.AlarmRepository;
+import com.clnine.kimpd.src.Web.alarm.models.Alarm;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
@@ -24,6 +26,7 @@ public class CastingService {
     private final UserInfoRepository userInfoRepository;
     private final CastingRepository castingRepository;
     private final CastingProvider castingProvider;
+    private final AlarmRepository alarmRepository;
 
     /**
      * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
@@ -97,6 +100,15 @@ public class CastingService {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_POST_CASTING);
         }
+
+        String userNickname = userInfo.getNickname();
+        String alarmMessage = userNickname+"님이 전문가님께 섭외 요청을 보내셨습니다.";
+        Alarm alarm = new Alarm(expertInfo,alarmMessage);
+        try{
+            alarmRepository.save(alarm);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_SEND_ALARM);
+        }
     }
 
     /**
@@ -106,6 +118,7 @@ public class CastingService {
      * @param expertIdx
      * @throws BaseException
      */
+    @Transactional
     public void PostCastingByProjectLoaded(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException{
         UserInfo userInfo;
         try{
@@ -161,6 +174,15 @@ public class CastingService {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_POST_CASTING);
         }
+
+        String userNickname = userInfo.getNickname();
+        String alarmMessage = userNickname+"님이 전문가님께 섭외 요청을 보내셨습니다.";
+        Alarm alarm = new Alarm(expertInfo,alarmMessage);
+        try{
+            alarmRepository.save(alarm);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_SEND_ALARM);
+        }
     }
 
 
@@ -194,6 +216,15 @@ public class CastingService {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_RECASTING);
         }
+
+        String userNickname = casting.getUserInfo().getNickname();
+        String alarmMessage = userNickname+"님이 전문가님께 섭외 요청을 보내셨습니다.";
+        Alarm alarm = new Alarm(casting.getExpert(), alarmMessage);
+        try{
+            alarmRepository.save(alarm);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_SEND_ALARM);
+        }
     }
 
     /**
@@ -216,6 +247,27 @@ public class CastingService {
             throw new BaseException(FAILED_TO_UPDATE_CASTING_STATUS);
         }
 
+        if(state==2){
+            String expertNickname = casting.getExpert().getNickname();
+            String alarmMessage = expertNickname+"전문가님께서 섭외 요청을 승인하셨습니다.";
+            Alarm alarm = new Alarm(casting.getUserInfo(), alarmMessage);
+            try{
+                alarmRepository.save(alarm);
+            }catch(Exception ignored){
+                throw new BaseException(FAILED_TO_SEND_ALARM);
+            }
+
+        }else if(state==3){
+            String expertNickname = casting.getExpert().getNickname();
+            String alarmMessage = expertNickname+"전문가님께서 섭외 요청을 거절하셨습니다.";
+            Alarm alarm = new Alarm(casting.getUserInfo(), alarmMessage);
+            try{
+                alarmRepository.save(alarm);
+            }catch(Exception ignored){
+                throw new BaseException(FAILED_TO_SEND_ALARM);
+            }
+
+        }
 
     }
 }
