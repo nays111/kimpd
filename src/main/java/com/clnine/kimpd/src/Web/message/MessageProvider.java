@@ -39,7 +39,8 @@ public class MessageProvider {
         } catch (Exception ignored) {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_MESSAGE);
         }
-
+        message.setReadStatus(1);
+        messageRepository.save(message);
         String senderNickname = message.getSender().getNickname();
         String description = message.getDescription();
         Date sendTimeDateForm = message.getCreatedAt();
@@ -81,7 +82,8 @@ public class MessageProvider {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
             String description = message.getDescription();
-            GetMessagesRes getMessagesRes = new GetMessagesRes(messageIdx,senderNickname,senderJobName,sendTime,description);
+            int readStatus = message.getReadStatus();
+            GetMessagesRes getMessagesRes = new GetMessagesRes(messageIdx,senderNickname,senderJobName,sendTime,description,readStatus);
             getMessagesResList.add(getMessagesRes);
         }
 

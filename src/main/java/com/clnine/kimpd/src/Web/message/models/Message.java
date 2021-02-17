@@ -30,6 +30,9 @@ public class Message extends BaseEntity {
     @Column(name="description")
     private String description;
 
+    @Column(name="readStatus")
+    private int readStatus=0;
+
     @Column(name="status")
     private String status="ACTIVE";
 
