@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AdminGetFaqsRes {
-    private final int noticeIdx;
-    private final String noticeTitle;
-    private final String noticeDescription;
+    private final int faqIdx;
+    private final String faqQuestion;
+    private final String faqAnswer;
     private final String status;
 
 }

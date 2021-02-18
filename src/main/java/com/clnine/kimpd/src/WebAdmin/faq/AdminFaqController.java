@@ -23,102 +23,100 @@ public class AdminFaqController {
     private final AdminFaqService adminFaqService;
 
     /**
-     * 공지사항 전체 조회 API
-     * [GET] /notices
-     * @return BaseResponse<AdminGetNoticesListRes>
+     * FAQ 전체 조회 API
+     * [GET] /faqs
+     * @return BaseResponse<AdminGetFaqsListRes>
      */
     @ResponseBody
-    @GetMapping("/notices")
+    @GetMapping("/faqs")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetFaqsListRes> getBanners() throws BaseException{
-        List<AdminGetFaqsRes> getNoticesResList;
+    public BaseResponse<AdminGetFaqsListRes> getFaqs() throws BaseException{
+        List<AdminGetFaqsRes> getFaqsResList;
 
         try{
-            getNoticesResList = adminFaqProvider.getNoticeList();
-            AdminGetFaqsListRes bannerList = new AdminGetFaqsListRes(getNoticesResList);
-            return new BaseResponse<>(SUCCESS_READ_NOTICES, bannerList);
+            getFaqsResList = adminFaqProvider.getFaqList();
+            AdminGetFaqsListRes faqList = new AdminGetFaqsListRes(getFaqsResList);
+            return new BaseResponse<>(SUCCESS_READ_FAQS, faqList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 공지사항 상세 조회 API
-     * [GET] /notices/:noticeIdx
-     * @PathVariable noticeIdx
+     * FAQ 상세 조회 API
+     * [GET] /faqs/:faqIdx
+     * @PathVariable faqIdx
      * @return BaseResponse<AdminGetNoticesRes>
      */
     @ResponseBody
-    @GetMapping("/notices/{noticeIdx}")
+    @GetMapping("/faqs/{faqIdx}")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetFaqsRes> getUser(@PathVariable Integer noticeIdx) {
-        if (noticeIdx== null || noticeIdx <= 0) {
-            return new BaseResponse<>(EMPTY_NOTICE_IDX);
+    public BaseResponse<AdminGetFaqsRes> getFaq(@PathVariable Integer faqIdx) {
+        if (faqIdx == null || faqIdx <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_IDX);
         }
 
         try {
-            AdminGetFaqsRes adminGetFaqsRes = adminFaqProvider.retrieveNoticeInfo(noticeIdx);
-            return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetFaqsRes);
+            AdminGetFaqsRes adminGetFaqsRes = adminFaqProvider.retrieveFaqInfo(faqIdx);
+            return new BaseResponse<>(SUCCESS_READ_FAQS, adminGetFaqsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 공지사항 등록 API
-     * [POST] /notices
-     * @RequestBody AdminPostNoticesReq
+     * FAQ 등록 API
+     * [POST] /faqs
+     * @RequestBody AdminPostFaqsReq
      * @return BaseResponse<Void>
      */
     @ResponseBody
-    @PostMapping("/notices")
+    @PostMapping("/faqs")
     @CrossOrigin(origins = "*")
-    public BaseResponse<Void> postNotices(@RequestBody AdminPostFaqsReq parameters) {
+    public BaseResponse<Void> postFaqs(@RequestBody AdminPostFaqsReq parameters) {
         // 1. Body Parameter Validation
-        if (parameters.getNoticeTitle() == null || parameters.getNoticeTitle().length() <= 0) {
-            return new BaseResponse<>(EMPTY_BANNER_END_DATE);
+        if (parameters.getFaqQuestion() == null || parameters.getFaqQuestion().length() <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_QUESTION);
         }
 
-        if (parameters.getNoticeDescription() == null || parameters.getNoticeDescription().length() <= 0) {
-            return new BaseResponse<>(EMPTY_BANNER_IMAGE);
+        if (parameters.getFaqAnswer() == null || parameters.getFaqAnswer().length() <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_ANSWER);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-        // 2. Post Notice
+        // 2. Post Faq
         try {
-            adminFaqService.createNotices(parameters);
-            return new BaseResponse<>(SUCCESS_POST_NOTICES);
+            adminFaqService.createFaqs(parameters);
+            return new BaseResponse<>(SUCCESS_POST_FAQS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 광고 수정 API
-     * [PATCH] /notices
-     * @RequestBody AdminPatchNoticesReq
+     * FAQ 수정 API
+     * [PATCH] /faqs
+     * @RequestBody AdminPatchFaqsReq
      * @return BaseResponse<Void>
      */
     @ResponseBody
-    @PatchMapping("/notices")
+    @PatchMapping("/faqs")
     @CrossOrigin(origins = "*")
-    public BaseResponse<Void> patchNotices(@RequestBody AdminPatchFaqsReq parameters) {
-        if (parameters.getNoticeIdx() <= 0) {
-            return new BaseResponse<>(EMPTY_NOTICE_IDX);
+    public BaseResponse<Void> patchFaqs(@RequestBody AdminPatchFaqsReq parameters) {
+        if (parameters.getFaqIdx() <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_IDX);
         }
 
-        if (parameters.getNoticeTitle() == null || parameters.getNoticeTitle().length() <= 0) {
-            return new BaseResponse<>(EMPTY_NOTICE_TITLE);
+        if (parameters.getFaqQuestion() == null || parameters.getFaqQuestion().length() <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_QUESTION);
         }
 
-        if (parameters.getNoticeDescription() == null || parameters.getNoticeDescription().length() <= 0) {
-            return new BaseResponse<>(EMPTY_NOTICE_DESCRIPTION);
+        if (parameters.getFaqAnswer() == null || parameters.getFaqAnswer().length() <= 0) {
+            return new BaseResponse<>(EMPTY_FAQ_ANSWER);
         }
 
         try {
-            adminFaqService.updateNotice(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
+            adminFaqService.updateFaq(parameters);
+            return new BaseResponse<>(SUCCESS_PATCH_FAQS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

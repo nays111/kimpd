@@ -9,22 +9,22 @@ import javax.persistence.*;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name="Notice")
+@Table(name="Faq")
 public class AdminFaq extends BaseEntity {
-    @Id @Column(name="noticeIdx",nullable = false,updatable = false)
+    @Id @Column(name="faqIdx",nullable = false,updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int noticeIdx;
+    private int faqIdx;
 
-    @Column(name="noticeTitle")
-    private String noticeTitle;
+    @Column(name="faqQuestion")
+    private String faqQuestion;
 
-    @Column(name="noticeDescription")
-    private String noticeDescription;
+    @Column(name="faqAnswer")
+    private String faqAnswer;
 
     private String status="ACTIVE";
 
-    public AdminFaq(String noticeTitle, String noticeDescription) {
-        this.noticeTitle = noticeTitle;
-        this.noticeDescription = noticeDescription;
+    public AdminFaq(String faqQuestion, String faqAnswer) {
+        this.faqQuestion = faqQuestion;
+        this.faqAnswer = faqAnswer;
     }
 }

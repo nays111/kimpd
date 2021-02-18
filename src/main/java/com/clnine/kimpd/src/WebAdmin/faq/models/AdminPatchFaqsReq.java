@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class AdminPatchFaqsReq {
-    private int noticeIdx;
-    private String noticeTitle;
-    private String noticeDescription;
+    private int faqIdx;
+    private String faqQuestion;
+    private String faqAnswer;
     private String status;
 }

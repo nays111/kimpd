@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class AdminPostFaqsReq {
-    private String noticeTitle;
-    private String noticeDescription;
+    private String faqQuestion;
+    private String faqAnswer;
 }
