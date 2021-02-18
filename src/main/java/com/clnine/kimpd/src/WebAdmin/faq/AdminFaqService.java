@@ -7,8 +7,7 @@ import com.clnine.kimpd.src.WebAdmin.faq.models.AdminPostFaqsReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_PATCH_NOTICES;
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_POST_NOTICES;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 
 @Service
@@ -23,43 +22,43 @@ public class AdminFaqService {
     }
 
     /**
-     * 공지사항 등록 API
+     * FAQ 등록 API
      * @param postNoticesReq
-     * @return AdminPostNoticesReq
+     * @return AdminPostFaqsReq
      * @throws BaseException
      */
-    public void createNotices(AdminPostFaqsReq postNoticesReq) throws BaseException {
+    public void createFaqs(AdminPostFaqsReq postNoticesReq) throws BaseException {
 
-        String noticeTitle = postNoticesReq.getNoticeTitle();
-        String noticeDescription = postNoticesReq.getNoticeDescription();
-        AdminFaq noticeInfo = new AdminFaq(noticeTitle, noticeDescription);
+        String faqQuestion = postNoticesReq.getFaqQuestion();
+        String faqAnswer = postNoticesReq.getFaqAnswer();
+        AdminFaq faqInfo = new AdminFaq(faqQuestion, faqAnswer);
 
         try {
-            noticeInfo = adminFaqRepository.save(noticeInfo);
+            faqInfo = adminFaqRepository.save(faqInfo);
         } catch (Exception exception) {
-            throw new BaseException(FAILED_TO_POST_NOTICES);
+            throw new BaseException(FAILED_TO_POST_FAQS);
         }
         return;
     }
 
     /**
-     * 공지사항 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     * FAQ 수정 (POST uri 가 겹쳤을때의 예시 용도)
      * @param adminPatchFaqsReq
      * @return void
      * @throws BaseException
      */
-    public void updateNotice(AdminPatchFaqsReq adminPatchFaqsReq) throws BaseException {
+    public void updateFaq(AdminPatchFaqsReq adminPatchFaqsReq) throws BaseException {
         AdminFaq adminFaq = null;
 
         try {
-            adminFaq = adminFaqProvider.retrieveNoticeByNoticeIdx(adminPatchFaqsReq.getNoticeIdx());
-            adminFaq.setNoticeTitle(adminPatchFaqsReq.getNoticeTitle());
-            adminFaq.setNoticeDescription(adminPatchFaqsReq.getNoticeDescription());
+            adminFaq = adminFaqProvider.retrieveFaqByFaqIdx(adminPatchFaqsReq.getFaqIdx());
+            adminFaq.setFaqQuestion(adminPatchFaqsReq.getFaqQuestion());
+            adminFaq.setFaqAnswer(adminPatchFaqsReq.getFaqAnswer());
             adminFaq.setStatus(adminPatchFaqsReq.getStatus());
             adminFaqRepository.save(adminFaq);
             return ;
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_NOTICES);
+            throw new BaseException(FAILED_TO_PATCH_FAQS);
         }
     }
 

@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class AdminGetFaqsListRes {
-    List<AdminGetFaqsRes> noticesList;
+    List<AdminGetFaqsRes> faqList;
 }

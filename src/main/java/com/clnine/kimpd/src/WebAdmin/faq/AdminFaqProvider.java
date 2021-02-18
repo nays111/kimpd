@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_NOTICES;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
 public class AdminFaqProvider {
@@ -24,63 +24,63 @@ public class AdminFaqProvider {
     }
 
     /**
-     * 공지사항 전체 조회
-     * @return List<AdminGetNoticesRes>
+     * FAQ 전체 조회
+     * @return List<AdminGetFaqsRes>
      * @throws BaseException
      */
-    public List<AdminGetFaqsRes> getNoticeList() throws BaseException{
-        List<AdminFaq> noticesList;
+    public List<AdminGetFaqsRes> getFaqList() throws BaseException{
+        List<AdminFaq> faqList;
         try{
-            noticesList = adminFaqRepository.findAll();
+            faqList = adminFaqRepository.findAll();
         }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_NOTICES);
+            throw new BaseException(FAILED_TO_GET_FAQS);
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return noticesList.stream().map(Notice ->{
-            int noticeIdx = Notice.getNoticeIdx();
-            String noticeTitle = Notice.getNoticeTitle();
-            String noticeDescription = Notice.getNoticeDescription();
-            String status = Notice.getStatus();
-            return new AdminGetFaqsRes(noticeIdx, noticeTitle, noticeDescription, status);
+
+        return faqList.stream().map(Faq ->{
+            int faqIdx = Faq.getFaqIdx();
+            String faqQuestion = Faq.getFaqQuestion();
+            String faqAnswer = Faq.getFaqAnswer();
+            String status = Faq.getStatus();
+            return new AdminGetFaqsRes(faqIdx, faqQuestion, faqAnswer, status);
         }).collect(Collectors.toList());
     }
 
     /**
-     * 공지사항 상세 조회
-     * @param noticeIdx
-     * @return AdminGetNoticesRes
+     * FAQ 상세 조회
+     * @param faqIdx
+     * @return AdminGetFaqsRes
      * @throws BaseException
      */
-    public AdminGetFaqsRes retrieveNoticeInfo(int noticeIdx) throws BaseException {
+    public AdminGetFaqsRes retrieveFaqInfo(int faqIdx) throws BaseException {
         // 1. DB에서 noticeIdx AdminNotice 조회
-        AdminFaq adminFaq = retrieveNoticeByNoticeIdx(noticeIdx);
+        AdminFaq adminFaq = retrieveFaqByFaqIdx(faqIdx);
         if(adminFaq == null){
-            throw new BaseException(FAILED_TO_GET_NOTICES);
+            throw new BaseException(FAILED_TO_GET_FAQS);
         }
         // 2. AdminGetNoticesRes 변환하여 return
-        String noticeTitle = adminFaq.getNoticeTitle();
-        String noticeDescription = adminFaq.getNoticeDescription();
+        String faqQuestion = adminFaq.getFaqQuestion();
+        String faqAnswer = adminFaq.getFaqAnswer();
         String status = adminFaq.getStatus();
 
-        return new AdminGetFaqsRes(noticeIdx, noticeTitle, noticeDescription, status);
+        return new AdminGetFaqsRes(faqIdx, faqQuestion, faqAnswer, status);
     }
 
     /**
-     * 공지사항 조회
-     * @param noticeIdx
-     * @return AdminNotice
+     * FAQ 조회
+     * @param faqIdx
+     * @return AdminFaq
      * @throws BaseException
      */
-    public AdminFaq retrieveNoticeByNoticeIdx(int noticeIdx) throws BaseException {
-        // 1. DB에서 AdminNotice 조회
+    public AdminFaq retrieveFaqByFaqIdx(int faqIdx) throws BaseException {
+        // 1. DB에서 AdminFaq 조회
         AdminFaq adminFaq;
         try {
-            adminFaq = adminFaqRepository.findById(noticeIdx).orElse(null);
+            adminFaq = adminFaqRepository.findById(faqIdx).orElse(null);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_NOTICES);
+            throw new BaseException(FAILED_TO_GET_FAQS);
         }
 
-        // 2. AdminNotice return
+        // 2. AdminFaq return
         return adminFaq;
     }
 

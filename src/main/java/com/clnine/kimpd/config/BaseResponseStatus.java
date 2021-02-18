@@ -37,6 +37,9 @@ public enum BaseResponseStatus {
     SUCCESS_READ_NOTICES(true,1503,"공지사항 조회에 성공하였습니다."),
     SUCCESS_POST_NOTICES(true, 1504, "공지사항 등록에 성공하였습니다."),
     SUCCESS_PATCH_NOTICES(true, 1505, "공지사항 수정에 성공하였습니다."),
+    SUCCESS_READ_FAQS(true,1506,"FAQ 조회에 성공하였습니다."),
+    SUCCESS_POST_FAQS(true, 1507, "FAQ 등록에 성공하였습니다."),
+    SUCCESS_PATCH_FAQS(true, 1508, "FAQ 수정에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
@@ -104,6 +107,9 @@ public enum BaseResponseStatus {
     EMPTY_NOTICE_IDX(false, 2507, "공지사항 인덱스가 비었습니다."),
     EMPTY_NOTICE_TITLE(false, 2508, "공지사항 제목이 비었습니다."),
     EMPTY_NOTICE_DESCRIPTION(false, 2509, "공지사항 설명이 비었습니다."),
+    EMPTY_FAQ_IDX(false, 2510, "FAQ 인덱스가 비었습니다."),
+    EMPTY_FAQ_QUESTION(false, 2511, "FAQ 질문이 비었습니다."),
+    EMPTY_FAQ_ANSWER(false, 2512, "FAQ 답변이 비었습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -143,6 +149,9 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_NOTICES(false,3503,"공지사항 조회하는데 실패했습니다."),
     FAILED_TO_POST_NOTICES(false,3504,"공지사항 등록에 실패하였습니다."),
     FAILED_TO_PATCH_NOTICES(false, 3505, "공지사항 수정에 실패하였습니다."),
+    FAILED_TO_GET_FAQS(false,3506,"FAQ 조회하는데 실패했습니다."),
+    FAILED_TO_POST_FAQS(false,3507,"FAQ 등록에 실패하였습니다."),
+    FAILED_TO_PATCH_FAQS(false, 3508, "FAQ 수정에 실패하였습니다."),
 
 
     // 4000 : Database 오류

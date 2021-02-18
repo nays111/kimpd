@@ -1,12 +1,14 @@
 package com.clnine.kimpd.src.WebAdmin.notice;
 
 import com.clnine.kimpd.config.BaseException;
+import com.clnine.kimpd.src.WebAdmin.notice.models.AdminGetNoticeRes;
 import com.clnine.kimpd.src.WebAdmin.notice.models.AdminNotice;
 import com.clnine.kimpd.src.WebAdmin.notice.models.AdminGetNoticesRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,13 +37,15 @@ public class AdminNoticeProvider {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_NOTICES);
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         return noticesList.stream().map(Notice ->{
             int noticeIdx = Notice.getNoticeIdx();
             String noticeTitle = Notice.getNoticeTitle();
             String noticeDescription = Notice.getNoticeDescription();
+            String updatedAt = sDate.format(Notice.getUpdatedAt());
             String status = Notice.getStatus();
-            return new AdminGetNoticesRes(noticeIdx, noticeTitle, noticeDescription, status);
+            return new AdminGetNoticesRes(noticeIdx, noticeTitle, noticeDescription, updatedAt, status);
         }).collect(Collectors.toList());
     }
 
@@ -51,7 +55,7 @@ public class AdminNoticeProvider {
      * @return AdminGetNoticesRes
      * @throws BaseException
      */
-    public AdminGetNoticesRes retrieveNoticeInfo(int noticeIdx) throws BaseException {
+    public AdminGetNoticeRes retrieveNoticeInfo(int noticeIdx) throws BaseException {
         // 1. DB에서 noticeIdx AdminNotice 조회
         AdminNotice adminNotice = retrieveNoticeByNoticeIdx(noticeIdx);
         if(adminNotice == null){
@@ -62,7 +66,7 @@ public class AdminNoticeProvider {
         String noticeDescription = adminNotice.getNoticeDescription();
         String status = adminNotice.getStatus();
 
-        return new AdminGetNoticesRes(noticeIdx, noticeTitle, noticeDescription, status);
+        return new AdminGetNoticeRes(noticeIdx, noticeTitle, noticeDescription, status);
     }
 
     /**
