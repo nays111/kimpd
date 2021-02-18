@@ -56,7 +56,7 @@ public class AdminUserInfoController {
     @GetMapping("/users/{userIdx}")
     @CrossOrigin(origins = "*")
     public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userIdx) {
-        if (userIdx== null || userIdx <= 0) {
+        if (userIdx == null || userIdx <= 0) {
             return new BaseResponse<>(EMPTY_USERID);
         }
 
@@ -176,15 +176,43 @@ public class AdminUserInfoController {
     }
 
     /**
-     * 비밀번호 수정 API
-     * [PATCH] /password
-     * @RequestBody PatchUserReq
-     * @return BaseResponse<PatchUserRes>
+     * 사용자 비밀번호 수정 API
+     * [PATCH] /user-password
+     * @RequestBody AdminPatchUserPwReq
+     * @return BaseResponse<Void>
      */
     @ResponseBody
-    @PatchMapping("/password")
+    @PatchMapping("/user-password")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminPatchUserPwRes> patchUsers(@RequestBody AdminPatchUserPwReq parameters) {
+    public BaseResponse<Void> patchUsersPassword(@RequestBody AdminPatchUserPwReq parameters) {
+
+        if (parameters.getUserIdx() <= 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+
+        System.out.println(parameters.getEmail());
+        if (parameters.getEmail() == null || parameters.getEmail().length() <= 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+
+        try {
+            adminUserInfoService.updateUserPw(parameters);
+            return new BaseResponse<>(SUCCESS_PATCH_USER_PASSWORD);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * admin 비밀번호 수정 API
+     * [PATCH] /admin-password
+     * @RequestBody AdminPatchAdminPwReq
+     * @return BaseResponse<AdminPatchAdminPwRes>
+     */
+    @ResponseBody
+    @PatchMapping("/admin-password")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<AdminPatchAdminPwRes> patchUsers(@RequestBody AdminPatchAdminPwReq parameters) {
 
 
         if (parameters.getUserId() == null || parameters.getUserId().length() <= 0){

@@ -6,7 +6,6 @@ import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
 import com.clnine.kimpd.utils.MailService;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -268,28 +267,47 @@ public class AdminUserInfoService {
     }
 
     /**
-     * admin 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     * user 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
      * @param adminPatchUserPwReq
+     * @return void
+     * @throws BaseException
+     */
+    public void updateUserPw(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
+        AdminUserInfo existsUserInfo = null;
+
+        try{
+            //존재한다면
+            existsUserInfo = adminUserInfoProvider.retrieveUserInfoByEmail(adminPatchUserPwReq.getEmail());
+        }catch(BaseException exception){
+            throw new BaseException(NOT_FOUND_USER);
+        }
+        String newPassword = mailService.sendPwFindMail(adminPatchUserPwReq.getEmail());
+        return;
+    }
+
+    /**
+     * admin 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     * @param adminPatchAdminPwReq
      * @return PatchUserRes
      * @throws BaseException
      */
-    public AdminPatchUserPwRes updateAdminInfo(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
+    public AdminPatchAdminPwRes updateAdminInfo(AdminPatchAdminPwReq adminPatchAdminPwReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
         String password;
 
         try {
-            existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchUserPwReq.getUserId());
+            existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchAdminPwReq.getUserId());
 
-            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchUserPwReq.getPassword());
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getPassword());
             System.out.println(password);
             if(!password.equals(existsWebAdminInfo.getPassword()))
                 throw new BaseException(FAILED_TO_PATCH_USER);
             else{
-                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchUserPwReq.getNewPassword());
+                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getNewPassword());
                 existsWebAdminInfo.setPassword(password);
                 webAdminInfoRepository.save(existsWebAdminInfo);
             }
-            return new AdminPatchUserPwRes(adminPatchUserPwReq.getUserId());
+            return new AdminPatchAdminPwRes(adminPatchAdminPwReq.getUserId());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_PATCH_USER);
         }

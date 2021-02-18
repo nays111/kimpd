@@ -34,6 +34,9 @@ public enum BaseResponseStatus {
     SUCCESS_READ_BANNERS(true,1500,"광고 조회에 성공하였습니다."),
     SUCCESS_PATCH_BANNERS(true, 1501, "광고 수정에 성공하였습니다."),
     SUCCESS_POST_BANNERS(true, 1502, "광고 등록에 성공하였습니다."),
+    SUCCESS_READ_NOTICES(true,1503,"공지사항 조회에 성공하였습니다."),
+    SUCCESS_POST_NOTICES(true, 1504, "공지사항 등록에 성공하였습니다."),
+    SUCCESS_PATCH_NOTICES(true, 1505, "공지사항 수정에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
@@ -98,6 +101,9 @@ public enum BaseResponseStatus {
     EMPTY_BANNER_END_DATE(false, 2504, "광고 종료일이 비었습니다."),
     EMPTY_BANNER_IMAGE(false, 2505, "광고 이미지가 비었습니다."),
     NOT_VALID_START_DATE(false, 2506, "광고 시작일이 광고 종료일보다 늦을 수 없습니다."),
+    EMPTY_NOTICE_IDX(false, 2507, "공지사항 인덱스가 비었습니다."),
+    EMPTY_NOTICE_TITLE(false, 2508, "공지사항 제목이 비었습니다."),
+    EMPTY_NOTICE_DESCRIPTION(false, 2509, "공지사항 설명이 비었습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -134,6 +140,9 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),
     FAILED_TO_POST_BANNER(false,3502,"광고 등록에 실패하였습니다."),
+    FAILED_TO_GET_NOTICES(false,3503,"공지사항 조회하는데 실패했습니다."),
+    FAILED_TO_POST_NOTICES(false,3504,"공지사항 등록에 실패하였습니다."),
+    FAILED_TO_PATCH_NOTICES(false, 3505, "공지사항 수정에 실패하였습니다."),
 
 
     // 4000 : Database 오류
