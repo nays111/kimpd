@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
-public class AdminPatchUserPwReq {
-    private int userIdx;
-    private String email;
+public class AdminPatchAdminPwReq {
+    private String userId;
+    private String password;
+    private String newPassword;
+    private String confirmPassword;
 }

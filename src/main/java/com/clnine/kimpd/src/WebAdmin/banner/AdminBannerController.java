@@ -76,7 +76,7 @@ public class AdminBannerController {
     @ResponseBody
     @PostMapping("/banners")
     @CrossOrigin(origins = "*")
-    public BaseResponse<Void> postNormalUsers(@RequestBody AdminPostBannerReq parameters) {
+    public BaseResponse<Void> postBanners(@RequestBody AdminPostBannerReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getBannerLink() == null || parameters.getBannerLink().length() <= 0) {
             return new BaseResponse<>(EMPTY_BANNER_LINK);
@@ -127,7 +127,7 @@ public class AdminBannerController {
     @ResponseBody
     @PatchMapping("/banners")
     @CrossOrigin(origins = "*")
-    public BaseResponse<Void> patchUsers(@RequestBody AdminPatchBannerReq parameters) {
+    public BaseResponse<Void> patchBanners(@RequestBody AdminPatchBannerReq parameters) {
         if (parameters.getBannerLink() == null || parameters.getBannerLink().length() <= 0) {
             return new BaseResponse<>(EMPTY_BANNER_LINK);
         }
