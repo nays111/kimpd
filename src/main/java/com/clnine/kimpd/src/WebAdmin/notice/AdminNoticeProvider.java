@@ -38,14 +38,14 @@ public class AdminNoticeProvider {
             throw new BaseException(FAILED_TO_GET_NOTICES);
         }
 
-        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
         return noticesList.stream().map(Notice ->{
             int noticeIdx = Notice.getNoticeIdx();
             String noticeTitle = Notice.getNoticeTitle();
             String noticeDescription = Notice.getNoticeDescription();
-            String updatedAt = sDate.format(Notice.getUpdatedAt());
+            String createdAt = sDate.format(Notice.getCreatedAt());
             String status = Notice.getStatus();
-            return new AdminGetNoticesRes(noticeIdx, noticeTitle, noticeDescription, updatedAt, status);
+            return new AdminGetNoticesRes(noticeIdx, noticeTitle, noticeDescription, createdAt, status);
         }).collect(Collectors.toList());
     }
 
