@@ -11,6 +11,6 @@ public class AdminGetNoticesRes {
     private final int noticeIdx;
     private final String noticeTitle;
     private final String noticeDescription;
-    private final String updatedAt;
+    private final String createdAt;
     private final String status;
 }
