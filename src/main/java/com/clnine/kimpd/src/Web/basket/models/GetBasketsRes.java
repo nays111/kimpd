@@ -13,7 +13,7 @@ public class GetBasketsRes {
     private final String jobCategoryChildName;
     private final String introduce;
     private final String castingDate;
-    private final int projectIdx;
     private final String projectName;
     private final String castingPrice;
+    private final String castingCondition;
 }
