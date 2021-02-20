@@ -13,29 +13,30 @@ import java.util.List;
 
 @Repository
 public interface CastingRepository extends CrudRepository<Casting,Integer> {
-    List<Casting> findByUserInfoAndExpertAndProjectAndStatus(UserInfo user, UserInfo expert, Project project,String status);
+    List<Casting> findByUserInfoAndExpertAndProjectAndCastingStatusNotAndStatus(UserInfo user, UserInfo expert, Project project,int castingStatus,String status);
     //섭외 신청을 보낸 경우
     int countAllByUserInfoAndCastingStatusAndStatus(UserInfo user,int castingStatus,String status);
     //섭외 요청을 받은 경우
     int countAllByExpertAndCastingStatusAndStatus(UserInfo user,int castingStatus,String status);
 
+
     // 섭외 요청을 보낸 경우
     //전체 기간 전체 조회
-    List<Casting> findAllByUserInfoAndStatusOrderByCastingIdxDesc(UserInfo userInfo, String status, Pageable pageable);
+    List<Casting> findAllByUserInfoAndStatusAndCastingStatusNotOrderByCastingIdxDesc(UserInfo userInfo, String status,int castingStatus ,Pageable pageable);
     //전체 기간 섭외 상태에 따른 조회
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
     //기간 내 전체 조회
-    List<Casting> findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, String status, Date now, Date end, Pageable pageable);
+    List<Casting> findAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, String status, int castingStatus,Date now, Date end, Pageable pageable);
     //기간 내 섭외 상태에 따른 조회
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
 
     //섭외 요청을 받은 경우
-    //전체 기간 전체 조회
-    List<Casting> findAllByExpertAndStatusOrderByCastingIdxDesc(UserInfo userInfo, String status, Pageable pageable);
+    //전체 기간 전체 조회 (수정)
+    List<Casting> findAllByExpertAndStatusAndCastingStatusNotOrderByCastingIdxDesc(UserInfo userInfo, String status, int castingStatus,Pageable pageable);
     //전체 기간 섭외 상태에 따른 조회
     List<Casting> findAllByExpertAndCastingStatusAndStatusOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
-    //기간 내 전체 조회
-    List<Casting> findAllByExpertAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, String status, Date now, Date end, Pageable pageable);
+    //기간 내 전체 조회 (수정)
+    List<Casting> findAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, String status, int castingStatus,Date now, Date end, Pageable pageable);
     //기간 내 섭외 상태에 따른 조회
     List<Casting> findAllByExpertAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
 

@@ -1,6 +1,7 @@
 package com.clnine.kimpd.src.Web.user;
 
 import com.baroservice.api.BarobillApiService;
+import com.baroservice.ws.CorpState;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.user.models.*;
@@ -421,11 +422,19 @@ public class UserInfoController {
             return  new BaseResponse<>(WRONG_CORP_NUM);
         }
 
-        int result = barobillApiService.taxInvoice.checkCorpIsMember(barobillCertyKey,barbobillCorpNum,corpNum);
+        CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
+        //int result = corpState.getState();
+        String cn = corpState.getCorpNum();
+        int tt = corpState.getTaxType();
+        int state = corpState.getState();
+
+        System.out.println(cn+" "+tt+" "+state);
+
+//        int result2 = barobillApiService.taxInvoice.checkCorpIsMember(barobillCertyKey,barbobillCorpNum,corpNum);
+//        System.out.println(result2);
 
 
-
-        if(result>=1){
+        if(state>=1){
             return new BaseResponse<>(SUCCESS);
         }else{
             return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);

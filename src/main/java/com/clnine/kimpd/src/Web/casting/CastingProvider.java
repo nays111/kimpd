@@ -34,7 +34,7 @@ public class CastingProvider {
     public Casting retrieveCastingInfoByUserExpertProject(UserInfo user, UserInfo expert, Project project) throws BaseException{
         List<Casting> existsCastingList;
         try{
-            existsCastingList = castingRepository.findByUserInfoAndExpertAndProjectAndStatus(user,expert,project,"ACTIVE");
+            existsCastingList = castingRepository.findByUserInfoAndExpertAndProjectAndCastingStatusNotAndStatus(user,expert,project,0,"ACTIVE");
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_CASTING);
         }
@@ -112,19 +112,19 @@ public class CastingProvider {
 
         if(duration==null){ //전체기간 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatusOrderByCastingIdxDesc(userInfo,"ACTIVE",pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0,pageable);
             }else{
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",pageable);
             }
         }else if(duration==1){ //최근 3개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end1,now1,pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1,pageable);
             }else{
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end1,now1,pageable);
             }
         }else if(duration==2){ //최근 6개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end2,now1,pageable);
+                castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1,pageable);
             }else{
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end2,now1,pageable);
             }
@@ -213,19 +213,19 @@ public class CastingProvider {
 
         if(duration==null){ //전체기간 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByExpertAndStatusOrderByCastingIdxDesc(userInfo,"ACTIVE",pageable);
+                castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0,pageable);
             }else{
                 castingList = castingRepository.findAllByExpertAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",pageable);
             }
         }else if(duration==1){ //최근 3개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByExpertAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end1,now1,pageable);
+                castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1,pageable);
             }else{
                 castingList = castingRepository.findAllByExpertAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end1,now1,pageable);
             }
         }else if(duration==2){ //최근 6개월 조회
             if(castingStatus==null){//전체조회
-                castingList = castingRepository.findAllByExpertAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",end2,now1,pageable);
+                castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1,pageable);
             }else{
                 castingList = castingRepository.findAllByExpertAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end2,now1,pageable);
             }
