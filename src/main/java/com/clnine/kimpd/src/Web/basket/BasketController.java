@@ -3,13 +3,14 @@ package com.clnine.kimpd.src.Web.basket;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.basket.models.GetBasketListRes;
+import com.clnine.kimpd.src.Web.basket.models.PostBasketCastingReq;
 import com.clnine.kimpd.src.Web.basket.models.PostBasketReq;
 import com.clnine.kimpd.src.Web.casting.models.CastingCountRes;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,5 +65,29 @@ public class BasketController {
         }
     }
 
+    /**
+     * 장바구니에 담긴걸 섭외 요청 보내기
+     * @param postBasketCastingReq
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/baskets/castings")
+    public BaseResponse<String> postBasketCasting(@RequestBody PostBasketCastingReq postBasketCastingReq){
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        if(postBasketCastingReq.getCastingIdx().size()==0 || postBasketCastingReq.getCastingIdx()==null){
+            return new BaseResponse<>(EMPTY_CASTING_INDEX);
+        }
+        try{
+            basketService.postBasketCasting(postBasketCastingReq);
+            return new BaseResponse<>(SUCCESS);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
 
 }

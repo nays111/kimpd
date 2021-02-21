@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.basket;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.Web.basket.models.PostBasketCastingReq;
 import com.clnine.kimpd.src.Web.basket.models.PostBasketReq;
 import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
@@ -12,6 +13,7 @@ import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -77,8 +79,36 @@ public class BasketService {
 
     }
 
+    /**
+     * 장바구니에 있는 걸로 섭외 요청하기
+     * @param postBasketCastingReq
+     * @throws BaseException
+     */
+    public void postBasketCasting(PostBasketCastingReq postBasketCastingReq) throws BaseException{
+        List<Integer> castingIdxList = postBasketCastingReq.getCastingIdx();
+        List<Casting> castingList = new ArrayList<>();
+        for(int i=0;i<castingIdxList.size();i++){
+            Casting casting;
+            try{
+                casting = castingRepository.findAllByCastingIdxAndStatus(castingIdxList.get(i),"ACTIVE");
+            }catch (Exception ignored){
+                throw new BaseException(BaseResponseStatus.NOT_FOUND_CASTING);
+            }
+            String castingMessage = casting.getCastingMessage();
+            String castingWork = casting.getCastingWork();
+            String castingPriceDate = casting.getCastingPriceDate();
+            if(castingMessage==null || castingWork==null || castingPriceDate==null){
+                throw new BaseException(BaseResponseStatus.DID_NOT_INSERT_CASTING_CONDITION);
+            }else {
+                castingList.add(casting);
+            }
+        }
 
-
-
+        for(int i=0;i<castingList.size();i++) {
+            Casting casting = castingList.get(i);
+            casting.setCastingStatus(1);
+            castingRepository.save(casting);
+        }
+    }
 
 }
