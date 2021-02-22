@@ -423,16 +423,8 @@ public class UserInfoController {
         }
 
         CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
-        //int result = corpState.getState();
-        String cn = corpState.getCorpNum();
-        int tt = corpState.getTaxType();
+
         int state = corpState.getState();
-
-        System.out.println(cn+" "+tt+" "+state);
-
-//        int result2 = barobillApiService.taxInvoice.checkCorpIsMember(barobillCertyKey,barbobillCorpNum,corpNum);
-//        System.out.println(result2);
-
 
         if(state>=1){
             return new BaseResponse<>(SUCCESS);
