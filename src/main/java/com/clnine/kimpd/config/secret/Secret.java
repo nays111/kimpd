@@ -6,6 +6,6 @@ public class Secret {
     public static String aligoKey="bt1qufu4xrtcwpi3bsp6i7tyiue7cufy";
     public static String aligoId="kimpdlabs";
     public static String aligoSender="01062376451";
-    public static String barobillCertyKey = "1CD1F6A5-33A6-40E0-B5D6-0A4256685139";
+    public static String barobillCertyKey = "F4D0AE23-6868-49DF-88F8-F99B2A992F04";
     public static String barbobillCorpNum = "2648100466";
 }
