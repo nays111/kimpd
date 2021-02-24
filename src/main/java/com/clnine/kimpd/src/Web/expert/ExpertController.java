@@ -52,10 +52,10 @@ public class ExpertController {
      */
     @GetMapping("/experts")
     public BaseResponse<GetExpertsRes> getExperts(@RequestParam(required = false) String word,
-                                                      @RequestParam(required = false) Integer jobCategoryParentIdx,
-                                                      @RequestParam(required = false) Integer jobCategoryChildIdx,
-                                                      @RequestParam(required = false) Integer genreCategoryIdx,
-                                                      @RequestParam(required = false) String city,
+                                                      @RequestParam(required = false) List<Long> jobCategoryParentIdx,
+                                                      @RequestParam(required = false) List<Long> jobCategoryChildIdx,
+                                                      @RequestParam(required = false) List<Long> genreCategoryIdx,
+                                                      @RequestParam(required = false) List<String> city,
                                                       @RequestParam(required = false) String minimumCastingPrice,
                                                       @RequestParam(required = true)int page,
                                                       @RequestParam(required = true)int sort){

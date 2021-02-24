@@ -180,21 +180,6 @@ public class UserInfoProvider {
         //3분 이내의 것들 중에 가장 최근 것것
        Certification certification;
        int code;
-
-//       String today = null;
-//       String day3before = null;
-//       Date date = new Date();
-//       SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
-//
-//       Calendar cal = Calendar.getInstance();
-//       cal.setTime(date);
-//       today = formatter.format(cal.getTime());
-//
-//       cal.add(Calendar.MINUTE,-3);
-//       day3before = formatter.format(cal.getTime());
-//
-//       Date TODAY =  formatter.parse(today);
-//       Date DAY3BEFORE =  formatter.parse(day3before);
         LocalDateTime now = LocalDateTime.now();
         Timestamp t1 = new Timestamp(System.currentTimeMillis());
         Timestamp t2 = new Timestamp(System.currentTimeMillis() - 180000); //3분

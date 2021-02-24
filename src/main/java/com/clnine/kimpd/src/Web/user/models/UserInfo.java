@@ -1,11 +1,14 @@
 package com.clnine.kimpd.src.Web.user.models;
 
 import com.clnine.kimpd.config.BaseEntity;
+import com.clnine.kimpd.src.Web.category.models.UserJobCategory;
 import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -18,6 +21,8 @@ public class UserInfo extends BaseEntity {
     @Column(name="userIdx",nullable = false,updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userIdx;
+
+
 
     @Column(name="userType",nullable = false)
     private int userType;
