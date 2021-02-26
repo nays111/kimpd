@@ -52,6 +52,9 @@ public class AdminFaqService {
 
         try {
             adminFaq = adminFaqProvider.retrieveFaqByFaqIdx(adminPatchFaqsReq.getFaqIdx());
+            if(adminFaq == null){
+                throw new BaseException(FAILED_TO_PATCH_FAQS);
+            }
             adminFaq.setFaqQuestion(adminPatchFaqsReq.getFaqQuestion());
             adminFaq.setFaqAnswer(adminPatchFaqsReq.getFaqAnswer());
             adminFaq.setStatus(adminPatchFaqsReq.getStatus());

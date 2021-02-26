@@ -56,6 +56,9 @@ public class AdminNoticeService {
 
         try {
             adminNotice = adminNoticeProvider.retrieveNoticeByNoticeIdx(adminPatchNoticesReq.getNoticeIdx());
+            if(adminNotice == null){
+                throw new BaseException(FAILED_TO_PATCH_NOTICES);
+            }
             adminNotice.setNoticeTitle(adminPatchNoticesReq.getNoticeTitle());
             adminNotice.setNoticeDescription(adminPatchNoticesReq.getNoticeDescription());
             adminNotice.setStatus(adminPatchNoticesReq.getStatus());

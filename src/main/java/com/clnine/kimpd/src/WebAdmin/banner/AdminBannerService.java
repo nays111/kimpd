@@ -73,6 +73,9 @@ public class AdminBannerService {
 
         try {
             adminBanner = adminBannerProvider.retrieveBannerByBannerIdx(adminPatchBannerReq.getBannerIdx());
+            if(adminBanner == null){
+                throw new BaseException(FAILED_TO_PATCH_BANNER);
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             adminBanner.setBannerImageURL(adminPatchBannerReq.getBannerImageURL());
