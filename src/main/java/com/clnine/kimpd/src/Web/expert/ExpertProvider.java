@@ -92,20 +92,24 @@ public class ExpertProvider {
 
     /**
      * 전문가 리스트 검색
-     * @param word
-     * @param jobCategoryParentIdx
-     * @param jobCategoryChildIdx
-     * @param genreCategoryIdx
-     * @param city
-     * @param minimumCastingPrice
-     * @param page
-     * @param sort
-     * @return
      * @throws BaseException
      */
-    public GetExpertsRes findExperts(String word,List<Long> jobCategoryParentIdx,List<Long> jobCategoryChildIdx,
-                                     List<Long> genreCategoryIdx, List<String> city,
-                                     String minimumCastingPrice,int page,int sort) throws BaseException{
+    public GetExpertsRes findExperts(PostExpertsReq postExpertsReq) throws BaseException{
+
+        String word = postExpertsReq.getWord();
+        List<Long> jobCategoryParentIdx = postExpertsReq.getJobCategoryParentIdx();
+        List<Long> jobCategoryChildIdx = postExpertsReq.getJobCategoryChildIdx();
+        List<Long> genreCategoryIdx = postExpertsReq.getGenreCategoryIdx();
+        List<String> city = postExpertsReq.getCity();
+        String castingStartDate = postExpertsReq.getCastingStartDate();
+        String castingEndDate = postExpertsReq.getCastingEndDate();
+        String minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
+        int page = postExpertsReq.getPage();
+        int sort = postExpertsReq.getSort();
+
+
+
+
         int pageSearch = (page-1)*5;
 
         List<Object[]> resultList = null;
@@ -144,14 +148,24 @@ public class ExpertProvider {
             city.add("전남");
             city.add("전북");
             city.add("충남");
+            city.add("충북");
             city.add("제주");
+        }
+        if(castingStartDate==null || castingStartDate.length()==0){
+            castingStartDate="";
+        }
+        if(castingEndDate==null || castingEndDate.length()==0){
+            castingEndDate="999999";
+        }
+        if(minimumCastingPrice==null || minimumCastingPrice.length()==0){
+            minimumCastingPrice="999999999999999";
         }
 
 
         if(sort==1){ //퍙점순 정렬
-            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,pageSearch);
+            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
         } else if(sort==2){ //섭외순 정렬
-            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,pageSearch);
+            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
 
         }
         int size = resultList.size();

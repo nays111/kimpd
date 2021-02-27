@@ -80,6 +80,13 @@ public class UserInfo extends BaseEntity {
     @Column(name="minimumCastingPrice")
     private String minimumCastingPRice;
 
+    //섭외 가능 시작 날짜
+    private String castingPossibleStartDate;
+
+    //섭외 가능 종료 잘짜
+    private String castingPossibleEndDate;
+
+
     @Column(name="agreeShowDB")
     private int agreeShowDB=1;
 
