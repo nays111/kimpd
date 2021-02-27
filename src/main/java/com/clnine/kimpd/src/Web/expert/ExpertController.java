@@ -85,6 +85,23 @@ public class ExpertController {
         }
     }
 
+    @GetMapping("/users/{userIdx}/profile")
+    @ResponseBody
+    public BaseResponse<GetMyExpertRes> getMyExpertRes(@PathVariable(required = true,value = "userIdx")int userIdx){
+        int userIdxJWT;
+        try{
+            userIdxJWT = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        try{
+            GetMyExpertRes getMyExpertRes = expertProvider.getMyExpertRes(userIdx);
+            return new BaseResponse<>(SUCCESS,getMyExpertRes);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 
 
 }

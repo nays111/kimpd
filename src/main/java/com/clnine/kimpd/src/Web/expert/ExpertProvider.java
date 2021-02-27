@@ -3,8 +3,9 @@ package com.clnine.kimpd.src.Web.expert;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
+import com.clnine.kimpd.src.Web.category.UserGenreCategoryRepository;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
-import com.clnine.kimpd.src.Web.category.models.UserJobCategory;
+import com.clnine.kimpd.src.Web.category.models.*;
 import com.clnine.kimpd.src.Web.expert.models.*;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
@@ -34,6 +35,7 @@ public class ExpertProvider {
     private final CategoryProvider categoryProvider;
     private final UserJobCategoryRepository userJobCategoryRepository;
     private final ExpertRepository expertRepository;
+    private final UserGenreCategoryRepository userGenreCategoryRepository;
 
     /**
      * 전문가 상세보기
@@ -187,5 +189,80 @@ public class ExpertProvider {
         GetExpertsRes getExpertsRes = new GetExpertsRes(size,getUsersResList);
         return getExpertsRes;
     }
+
+
+    /**
+     * 내 정보 조회 (전문가일 경우)
+     * @param userIdx
+     * @return
+     * @throws BaseException
+     */
+    public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
+        UserInfo userInfo;
+        try {
+            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
+        } catch (Exception ignored) {
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
+        }
+        if(userInfo==null){
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
+        }
+        List<UserJobCategory> userJobCategoryList = userJobCategoryRepository.findByUserInfo(userInfo);
+        List<UserGenreCategory> userGenreCategoryList = userGenreCategoryRepository.findByUserInfo(userInfo);
+        List<Portfolio> portfolioList = portfolioRepository.findAllByUserInfo(userInfo);
+
+
+        List<UserJobCategoryParentDTO> jobCategoryParentDTOS = new ArrayList<>();
+        List<UserJobCategoryChildDTO> jobCategoryChildDTOS = new ArrayList<>();
+        List<UserGenreCategoryDTO> genreCategoryDTOS = new ArrayList<>();
+
+        if(userJobCategoryList!=null){
+            for(int i=0;i<userJobCategoryList.size();i++){
+                UserJobCategory userJobCategory = userJobCategoryList.get(i);
+                JobCategoryChild jobCategoryChild = userJobCategory.getJobCategoryChild();
+                JobCategoryParent jobCategoryParent = userJobCategory.getJobCategoryParent();
+                UserJobCategoryParentDTO userJobCategoryParentDTO = new UserJobCategoryParentDTO(jobCategoryParent.getJobCategoryParentIdx(), jobCategoryParent.getJobCategoryName());
+                UserJobCategoryChildDTO userJobCategoryChildDTO = new UserJobCategoryChildDTO(jobCategoryChild.getJobCategoryChildIdx(), jobCategoryChild.getJobCategoryChildName());
+                jobCategoryParentDTOS.add(userJobCategoryParentDTO);
+                jobCategoryChildDTOS.add(userJobCategoryChildDTO);
+            }
+        }
+
+
+        if(userGenreCategoryList!=null){
+            for(int i=0;i<userGenreCategoryList.size();i++){
+                UserGenreCategory userGenreCategory = userGenreCategoryList.get(i);
+                GenreCategory genreCategory = userGenreCategory.getGenreCategory();
+                UserGenreCategoryDTO userGenreCategoryDTO = new UserGenreCategoryDTO(genreCategory.getGenreCategoryIdx(),genreCategory.getGenreCategoryName());
+                genreCategoryDTOS.add(userGenreCategoryDTO);
+            }
+        }
+
+
+        List<String> portfolioFileURL = new ArrayList<>();
+        if(portfolioFileURL!=null){
+            for(int i=0;i<portfolioList.size();i++){
+                String portfolioURL = portfolioList.get(i).getPortfolioURL();
+                portfolioFileURL.add(portfolioURL);
+            }
+        }
+
+        String introduce,career,etc,castingStartPossibleDate,castingEndPossibleDate;
+        Integer minimumCastingPrice,agreeShowDB;
+
+         introduce = userInfo.getIntroduce();
+         career = userInfo.getCareer();
+         etc = userInfo.getEtc();
+         minimumCastingPrice = userInfo.getMinimumCastingPrice();
+         castingStartPossibleDate = userInfo.getCastingPossibleStartDate();
+         castingEndPossibleDate = userInfo.getCastingPossibleEndDate();
+         agreeShowDB = userInfo.getAgreeShowDB();
+
+        GetMyExpertRes getMyExpertRes = new GetMyExpertRes(jobCategoryParentDTOS,jobCategoryChildDTOS,genreCategoryDTOS,introduce,career,portfolioFileURL,etc,minimumCastingPrice,castingStartPossibleDate,castingEndPossibleDate,agreeShowDB);
+        return getMyExpertRes;
+    }
+
+
+
 
 }

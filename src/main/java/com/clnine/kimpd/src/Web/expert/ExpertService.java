@@ -83,7 +83,7 @@ public class ExpertService {
         userInfo.setIntroduce(introduce);
         userInfo.setCareer(career);
         userInfo.setEtc(etc);
-        userInfo.setMinimumCastingPRice(minimumCastingPrice);
+        userInfo.setMinimumCastingPrice(minimumCastingPrice);
         userInfo.setCastingPossibleStartDate(castingStartPossibleDate);
         userInfo.setCastingPossibleEndDate(castingEndPossibleDate);
         userInfo.setAgreeShowDB(agreeShowDB);
