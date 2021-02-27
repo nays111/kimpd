@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,4 +28,9 @@ public class Portfolio extends BaseEntity {
 
     @Column(name="status")
     private String status = "ACTIVE";
+
+    public Portfolio(UserInfo userInfo, String portfolioFileURL) {
+        this.userInfo = userInfo;
+        this.portfolioURL = portfolioFileURL;
+    }
 }

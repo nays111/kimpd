@@ -16,5 +16,8 @@ public class PatchMyExpertReq {
     private String career;
     private List<String> portfolioFileURL;
     private String etc;
-    private String minimumCastingPrice;
+    private Integer minimumCastingPrice;
+    private String castingStartPossibleDate;
+    private String castingEndPossibleDate;
+    private int agreeShowDB;
 }
