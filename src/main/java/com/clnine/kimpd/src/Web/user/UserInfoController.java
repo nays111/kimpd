@@ -154,9 +154,9 @@ public class UserInfoController {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if (!isRegexImageType(parameters.getBusinessImageURL())) {
-                return new BaseResponse<>(INVALID_IMAGE_TYPE);
-            }
+//            if (!isRegexImageType(parameters.getBusinessImageURL())) {
+//                return new BaseResponse<>(INVALID_IMAGE_TYPE);
+//            }
         }
 
         /**

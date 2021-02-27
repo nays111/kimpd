@@ -103,7 +103,7 @@ public class ExpertProvider {
         List<String> city = postExpertsReq.getCity();
         String castingStartDate = postExpertsReq.getCastingStartDate();
         String castingEndDate = postExpertsReq.getCastingEndDate();
-        String minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
+        Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         int page = postExpertsReq.getPage();
         int sort = postExpertsReq.getSort();
 
@@ -157,18 +157,22 @@ public class ExpertProvider {
         if(castingEndDate==null || castingEndDate.length()==0){
             castingEndDate="999999";
         }
-        if(minimumCastingPrice==null || minimumCastingPrice.length()==0){
-            minimumCastingPrice="999999999999999";
+        if(minimumCastingPrice==null){
+            minimumCastingPrice=999999999;
         }
 
+
+        List<Object[]> resultList2 = null;
 
         if(sort==1){ //퍙점순 정렬
             resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
+            resultList2 = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
         } else if(sort==2){ //섭외순 정렬
             resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
+            resultList2 = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
 
         }
-        int size = resultList.size();
+        int size = resultList2.size();
 
         List<GetUsersRes> getUsersResList = resultList.stream().map(getUsersRes-> new GetUsersRes(
                 Integer.parseInt(String.valueOf(getUsersRes[0])), //userIdx

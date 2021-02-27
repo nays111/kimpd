@@ -78,7 +78,7 @@ public class UserInfo extends BaseEntity {
     private String etc;
 
     @Column(name="minimumCastingPrice")
-    private String minimumCastingPRice;
+    private int minimumCastingPRice;
 
     //섭외 가능 시작 날짜
     private String castingPossibleStartDate;
