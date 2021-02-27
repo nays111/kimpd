@@ -20,26 +20,6 @@ public class AdminInquiryService {
     }
 
     /**
-     * FAQ 등록 API
-     * @param postNoticesReq
-     * @return AdminPostFaqsReq
-     * @throws BaseException
-     */
-//    public void createFaqs(AdminPostFaqsReq postNoticesReq) throws BaseException {
-//
-//        String faqQuestion = postNoticesReq.getFaqQuestion();
-//        String faqAnswer = postNoticesReq.getFaqAnswer();
-//        AdminInquiry faqInfo = new AdminInquiry(faqQuestion, faqAnswer);
-//
-//        try {
-//            faqInfo = adminFaqRepository.save(faqInfo);
-//        } catch (Exception exception) {
-//            throw new BaseException(FAILED_TO_POST_FAQS);
-//        }
-//        return;
-//    }
-
-    /**
      * 1:1문의 답글 (POST uri 가 겹쳤을때의 예시 용도)
      * @param adminPatchInquiriesReq
      * @return void

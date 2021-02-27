@@ -42,7 +42,7 @@ public class Project extends BaseEntity {
     @Column(name="projectBudget",nullable = false)
     private String projectBudget;
 
-    @Column(name="projectSatus")
+    @Column(name="projectStatus")
     private int projectStatus=1;
 
     @Column(name="status")
