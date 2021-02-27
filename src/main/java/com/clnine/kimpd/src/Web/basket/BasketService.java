@@ -45,9 +45,9 @@ public class BasketService {
          */
         List<Integer> expertIdxList = postBasketReq.getUserIdx();
 
-        String castingStartDate = postBasketReq.getCastingStartDate();//삽입할 정보
-        String castingEndDate = postBasketReq.getCastingEndDate();//삽입할 정보
-        String castingPrice = postBasketReq.getCastingPrice();//삽입할 정보
+//        String castingStartDate = postBasketReq.getCastingStartDate();//삽입할 정보
+//        String castingEndDate = postBasketReq.getCastingEndDate();//삽입할 정보
+//        String castingPrice = postBasketReq.getCastingPrice();//삽입할 정보
 
         int projectIdx = postBasketReq.getProjectIdx();
         Project project; //삽입할 정보
@@ -56,9 +56,6 @@ public class BasketService {
         }catch(Exception ignored){
             throw new BaseException(BaseResponseStatus.FAILED_TO_GET_PROJECTS);
         }
-
-
-
 
         for(int i=0;i<expertIdxList.size();i++){
             int expertIdx = expertIdxList.get(i);
@@ -73,7 +70,11 @@ public class BasketService {
             }
             int castingStatus = 0;
 
-            Casting casting = new Casting(userInfo,expertInfo,project,castingPrice,castingStartDate,castingEndDate,castingStatus);
+//            Casting casting = new Casting(userInfo,expertInfo,project,castingPrice,castingStartDate,castingEndDate,castingStatus);
+
+
+            Casting casting = new Casting(userInfo,expertInfo,project,castingStatus);
+
             castingRepository.save(casting);
         }
 
@@ -94,10 +95,14 @@ public class BasketService {
             }catch (Exception ignored){
                 throw new BaseException(BaseResponseStatus.NOT_FOUND_CASTING);
             }
+            String castingStartDate = casting.getCastingStartDate();
+            String castingEndDate = casting.getCastingEndDate();
+            String castingPrice = casting.getCastingPrice();
             String castingMessage = casting.getCastingMessage();
             String castingWork = casting.getCastingWork();
             String castingPriceDate = casting.getCastingPriceDate();
-            if(castingMessage==null || castingWork==null || castingPriceDate==null){
+
+            if(castingMessage==null || castingWork==null || castingPriceDate==null || castingStartDate==null || castingEndDate==null || castingPrice==null){
                 throw new BaseException(BaseResponseStatus.DID_NOT_INSERT_CASTING_CONDITION);
             }else {
                 castingList.add(casting);
