@@ -94,12 +94,28 @@ public class BasketProvider {
             String nickname = expert.getNickname();
             String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(expert);
             String introduce = expert.getIntroduce();
-            String castingStartDate = "20"+castingList.get(i).getCastingStartDate();
-            String castingEndDate = "20"+castingList.get(i).getCastingEndDate();
-            String castingDate = castingStartDate+"~"+castingEndDate;
-            castingDate = castingDate.replace("/",".");
+
+            String castingDate=null;
+            if(castingList.get(i).getCastingStartDate()!=null && castingList.get(i).getCastingEndDate()!=null){
+                String castingStartDate = "20"+castingList.get(i).getCastingStartDate();
+                String castingEndDate = "20"+castingList.get(i).getCastingEndDate();
+                castingDate = castingStartDate+"~"+castingEndDate;
+                castingDate = castingDate.replace("/",".");
+            }else{
+                castingDate = "정보 없음";
+            }
+
+
+            String castingPrice=null;
+            if(castingList.get(i).getCastingPrice()!=null){
+                castingPrice = castingList.get(i).getCastingPrice();
+            }else{
+                castingPrice = "정보 없음";
+            }
+
+
             String projectName = castingList.get(i).getProject().getProjectName();
-            String castingPrice = castingList.get(i).getCastingPrice();
+
             String castingCondition = "섭외 조건 입력";
 
             if(castingList.get(i).getCastingMessage()!=null && castingList.get(i).getCastingPriceDate()!=null && castingList.get(i).getCastingWork()!=null
