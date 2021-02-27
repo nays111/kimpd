@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.expert.models.GetExpertRes;
 import com.clnine.kimpd.src.Web.expert.models.GetExpertsRes;
+import com.clnine.kimpd.src.Web.expert.models.PostExpertsReq;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.expert.models.GetUsersRes;
 
@@ -42,27 +43,12 @@ public class ExpertController {
 
     /**
      * [2021.02.11] 전문가 리스트 조회(검색) API
-     * @param word
-     * @param jobCategoryParentIdx
-     * @param jobCategoryChildIdx
-     * @param genreCategoryIdx
-     * @param city
-     * @param minimumCastingPrice
-     * @param page
-     * @param sort
-     * @return
      */
-    @GetMapping("/experts")
-    public BaseResponse<GetExpertsRes> getExperts(@RequestParam(required = false) String word,
-                                                      @RequestParam(required = false,defaultValue = "")@Nullable List<Long> jobCategoryParentIdx,
-                                                      @RequestParam(required = false,defaultValue = "")@Nullable List<Long> jobCategoryChildIdx,
-                                                      @RequestParam(required = false,defaultValue = "")@Nullable List<Long> genreCategoryIdx,
-                                                      @RequestParam(required = false,defaultValue = "")@Nullable List<String> city,
-                                                      @RequestParam(required = false) String minimumCastingPrice,
-                                                      @RequestParam(required = true)int page,
-                                                      @RequestParam(required = true)int sort){
+    @PostMapping("/experts")
+    public BaseResponse<GetExpertsRes> getExperts(@RequestBody PostExpertsReq postExpertsReq){
+        //todo validation 추가
         try{
-            GetExpertsRes getUsersResList = expertProvider.findExperts(word,jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,minimumCastingPrice,page,sort);
+            GetExpertsRes getUsersResList = expertProvider.findExperts(postExpertsReq);
             return new BaseResponse<>(SUCCESS,getUsersResList);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

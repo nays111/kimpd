@@ -11,7 +11,7 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
 
 
     @Query(value="select UI.userIdx,\n" +
-            "       ifnull(UI.profileImageURL,\"프로필 사진이 없습니다\") as profileImageURL,\n" +
+            "       UI.profileImageURL,\n" +
             "       UI.nickname,\n" +
             "       (select JobCategoryChildName\n" +
             "        from JobCategoryChild\n" +
@@ -47,6 +47,9 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and UI.city  IN (:city)\n" +
             "  and (UI.nickname like concat('%', ifnull(:nickname, UI.nickname), '%') or\n" +
             "       UI.introduce like concat('%', ifnull(:introduce, UI.introduce), '%'))\n" +
+            "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
+            "  and (UI.castingPossibleStartDate between :castingStartDate and :castingEndDate or\n" +
+            "       UI.castingPossibleEndDate between :castingStartDate1 and :castingEndDate1)\n" +
             "group by UI.userIdx\n" +
             "order by castingCount desc\n" +
             "limit :page,5;",nativeQuery = true,name="findExpertOrderByCasting")
@@ -56,10 +59,15 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
                                             @Param("city")List<String> city,
                                             @Param("nickname")String nickname,
                                             @Param("introduce") String introduce,
+                                                @Param("minimumCastingPrice")String minimumCastingPrice,
+                                                @Param("castingStartDate")String castingStartDate,
+                                                @Param("castingEndDate")String castingEndDate,
+                                                @Param("castingStartDate1")String castingStartDate1,
+                                                @Param("castingEndDate1")String castingEndDate1,
                                             @Param("page")int page);
 
     @Query(value="select UI.userIdx,\n" +
-            "       ifnull(UI.profileImageURL,\"프로필 사진이 없습니다\") as profileImageURL,\n" +
+            "       UI.profileImageURL,\n" +
             "       UI.nickname,\n" +
             "       (select JobCategoryChildName\n" +
             "        from JobCategoryChild\n" +
@@ -95,6 +103,9 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and UI.city  IN (:city)\n" +
             "  and (UI.nickname like concat('%', ifnull(:nickname, UI.nickname), '%') or\n" +
             "       UI.introduce like concat('%', ifnull(:introduce, UI.introduce), '%'))\n" +
+            "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
+            "  and (UI.castingPossibleStartDate between :castingStartDate and :castingEndDate or\n" +
+            "       UI.castingPossibleEndDate between :castingStartDate1 and :castingEndDate1)\n" +
             "group by UI.userIdx\n" +
             "order by reviewAverage desc\n" +
             "limit :page,5;",nativeQuery = true,name="findExpertOrderByCasting")
@@ -104,6 +115,11 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
                                                 @Param("city")List<String> city,
                                                 @Param("nickname")String nickname,
                                                 @Param("introduce") String introduce,
+                                               @Param("minimumCastingPrice")String minimumCastingPrice,
+                                                @Param("castingStartDate")String castingStartDate,
+                                                @Param("castingEndDate")String castingEndDate,
+                                               @Param("castingStartDate1")String castingStartDate1,
+                                               @Param("castingEndDate1")String castingEndDate1,
                                                 @Param("page")int page);
 
 
