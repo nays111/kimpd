@@ -40,12 +40,12 @@ public class AdminBannerProvider {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         return bannerList.stream().map(Banner ->{
             int bannerIdx = Banner.getBannerIdx();
-            String bannerLink = Banner.getBannerLink();
             String bannerImageURL = Banner.getBannerImageURL();
+            String bannerLink = Banner.getBannerLink();
             String startDate = sdf.format(Banner.getStartDate());
             String endDate = sdf.format(Banner.getEndDate());
             String status = Banner.getStatus();
-            return new AdminGetBannersRes(bannerIdx,bannerLink,bannerImageURL, startDate, endDate, status);
+            return new AdminGetBannersRes(bannerIdx, bannerImageURL, bannerLink, startDate, endDate, status);
         }).collect(Collectors.toList());
     }
 
