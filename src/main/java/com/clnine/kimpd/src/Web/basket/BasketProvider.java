@@ -101,7 +101,9 @@ public class BasketProvider {
             String projectName = castingList.get(i).getProject().getProjectName();
             String castingPrice = castingList.get(i).getCastingPrice();
             String castingCondition = "섭외 조건 입력";
-            if(castingList.get(i).getCastingMessage()!=null && castingList.get(i).getCastingPriceDate()!=null && castingList.get(i).getCastingWork()!=null){
+
+            if(castingList.get(i).getCastingMessage()!=null && castingList.get(i).getCastingPriceDate()!=null && castingList.get(i).getCastingWork()!=null
+            && castingList.get(i).getCastingPrice()!=null && castingList.get(i).getCastingStartDate()!=null && castingList.get(i).getCastingEndDate()!=null){
                 castingCondition = "섭외 조건 입력 완료";
             }
 

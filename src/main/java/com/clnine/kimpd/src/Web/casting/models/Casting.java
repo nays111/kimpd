@@ -72,13 +72,20 @@ public class Casting extends BaseEntity {
         this.castingPriceDate = castingPriceDate;
     }
 
-    public Casting(UserInfo userInfo, UserInfo expertInfo, Project project, String castingPrice, String castingStartDate, String castingEndDate, int castingStatus) {
+//    public Casting(UserInfo userInfo, UserInfo expertInfo, Project project, String castingPrice, String castingStartDate, String castingEndDate, int castingStatus) {
+//        this.userInfo =userInfo;
+//        this.expert = expertInfo;
+//        this.project = project;
+//        this.castingPrice = castingPrice;
+//        this.castingStartDate = castingStartDate;
+//        this.castingEndDate = castingEndDate;
+//        this.castingStatus = castingStatus;
+//    }
+
+    public Casting(UserInfo userInfo, UserInfo expertInfo, Project project, int castingStatus) {
         this.userInfo =userInfo;
         this.expert = expertInfo;
         this.project = project;
-        this.castingPrice = castingPrice;
-        this.castingStartDate = castingStartDate;
-        this.castingEndDate = castingEndDate;
         this.castingStatus = castingStatus;
     }
 }

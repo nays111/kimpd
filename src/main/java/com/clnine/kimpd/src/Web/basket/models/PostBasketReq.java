@@ -13,8 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PostBasketReq {
     List<Integer> userIdx;
-    String castingStartDate;
-    String castingEndDate;
-    String castingPrice;
+//    String castingStartDate;
+//    String castingEndDate;
+//    String castingPrice;
     int projectIdx;
 }
