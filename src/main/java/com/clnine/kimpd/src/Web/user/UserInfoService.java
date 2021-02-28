@@ -72,21 +72,11 @@ public class UserInfoService {
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
         String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         String nickname = postUserReq.getNickname();
-
-
-
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-
-
-        /**
-         * 1,2,3,4, 이런식으로 카테고리 인덱스를 입력받음
-         * genreCategory에서 해당되는 genreCategory 객체 생성
-         * userGenreCategory에 userInfo와 genreCategory 를 담는다.
-         */
         UserInfo userInfo = new UserInfo(userType,id,password,email,
                 phoneNumber,city,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
                 corporationBusinessName,corporationBusinessNumber,nickname);
@@ -157,17 +147,7 @@ public class UserInfoService {
      * @throws BaseException
      */
     public void deleteUserInfo(int userIdx) throws BaseException {
-        // 1. 존재하는 UserInfo가 있는지 확인 후 저장
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-
-        // 2-1. 해당 UserInfo를 완전히 삭제
-//        try {
-//            userInfoRepository.delete(userInfo);
-//        } catch (Exception exception) {
-//            throw new BaseException(DATABASE_ERROR_USER_INFO);
-//        }
-
-        // 2-2. 해당 UserInfo의 status를 INACTIVE로 설정
         userInfo.setStatus("INACTIVE");
         try {
             userInfoRepository.save(userInfo);
@@ -273,10 +253,30 @@ public class UserInfoService {
             userInfo.setUserType(6);
         }
         userInfoRepository.save(userInfo);
-
     }
 
-
-
-
+    public void patchMyPassword(int userIdx, PatchUserPasswordReq patchUserPasswordReq) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        String password;
+        try {
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getPassword());
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_LOGIN);
+        }
+        if (!patchUserPasswordReq.getCurrentPassword().equals(password)) {
+            throw new BaseException(WRONG_CURRENT_PASSWORD);
+        }
+        String newPassword = patchUserPasswordReq.getNewPassword();
+        try {
+            newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+        try{
+            userInfo.setPassword(newPassword);
+            userInfoRepository.save(userInfo);
+        }catch (Exception ignored) {
+            throw new BaseException(FAILED_SAVE_NEW_PASSWORD);
+        }
+    }
 }
