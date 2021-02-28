@@ -90,6 +90,10 @@ public enum BaseResponseStatus {
     EMPTY_INQUIRY_DESCRIPTION(false,2085,"1:1문의 내용을 입력해주세요."),
     WRONG_CASTING_STATUS(false,2086,"올바른 상태 변경을 해주세요."),
     EMPTY_CASTING_INDEX(false,2087,"섭외 요청을 보낼 전문가를 선택해주세요."),
+    EMPTY_NEW_PASSWORD(false,2088,"새로운 비밀번호를 입력해주세요."),
+    EMPTY_NEW_CONFIRM_PASSWORD(false,2089,"변경할 비밀번호를 입력해주세요."),
+    WRONG_CURRENT_PASSWORD(false,2090,"현재 비밀번호가 일치하지 않습니다."),
+
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -132,6 +136,8 @@ public enum BaseResponseStatus {
     FAILED_TO_SEND_ALARM(false,3047,"알림 전송에 실패했습니다."),
     FAILED_TO_GET_MY_ALARMS(false,3048,"알림 리스트 조회에 실패했습니다."),
     DID_NOT_INSERT_CASTING_CONDITION(false,3049,"섭외 조건을 입력해주세요."),
+    FAILED_SAVE_NEW_PASSWORD(false,3050,"비밀번호 수정에 실패했습니다."),
+
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");

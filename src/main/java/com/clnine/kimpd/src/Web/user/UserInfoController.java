@@ -5,17 +5,14 @@ import com.baroservice.ws.CorpState;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.user.models.*;
-import com.clnine.kimpd.utils.BarobillService;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.utils.MailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.ParseException;
-import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.config.secret.Secret.barbobillCorpNum;
@@ -34,70 +31,45 @@ public class UserInfoController {
     private final MailService mailService;
     private final BarobillApiService barobillApiService;
 
-
-
     /**
      * 1. 회원가입 API
      * [POST] /users
-     *
      * @return BaseResponse<PostUserRes>
      * @RequestBody PostUserReq
      */
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
-
-        /**
-         * 유저 타입 처리
-         */
         if (parameters.getUserType() == 0) {
             return new BaseResponse<>(INVALID_USER_TYPE);
         }
         if (parameters.getUserType() > 6) {
             return new BaseResponse<>(INVALID_USER_TYPE);
         }
-
-
-        /**
-         * 아이디 처리
-         */
         if (parameters.getId() == null || parameters.getId().length() == 0) {
             return new BaseResponse<>(EMPTY_ID);
         }
         if (!isRegexId(parameters.getId())) {
             return new BaseResponse<>(INVALID_ID);
         }
-
-        /**
-         * 이메일 처리
-         */
         if (parameters.getEmail() == null || parameters.getEmail().length() == 0) {
             return new BaseResponse<>(EMPTY_EMAIL);
         }
         if (!isRegexEmail(parameters.getEmail())) {
             return new BaseResponse<>(INVALID_EMAIL);
         }
-        /**
-         * 패스워드 처리
-         */
         if (parameters.getPassword() == null || parameters.getPassword().length() == 0) {
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
         if (!isRegexPassword(parameters.getPassword())) {
             return new BaseResponse<>(INVALID_PASSWORD);
         }
-        /**
-         * 패스워드 확인 처리
-         */
         if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() == 0) {
             return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
         }
         if (!parameters.getPassword().equals(parameters.getConfirmPassword())) {
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
         }
-        /**
-         * 휴대폰 처리
-         */
         if (parameters.getPhoneNum() == null || parameters.getPhoneNum().length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
@@ -110,46 +82,27 @@ public class UserInfoController {
 //        if(parameters.getAgreeAdvertisement()!=0 || parameters.getAgreeAdvertisement()!=1){
 //            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
 //        }
-        /**
-         * 도시 처리
-         */
         if(parameters.getCity()==null || parameters.getCity().length()==0){
             return new BaseResponse<>(EMPTY_CITY);
         }
-        /**
-         * 주소 처리
-         */
         if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {
             return new BaseResponse<>(EMPTY_ADDRESS);
         }
         //todo 주소 형식 처리
-
         /**
          * 필수 X 입력 아닌사항
-         */
-
-        /**
-         * 개인 사업자명 처리
          */
         if (parameters.getPrivateBusinessName() != null) {
             if (parameters.getPrivateBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
             }
         }
-
-        /**
-         * 사업자 등록 번호 처리
-         */
         if (parameters.getBusinessNumber() != null) {
             if (parameters.getBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
         }
-        //todo 사업자 등록 번호 양식 검사
-
-        /**
-         * 사업자 등록증 처리
-         */
+        //todo 사업자 등록 번호 양식 검사, 이미지 업로드 양식 검사
         if (parameters.getBusinessImageURL() != null) {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
@@ -158,28 +111,18 @@ public class UserInfoController {
 //                return new BaseResponse<>(INVALID_IMAGE_TYPE);
 //            }
         }
-
-        /**
-         * 법인 사업자명 처리
-         */
         if (parameters.getCorporationBusinessName() != null) {
             if (parameters.getCorporationBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
         }
         //todo 법인 사업자명 형식 검사
-        /**
-         * 법인 등록 번호 처리
-         */
         if (parameters.getCorporationBusinessNumber() != null) {
             if (parameters.getCorporationBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
         }
         //todo 법인 등록 번호 형식 검사
-        /**
-         * 닉네임 처리
-         */
         if (parameters.getNickname() != null) {
             if (parameters.getNickname().length() == 0) {
                 return new BaseResponse<>(EMPTY_NICKNAME);
@@ -188,39 +131,24 @@ public class UserInfoController {
                 return new BaseResponse<>(INVALID_NICKNAME);
             }
         }
-
-        /**
-         * 직종카테고리-1차 분류 처리
-         */
         if (parameters.getJobParentCategoryIdx() != null) {
             if (parameters.getJobParentCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
             }
         }
-
-        /**
-         * 직종카테고리-2차 분류 처리
-         */
         if (parameters.getJobChildCategoryIdx() != null) {
             if (parameters.getJobChildCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_JOB_CHILD_CATEGORY);
             }
         }
-
-
-        /**
-         * 장르카테고리 처리
-         */
         if (parameters.getGenreCategoryIdx() != null) {
             if (parameters.getGenreCategoryIdx().size() == 0) {
                 //카테고리 선택을 하나도 안했을 경우
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
             }
         }
-
-
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS, postUserRes);
@@ -321,8 +249,6 @@ public class UserInfoController {
         }
     }
 
-
-
     /**
      * [2021.01.30] 7.로그인 API
      * [POST] /users/login
@@ -383,7 +309,6 @@ public class UserInfoController {
         }
     }
 
-
     /**
      * [2021.01.30] 9.비밀번호 찾기 API
      * [GET] /users/password?email=
@@ -406,7 +331,6 @@ public class UserInfoController {
 
     }
 
-
     /**
      * 사업자 인증 API
      * @param corpNum
@@ -421,11 +345,8 @@ public class UserInfoController {
         if(corpNum.length()>13 || corpNum.length()<10){
             return  new BaseResponse<>(WRONG_CORP_NUM);
         }
-
         CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
-
         int state = corpState.getState();
-
         if(state>=1){
             return new BaseResponse<>(SUCCESS);
         }else{
@@ -475,6 +396,40 @@ public class UserInfoController {
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
+    }
+
+    @PatchMapping("{userIdx}/password")
+    @ResponseBody
+    public BaseResponse<String> patchMyPassword(@RequestBody PatchUserPasswordReq patchUserPasswordReq,
+                                                @PathVariable(required = true,value = "userIdx")int userIdx){
+        int userIdxJWT;
+        try{
+            userIdxJWT = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        if(patchUserPasswordReq.getCurrentPassword()==null || patchUserPasswordReq.getCurrentPassword().length()==0){
+            return new BaseResponse<>(EMPTY_PASSWORD);
+        }
+        if(patchUserPasswordReq.getNewPassword()==null || patchUserPasswordReq.getNewPassword().length()==0){
+            return new BaseResponse<>(EMPTY_NEW_PASSWORD);
+        }
+        if (!isRegexPassword(patchUserPasswordReq.getNewPassword())) {
+            return new BaseResponse<>(INVALID_PASSWORD);
+        }
+        if(patchUserPasswordReq.getConfirmNewPassword()==null || patchUserPasswordReq.getConfirmNewPassword().length()==0){
+            return new BaseResponse<>(EMPTY_NEW_CONFIRM_PASSWORD);
+        }
+        if (!patchUserPasswordReq.getNewPassword().equals(patchUserPasswordReq.getConfirmNewPassword())) {
+            return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
+        }
+        try{
+            userInfoService.patchMyPassword(userIdx, patchUserPasswordReq);
+            return new BaseResponse<String>(SUCCESS);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+
     }
 
 

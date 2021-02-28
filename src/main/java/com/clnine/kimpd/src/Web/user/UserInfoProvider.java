@@ -29,37 +29,24 @@ public class UserInfoProvider {
     private final CertificateRepository certificateRepository;
     private final CategoryProvider categoryProvider;
 
-
-
     /**
      * 로그인
-     *
      * @param postLoginReq
      * @return PostLoginRes
      * @throws BaseException
      */
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
-        // 1. DB에서 id로 UserInfo 조회
         UserInfo userInfo = retrieveUserInfoById(postLoginReq.getId());
-
-
-        // 2. UserInfo에서 password 추출
         String password;
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_LOGIN);
         }
-
-        // 3. 비밀번호 일치 여부 확인
         if (!postLoginReq.getPassword().equals(password)) {
             throw new BaseException(WRONG_PASSWORD);
         }
-
-        // 3. Create JWT
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 4. PostLoginRes 변환하여 return
         int userIdx = userInfo.getUserIdx();
         return new PostLoginRes(userIdx, jwt);
     }
@@ -94,55 +81,43 @@ public class UserInfoProvider {
 
     /**
      * 회원 조회
-     *
      * @param userIdx
      * @return UserInfo
      * @throws BaseException
      */
     public UserInfo retrieveUserInfoByUserIdx(int userIdx) throws BaseException {
-        // 1. DB에서 UserInfo 조회
         UserInfo userInfo;
         try {
             userInfo = userInfoRepository.findById(userIdx).orElse(null);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
-        // 2. 존재하는 회원인지 확인
         if (userInfo == null || !userInfo.getStatus().equals("ACTIVE")) {
             throw new BaseException(NOT_FOUND_USER);
         }
-
-        // 3. UserInfo를 return
         return userInfo;
     }
 
 
     /**
      * ID로 회원 조회
-     *
      * @param id
      * @return UserInfo
      * @throws BaseException
      */
     public UserInfo retrieveUserInfoById(String id) throws BaseException {
-        // 1. id를 이용해서 UserInfo DB 접근
         List<UserInfo> existsUserInfoList;
         try {
             existsUserInfoList = userInfoRepository.findByIdAndStatus(id, "ACTIVE");
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
-        // 2. 존재하는 UserInfo가 있는지 확인
         UserInfo userInfo;
         if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
             userInfo = existsUserInfoList.get(0);
         } else {
             throw new BaseException(NOT_FOUND_USER);
         }
-
-        // 3. UserInfo를 return
         return userInfo;
     }
 
@@ -162,22 +137,16 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
-        // 2. 존재하는 UserInfo가 있는지 확인
         UserInfo userInfo;
         if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
             userInfo = existsUserInfoList.get(0);
         } else {
             throw new BaseException(NOT_FOUND_USER);
         }
-
-        // 3. UserInfo를 return
         return userInfo;
     }
 
     public int checkPhoneNumCode(String phoneNum) throws BaseException {
-        //phoneNum으로 certificatin 객체 찾기
-        //3분 이내의 것들 중에 가장 최근 것것
        Certification certification;
        int code;
         LocalDateTime now = LocalDateTime.now();
@@ -187,12 +156,10 @@ public class UserInfoProvider {
         System.out.println(t2);
 
         long l = (t1.getTime() - t2.getTime());
-        long minute = (l / 1000 ) /60 ; //minute
-        long second = (l / 1000 ) % 60 ; //second
+        long minute = (l / 1000 ) /60 ;
+        long second = (l / 1000 ) % 60 ;
         try{
-//더 예전시간이 앞쪽 파라미터로 가야함
             code = certificateRepository.findTopByUserPhoneNumAndCreatedAtBetweenOrderByCertificationIdxDesc(phoneNum,t2,t1).getSecureCode();
-            //code = certificateRepository.findTopByUserPhoneNumOrderByCertificationIdxDesc(phoneNum).getSecureCode();
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_SECURE_CODE);
         }
@@ -201,9 +168,6 @@ public class UserInfoProvider {
 
     }
 
-    /**
-     *
-     */
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -211,16 +175,12 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
-        // 2. 존재하는 UserInfo가 있는지 확인
         UserInfo userInfo;
         if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
             userInfo = existsUserInfoList.get(0);
         } else {
             throw new BaseException(NOT_FOUND_USER);
         }
-
-        // 3. UserInfo를 return
         return userInfo;
     }
 
@@ -231,7 +191,6 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
         String id = userInfo.getId();
         String message = "김피디입니다. 회원님의 ID 는 [" + id + "] 입니다.";
         try {
@@ -250,7 +209,6 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
-
         /**
          * 공통 컬럼
          */
@@ -274,8 +232,6 @@ public class UserInfoProvider {
         String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
         GetMyUserInfoRes getMyUserInfoRes = null;
         if (userInfo.getUserType() == 1 || userInfo.getUserType() == 4) {
-            //getMyUserInfoRes = new GetMyUserInfoRes(userIdx,profileImageURL,id,nickname,phoneNum,email);
-        //}
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
                     .id(id).nickname(nickname)
@@ -303,8 +259,5 @@ public class UserInfoProvider {
 
         return getMyUserInfoRes;
     }
-
-
-
 
 }
