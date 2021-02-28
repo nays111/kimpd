@@ -22,8 +22,6 @@ public class UserInfo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userIdx;
 
-
-
     @Column(name="userType",nullable = false)
     private int userType;
 
@@ -78,13 +76,13 @@ public class UserInfo extends BaseEntity {
     private String etc;
 
     @Column(name="minimumCastingPrice")
-    private Integer minimumCastingPrice;
+    private Integer minimumCastingPrice=0;
 
     //섭외 가능 시작 날짜
-    private String castingPossibleStartDate;
+    private String castingPossibleStartDate="";
 
     //섭외 가능 종료 잘짜
-    private String castingPossibleEndDate;
+    private String castingPossibleEndDate="";
 
 
     @Column(name="agreeShowDB")

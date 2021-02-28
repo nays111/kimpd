@@ -93,6 +93,7 @@ public enum BaseResponseStatus {
     EMPTY_NEW_PASSWORD(false,2088,"새로운 비밀번호를 입력해주세요."),
     EMPTY_NEW_CONFIRM_PASSWORD(false,2089,"변경할 비밀번호를 입력해주세요."),
     WRONG_CURRENT_PASSWORD(false,2090,"현재 비밀번호가 일치하지 않습니다."),
+    INVALID_AGREE_ADVERTISEMENT_CHECK(false,2091,"광고동의 여부를 체크해주세요."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),

@@ -279,4 +279,27 @@ public class UserInfoService {
             throw new BaseException(FAILED_SAVE_NEW_PASSWORD);
         }
     }
+
+    public void patchMyUserInfo(int userIdx,PatchMyUserInfoReq patchMyUserInfoReq) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        String profileImageURL = patchMyUserInfoReq.getProfileImageURL();
+        String phoneNum = patchMyUserInfoReq.getPhoneNum();
+
+        String email = patchMyUserInfoReq.getEmail();
+        String privateBusinessName = patchMyUserInfoReq.getPrivateBusinessName();
+        String businessNumber = patchMyUserInfoReq.getBusinessNumber();
+        String businessImageURL = patchMyUserInfoReq.getBusinessImageURL();
+        String corpBusinessName = patchMyUserInfoReq.getCorpBusinessName();
+        String corpBusinessNumber = patchMyUserInfoReq.getCorpBusinessNumber();
+
+        userInfo.setProfileImageURL(profileImageURL);
+        userInfo.setPhoneNum(phoneNum);
+        userInfo.setEmail(email);
+        userInfo.setPrivateBusinessName(privateBusinessName);
+        userInfo.setBusinessNumber(businessNumber);
+        userInfo.setBusinessImageURL(businessImageURL);
+        userInfo.setCorporationBusinessName(corpBusinessName);
+        userInfo.setCorporationBusinessNumber(corpBusinessNumber);
+        userInfoRepository.save(userInfo);
+    }
 }
