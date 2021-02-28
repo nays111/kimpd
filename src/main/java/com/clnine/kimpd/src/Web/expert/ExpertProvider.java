@@ -105,7 +105,7 @@ public class ExpertProvider {
         List<String> city = postExpertsReq.getCity();
         String castingStartDate = postExpertsReq.getCastingStartDate();
         String castingEndDate = postExpertsReq.getCastingEndDate();
-        Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
+        //Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         int page = postExpertsReq.getPage();
         int sort = postExpertsReq.getSort();
 
@@ -159,8 +159,11 @@ public class ExpertProvider {
         if(castingEndDate==null || castingEndDate.length()==0){
             castingEndDate="999999";
         }
-        if(minimumCastingPrice==null){
+        Integer minimumCastingPrice;
+        if(postExpertsReq.getMinimumCastingPrice()==null){
             minimumCastingPrice=999999999;
+        }else{
+            minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         }
 
 
