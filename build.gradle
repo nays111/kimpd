@@ -59,6 +59,9 @@ dependencies {
 	compile group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
 	compile group: 'javax.xml.ws', name: 'jaxws-api', version: '2.3.1'
 	compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.3.1'
+
+	implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
+
 }
 
 test {
