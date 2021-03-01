@@ -16,12 +16,11 @@ public class PostUserReq {
     private String password;
     private String confirmPassword;
     private String email;
-    private int agreeAdvertisement;
+    private Integer agreeAdvertisement;
     private String phoneNum;
     private String city;
     private String address;
-    //todo 인증번호 (certificateCode 회원가입할 떄 처리할지?)
-    //private int certifiacteCode;
+
     @Nullable
     private String privateBusinessName;//개인사업자명
     @Nullable
@@ -40,4 +39,6 @@ public class PostUserReq {
     private ArrayList<Integer> jobParentCategoryIdx;
     @Nullable
     private ArrayList<Integer> jobChildCategoryIdx;
+    @Nullable
+    private Integer agreeShowDB;
 }

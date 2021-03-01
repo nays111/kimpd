@@ -72,6 +72,7 @@ public class UserInfoService {
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
         String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         String nickname = postUserReq.getNickname();
+        int agreeShowDB = postUserReq.getAgreeShowDB();
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
@@ -79,7 +80,7 @@ public class UserInfoService {
         }
         UserInfo userInfo = new UserInfo(userType,id,password,email,
                 phoneNumber,city,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
-                corporationBusinessName,corporationBusinessNumber,nickname);
+                corporationBusinessName,corporationBusinessNumber,nickname,agreeShowDB);
 
         // 3. 유저 정보 저장
         try {

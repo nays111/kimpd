@@ -66,16 +66,17 @@ public class UserInfoController {
         if (!isRegexPhoneNumber(parameters.getPhoneNum())) {
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
-        if(parameters.getAgreeAdvertisement()!=0 || parameters.getAgreeAdvertisement()!=1){
-            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
-        }
+//        if(parameters.getAgreeAdvertisement()!=0 || parameters.getAgreeAdvertisement()!=1){
+//            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
+//        }
         if(parameters.getCity()==null || parameters.getCity().length()==0){
             return new BaseResponse<>(EMPTY_CITY);
         }
+
         if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {
             return new BaseResponse<>(EMPTY_ADDRESS);
         }
-        //todo 주소 형식 처리
+
         /**
          * 필수 X 입력 아닌사항
          */
@@ -88,28 +89,32 @@ public class UserInfoController {
             if (parameters.getBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
+            if(parameters.getBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
+            }
         }
-        //todo 사업자 등록 번호 양식 검사, 이미지 업로드 양식 검사
+
         if (parameters.getBusinessImageURL() != null) {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-//            if (!isRegexImageType(parameters.getBusinessImageURL())) {
-//                return new BaseResponse<>(INVALID_IMAGE_TYPE);
-//            }
+            if (!isRegexImageType(parameters.getBusinessImageURL())) {
+                return new BaseResponse<>(INVALID_IMAGE_TYPE);
+            }
         }
         if (parameters.getCorporationBusinessName() != null) {
             if (parameters.getCorporationBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
         }
-        //todo 법인 사업자명 형식 검사
         if (parameters.getCorporationBusinessNumber() != null) {
             if (parameters.getCorporationBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
+            if(parameters.getCorporationBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_CORP_BUSINESS_NUMBER);
+            }
         }
-        //todo 법인 등록 번호 형식 검사
         if (parameters.getNickname() != null) {
             if (parameters.getNickname().length() == 0) {
                 return new BaseResponse<>(EMPTY_NICKNAME);
@@ -133,6 +138,13 @@ public class UserInfoController {
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
             }
         }
+//        if(parameters.getAgreeShowDB()!=null){
+//            if(parameters.getAgreeShowDB()!=0 || parameters.getAgreeShowDB()!=1){
+//                return new BaseResponse<>(NO_SELECT_AGREE_SHOW_DB);
+//            }
+//        }
+
+
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS, postUserRes);

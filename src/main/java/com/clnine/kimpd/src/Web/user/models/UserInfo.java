@@ -96,7 +96,7 @@ public class UserInfo extends BaseEntity {
                     int agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
                     String corporationBusinessName, String corporationBusinessNumber,
-                    String nickname) {
+                    String nickname,int agreeShowDB) {
         this.userType = userType;
         this.id = id;
         this.password = password;
@@ -111,6 +111,7 @@ public class UserInfo extends BaseEntity {
         this.corporationBusinessName = corporationBusinessName;
         this.corporationBusinessNumber = corporationBusinessNumber;
         this.nickname = nickname;
+        this.agreeShowDB = agreeShowDB;
     }
 
 
