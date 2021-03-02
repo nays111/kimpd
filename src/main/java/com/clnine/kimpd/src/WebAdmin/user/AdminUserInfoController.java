@@ -145,28 +145,10 @@ public class AdminUserInfoController {
             }
         }
 
-//        if (adminUserInfoProvider.isIdUseable(parameters.getId()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
-//
-//        if (adminUserInfoProvider.isEmailUseable(parameters.getEmail()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
-//
-//        if (adminUserInfoProvider.isPhoneNumUseable(parameters.getPhoneNum()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
-//
-//        if(parameters.getUserType().equals("전문가-일반") || parameters.getUserType().equals("전문가-개인") || parameters.getUserType().equals("전문가-법인")){
-//            if(parameters.getNickname() == null){
-//                return new BaseResponse<>(EMPTY_NICKNAME);
-//            }
-//            else{
-//                if (adminUserInfoProvider.isNicknameUseable(parameters.getNickname()) == false) {
-//                    return new BaseResponse<>(DUPLICATED_USER);
-//                }
-//            }
-//        }
+        if(parameters.getNickname() == null){
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+
         try {
             adminUserInfoService.updateUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_USER);
@@ -340,26 +322,24 @@ public class AdminUserInfoController {
             }
         }
 
-//        if (adminUserInfoProvider.isIdUseable(parameters.getId()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
-//
-//        if (adminUserInfoProvider.isEmailUseable(parameters.getEmail()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
-//
-//        if (adminUserInfoProvider.isPhoneNumUseable(parameters.getPhoneNum()) == false) {
-//            return new BaseResponse<>(DUPLICATED_USER);
-//        }
+        if (adminUserInfoProvider.isIdUseable(parameters.getId()) == false) {
+            return new BaseResponse<>(DUPLICATED_ID);
+        }
 
-        if(parameters.getUserType() == 4 || parameters.getUserType() == 5 || parameters.getUserType() == 6){
-            if(parameters.getNickname() == null){
-                return new BaseResponse<>(EMPTY_NICKNAME);
-            }
-            else{
-                if (adminUserInfoProvider.isNicknameUseable(parameters.getNickname()) == false) {
-                    return new BaseResponse<>(DUPLICATED_USER);
-                }
+        if (adminUserInfoProvider.isEmailUseable(parameters.getEmail()) == false) {
+            return new BaseResponse<>(DUPLICATED_PHONE_NUMBER);
+        }
+
+        if (adminUserInfoProvider.isPhoneNumUseable(parameters.getPhoneNum()) == false) {
+            return new BaseResponse<>(DUPLICATED_EMAIL);
+        }
+
+        if(parameters.getNickname() == null){
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+        else{
+            if (adminUserInfoProvider.isNicknameUseable(parameters.getNickname()) == false) {
+                return new BaseResponse<>(DUPLICATED_NICKNAME);
             }
         }
 
