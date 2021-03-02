@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class GetCertificationCodeReq {
+public class PostCertificationCodeReq {
+    private String phoneNum;
     private  Integer code;
 }
