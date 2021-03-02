@@ -6,7 +6,6 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.JwtService;
-import com.clnine.kimpd.utils.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -178,7 +177,7 @@ public class UserInfoController {
         }
     }
 
-    @PostMapping("/phone-auth")
+    @GetMapping("/phone-auth")
     public BaseResponse<String> phoneAuth(@RequestParam(value = "phoneNum") String phoneNum) throws IOException, ParseException {
         if (phoneNum == null || phoneNum.length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -195,17 +194,24 @@ public class UserInfoController {
     }
 
     @ResponseBody
-    @GetMapping("/phone-auth")
-    public BaseResponse<Void> phoneAuthCheck(@RequestParam(value = "phoneNum") String phoneNum, @RequestBody GetCertificationCodeReq getCertificationCodeReq) throws BaseException {
+    @PostMapping("/phone-auth")
+    public BaseResponse<Void> phoneAuthCheck(@RequestBody PostCertificationCodeReq postCertificationCodeReq) throws BaseException {
         //전송된 휴대폰 번호로 Certifiacte 테이블 조회
-        if (getCertificationCodeReq.getCode() == null) {
+
+        System.out.println(postCertificationCodeReq.getCode());
+        if (postCertificationCodeReq.getPhoneNum() == null || postCertificationCodeReq.getPhoneNum().length() == 0) {
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+        if (!isRegexPhoneNumber(postCertificationCodeReq.getPhoneNum())) {
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        if (postCertificationCodeReq.getCode() == null) {
             return new BaseResponse<>(EMPTY_CODE);
         }
-        System.out.println(getCertificationCodeReq.getCode());
 
         try {
-            int code = userInfoProvider.checkPhoneNumCode(phoneNum);
-            if(code==getCertificationCodeReq.getCode()){
+            int code = userInfoProvider.checkPhoneNumCode(postCertificationCodeReq.getPhoneNum());
+            if(code== postCertificationCodeReq.getCode()){
                 return new BaseResponse<>(SUCCESS);
             }else{
                 return new BaseResponse<>(WRONG_SECURE_CODE);
