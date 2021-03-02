@@ -47,7 +47,7 @@ public class AdminUserInfoProvider {
             int userIdx = adminUserInfo.getUserIdx();
             String userType = null;
             if(adminUserInfo.getUserType() == 1){
-                userType = "일반";
+                userType = "클라이언트";
             }
             else if(adminUserInfo.getUserType() == 2){
                 userType = "제작사-개인";
@@ -56,7 +56,7 @@ public class AdminUserInfoProvider {
                 userType = "제작사-법인";
             }
             else if(adminUserInfo.getUserType() == 4){
-                userType = "전문가-일반";
+                userType = "전문가-클라이언트";
             }
             else if(adminUserInfo.getUserType() == 5){
                 userType = "전문가-개인";
@@ -86,7 +86,7 @@ public class AdminUserInfoProvider {
         // 2. UserInfoRes로 변환하여 return
         String userType = null;
         if(adminUserInfo.getUserType() == 1){
-            userType = "일반";
+            userType = "클라이언트";
         }
         else if(adminUserInfo.getUserType() == 2){
             userType = "제작사-개인";
@@ -95,7 +95,7 @@ public class AdminUserInfoProvider {
             userType = "제작사-법인";
         }
         else if(adminUserInfo.getUserType() == 4){
-            userType = "전문가-일반";
+            userType = "전문가-클라이언트";
         }
         else if(adminUserInfo.getUserType() == 5){
             userType = "전문가-개인";

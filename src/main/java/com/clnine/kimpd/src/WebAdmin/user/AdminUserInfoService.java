@@ -1,5 +1,6 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
+import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.utils.JwtService;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.utils.AES128;
@@ -9,6 +10,12 @@ import com.clnine.kimpd.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -34,6 +41,7 @@ public class AdminUserInfoService {
 
     /**
      * 회원가입
+     *
      * @param postAdminUserReq
      * @return PostUserRes
      * @throws BaseException
@@ -82,6 +90,7 @@ public class AdminUserInfoService {
 
     /**
      * 회원 등록 API
+     *
      * @param postUserReq
      * @return PostUserRes
      * @throws BaseException
@@ -132,7 +141,7 @@ public class AdminUserInfoService {
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
         String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         int agreeShowDB = 0;
-        if(userType == 4 || userType == 5 || userType == 6){
+        if (userType == 4 || userType == 5 || userType == 6) {
             agreeShowDB = 1;
         }
         AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, city, nickname, profileImageURL,
@@ -151,6 +160,7 @@ public class AdminUserInfoService {
 
     /**
      * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     *
      * @param adminPatchUserReq
      * @return void
      * @throws BaseException
@@ -160,114 +170,124 @@ public class AdminUserInfoService {
         int userType = 0;
         int agreeShowDB = 0;
 
-        try {
-            adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
+        adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
 
-            if(!adminPatchUserReq.getId().equals(adminUserInfo.getId())){
-                if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
-                    throw new BaseException(DUPLICATED_USER);
-                }
+        if (!adminPatchUserReq.getId().equals(adminUserInfo.getId())) {
+            if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
+                throw new BaseException(DUPLICATED_USER);
             }
-            if (adminPatchUserReq.getUserType().equals("일반")) {
-                userType = 1;
-            }
-            else if(adminPatchUserReq.getUserType().equals("제작사-개인")){
-                userType = 2;
-            }
-            else if(adminPatchUserReq.getUserType().equals("제작사-법인")){
-                userType = 3;
-            }
-            else if(adminPatchUserReq.getUserType().equals("전문가-일반")){
-                userType = 4;
-                agreeShowDB = 1;
-            }
-            else if(adminPatchUserReq.getUserType().equals("전문가-개인")){
-                userType = 5;
-                agreeShowDB = 1;
-            }
-            else if(adminPatchUserReq.getUserType().equals("전문가-법인")){
-                userType = 6;
-                agreeShowDB = 1;
-            }
-
-            adminUserInfo.setUserType(userType);
-            adminUserInfo.setAgreeShowDB(agreeShowDB);
-            adminUserInfo.setId(adminPatchUserReq.getId());
-            adminUserInfo.setEmail(adminPatchUserReq.getEmail());
-            adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
-            if(adminPatchUserReq.getCity() == null || adminPatchUserReq.getCity().length() == 0) {
-                adminUserInfo.setCity(null);
-            }
-            else {
-                adminUserInfo.setCity(adminPatchUserReq.getCity());
-            }
-
-            if(adminPatchUserReq.getNickname() == null || adminPatchUserReq.getNickname().length() == 0)
-                adminUserInfo.setNickname(null);
-            else
-                adminUserInfo.setNickname(adminPatchUserReq.getNickname());
-
-            if(adminPatchUserReq.getProfileImageURL() == null || adminPatchUserReq.getProfileImageURL().length() == 0)
-                adminUserInfo.setProfileImageURL(null);
-            else
-                adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
-
-            if(adminPatchUserReq.getIntroduce() == null || adminPatchUserReq.getIntroduce().length() == 0)
-                adminUserInfo.setIntroduce(null);
-            else
-                adminUserInfo.setIntroduce(adminPatchUserReq.getIntroduce());
-
-            if(adminPatchUserReq.getCareer() == null || adminPatchUserReq.getCareer().length() == 0)
-                adminUserInfo.setCareer(null);
-            else
-                adminUserInfo.setCareer(adminPatchUserReq.getCareer());
-
-            if(adminPatchUserReq.getEtc() == null || adminPatchUserReq.getEtc().length() == 0)
-                adminUserInfo.setEtc(null);
-            else
-                adminUserInfo.setEtc(adminPatchUserReq.getEtc());
-
-            if(adminPatchUserReq.getMinimumCastingPrice() == null || adminPatchUserReq.getMinimumCastingPrice().length() == 0)
-                adminUserInfo.setMinimumCastingPrice(null);
-            else
-                adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
-
-            if(adminPatchUserReq.getPrivateBusinessName() == null || adminPatchUserReq.getPrivateBusinessName().length() == 0)
-                adminUserInfo.setPrivateBusinessName(null);
-            else
-                adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
-
-            if(adminPatchUserReq.getBusinessNumber() == null || adminPatchUserReq.getBusinessNumber().length() == 0)
-                adminUserInfo.setBusinessNumber(null);
-            else
-                adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
-
-            if(adminPatchUserReq.getBusinessImageURL() == null || adminPatchUserReq.getBusinessImageURL().length() == 0)
-                adminUserInfo.setBusinessImageURL(null);
-            else
-                adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
-
-            if(adminPatchUserReq.getCorporationBusinessName() == null || adminPatchUserReq.getCorporationBusinessName().length() == 0)
-                adminUserInfo.setCorporationBusinessName(null);
-            else
-                adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
-
-
-            if(adminPatchUserReq.getCorporationBusinessNumber() == null || adminPatchUserReq.getCorporationBusinessNumber().length() == 0)
-                adminUserInfo.setCorporationBusinessNumber(null);
-            else
-                adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
-
-            adminUserInfo.setStatus(adminPatchUserReq.getStatus());
-            adminUserInfoRepository.save(adminUserInfo);
-            return ;
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_USER);
         }
+
+        if (!adminPatchUserReq.getPhoneNum().equals(adminUserInfo.getPhoneNum())) {
+            if (adminUserInfoProvider.isPhoneNumUseable(adminPatchUserReq.getPhoneNum()) == false) {
+                throw new BaseException(DUPLICATED_PHONE_NUMBER);
+            }
+        }
+
+        if (!adminPatchUserReq.getEmail().equals(adminUserInfo.getEmail())) {
+            if (adminUserInfoProvider.isEmailUseable(adminPatchUserReq.getEmail()) == false) {
+                throw new BaseException(DUPLICATED_EMAIL);
+            }
+        }
+
+        if (!adminPatchUserReq.getNickname().equals(adminUserInfo.getNickname())) {
+            if (adminUserInfoProvider.isNicknameUseable(adminPatchUserReq.getNickname()) == false) {
+                throw new BaseException(DUPLICATED_NICKNAME);
+            }
+        }
+
+        if (adminPatchUserReq.getUserType().equals("클라이언트")) {
+            userType = 1;
+        } else if (adminPatchUserReq.getUserType().equals("제작사-개인")) {
+            userType = 2;
+        } else if (adminPatchUserReq.getUserType().equals("제작사-법인")) {
+            userType = 3;
+        } else if (adminPatchUserReq.getUserType().equals("전문가-클라이언트")) {
+            userType = 4;
+            agreeShowDB = 1;
+        } else if (adminPatchUserReq.getUserType().equals("전문가-개인")) {
+            userType = 5;
+            agreeShowDB = 1;
+        } else if (adminPatchUserReq.getUserType().equals("전문가-법인")) {
+            userType = 6;
+            agreeShowDB = 1;
+        }
+
+        adminUserInfo.setUserType(userType);
+        adminUserInfo.setAgreeShowDB(agreeShowDB);
+        adminUserInfo.setId(adminPatchUserReq.getId());
+        adminUserInfo.setEmail(adminPatchUserReq.getEmail());
+        adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
+        if (adminPatchUserReq.getCity() == null || adminPatchUserReq.getCity().length() == 0) {
+            adminUserInfo.setCity(null);
+        } else {
+            adminUserInfo.setCity(adminPatchUserReq.getCity());
+        }
+
+        if (adminPatchUserReq.getNickname() == null || adminPatchUserReq.getNickname().length() == 0)
+            adminUserInfo.setNickname(null);
+        else
+            adminUserInfo.setNickname(adminPatchUserReq.getNickname());
+
+        if (adminPatchUserReq.getProfileImageURL() == null || adminPatchUserReq.getProfileImageURL().length() == 0)
+            adminUserInfo.setProfileImageURL(null);
+        else
+            adminUserInfo.setProfileImageURL(adminPatchUserReq.getProfileImageURL());
+
+        if (adminPatchUserReq.getIntroduce() == null || adminPatchUserReq.getIntroduce().length() == 0)
+            adminUserInfo.setIntroduce(null);
+        else
+            adminUserInfo.setIntroduce(adminPatchUserReq.getIntroduce());
+
+        if (adminPatchUserReq.getCareer() == null || adminPatchUserReq.getCareer().length() == 0)
+            adminUserInfo.setCareer(null);
+        else
+            adminUserInfo.setCareer(adminPatchUserReq.getCareer());
+
+        if (adminPatchUserReq.getEtc() == null || adminPatchUserReq.getEtc().length() == 0)
+            adminUserInfo.setEtc(null);
+        else
+            adminUserInfo.setEtc(adminPatchUserReq.getEtc());
+
+        if (adminPatchUserReq.getMinimumCastingPrice() == null || adminPatchUserReq.getMinimumCastingPrice().length() == 0)
+            adminUserInfo.setMinimumCastingPrice(null);
+        else
+            adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
+
+        if (adminPatchUserReq.getPrivateBusinessName() == null || adminPatchUserReq.getPrivateBusinessName().length() == 0)
+            adminUserInfo.setPrivateBusinessName(null);
+        else
+            adminUserInfo.setPrivateBusinessName(adminPatchUserReq.getPrivateBusinessName());
+
+        if (adminPatchUserReq.getBusinessNumber() == null || adminPatchUserReq.getBusinessNumber().length() == 0)
+            adminUserInfo.setBusinessNumber(null);
+        else
+            adminUserInfo.setBusinessNumber(adminPatchUserReq.getBusinessNumber());
+
+        if (adminPatchUserReq.getBusinessImageURL() == null || adminPatchUserReq.getBusinessImageURL().length() == 0)
+            adminUserInfo.setBusinessImageURL(null);
+        else
+            adminUserInfo.setBusinessImageURL(adminPatchUserReq.getBusinessImageURL());
+
+        if (adminPatchUserReq.getCorporationBusinessName() == null || adminPatchUserReq.getCorporationBusinessName().length() == 0)
+            adminUserInfo.setCorporationBusinessName(null);
+        else
+            adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
+
+
+        if (adminPatchUserReq.getCorporationBusinessNumber() == null || adminPatchUserReq.getCorporationBusinessNumber().length() == 0)
+            adminUserInfo.setCorporationBusinessNumber(null);
+        else
+            adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
+
+        adminUserInfo.setStatus(adminPatchUserReq.getStatus());
+        adminUserInfoRepository.save(adminUserInfo);
+        return;
     }
 
     /**
-     * user 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     * user 비밀번호 초기화 (POST uri 가 겹쳤을때의 예시 용도)
+     *
      * @param adminPatchUserPwReq
      * @return void
      * @throws BaseException
@@ -275,18 +295,37 @@ public class AdminUserInfoService {
     public void updateUserPw(AdminPatchUserPwReq adminPatchUserPwReq) throws BaseException {
         AdminUserInfo existsUserInfo = null;
 
-        try{
+        try {
             //존재한다면
             existsUserInfo = adminUserInfoProvider.retrieveUserInfoByEmail(adminPatchUserPwReq.getEmail());
-        }catch(BaseException exception){
+            if (existsUserInfo == null) {
+                throw new BaseException(NOT_FOUND_USER);
+            }
+            String newPassword = mailService.sendPwFindMail(adminPatchUserPwReq.getEmail());
+            String hashedPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+            existsUserInfo.setPassword(hashedPassword);
+            adminUserInfoRepository.save(existsUserInfo);
+            return;
+        } catch (BaseException exception) {
             throw new BaseException(NOT_FOUND_USER);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
         }
-        String newPassword = mailService.sendPwFindMail(adminPatchUserPwReq.getEmail());
-        return;
     }
 
     /**
      * admin 비밀번호 수정 (POST uri 가 겹쳤을때의 예시 용도)
+     *
      * @param adminPatchAdminPwReq
      * @return PatchUserRes
      * @throws BaseException
@@ -300,9 +339,9 @@ public class AdminUserInfoService {
 
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getPassword());
             System.out.println(password);
-            if(!password.equals(existsWebAdminInfo.getPassword()))
+            if (!password.equals(existsWebAdminInfo.getPassword()))
                 throw new BaseException(FAILED_TO_PATCH_USER);
-            else{
+            else {
                 password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getNewPassword());
                 existsWebAdminInfo.setPassword(password);
                 webAdminInfoRepository.save(existsWebAdminInfo);
@@ -315,6 +354,7 @@ public class AdminUserInfoService {
 
     /**
      * 회원 탈퇴
+     *
      * @param userId
      * @throws BaseException
      */
