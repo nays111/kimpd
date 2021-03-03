@@ -22,8 +22,6 @@ public class BasketController {
 
     /**
      * 장바구니 담기 API
-     * @param postBasketReq
-     * @return
      */
     @ResponseBody
     @PostMapping("/baskets")
@@ -34,7 +32,12 @@ public class BasketController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        //todo requestbody validation 추가해야함
+        if(postBasketReq.getUserIdx().size()==0 || postBasketReq.getUserIdx()==null){
+            return new BaseResponse<>(EMPTY_EXPERT_TO_POST_BASKET);
+        }
+        if(postBasketReq.getProjectIdx()==null){
+            return new BaseResponse<>(EMPTY_PROJECT_INDEX);
+        }
         try{
             basketService.postBasket(userIdx,postBasketReq);
             return new BaseResponse<>(SUCCESS);
@@ -45,8 +48,6 @@ public class BasketController {
 
     /**
      * 내 장바구니 조회 API
-     * @param projectIdx
-     * @return
      */
     @ResponseBody
     @GetMapping("/baskets")
@@ -67,8 +68,6 @@ public class BasketController {
 
     /**
      * 장바구니에 담긴걸 섭외 요청 보내기
-     * @param postBasketCastingReq
-     * @return
      */
     @ResponseBody
     @PostMapping("/baskets/castings")
@@ -89,5 +88,4 @@ public class BasketController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
 }
