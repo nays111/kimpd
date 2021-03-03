@@ -6,6 +6,7 @@ import com.clnine.kimpd.src.WebAdmin.faq.models.AdminGetFaqsListRes;
 import com.clnine.kimpd.src.WebAdmin.faq.models.AdminGetFaqsRes;
 import com.clnine.kimpd.src.WebAdmin.faq.models.AdminPatchFaqsReq;
 import com.clnine.kimpd.src.WebAdmin.faq.models.AdminPostFaqsReq;
+import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class AdminFaqController {
     private final AdminFaqProvider adminFaqProvider;
     private final AdminFaqService adminFaqService;
+    private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
      * FAQ 전체 조회 API
@@ -34,6 +36,10 @@ public class AdminFaqController {
         List<AdminGetFaqsRes> getFaqsResList;
 
         try{
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             getFaqsResList = adminFaqProvider.getFaqList();
             AdminGetFaqsListRes faqList = new AdminGetFaqsListRes(getFaqsResList);
             return new BaseResponse<>(SUCCESS_READ_FAQS, faqList);
@@ -57,6 +63,10 @@ public class AdminFaqController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminGetFaqsRes adminGetFaqsRes = adminFaqProvider.retrieveFaqInfo(faqIdx);
             return new BaseResponse<>(SUCCESS_READ_FAQS, adminGetFaqsRes);
         } catch (BaseException exception) {
@@ -85,6 +95,10 @@ public class AdminFaqController {
 
         // 2. Post Faq
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminFaqService.createFaqs(parameters);
             return new BaseResponse<>(SUCCESS_POST_FAQS);
         } catch (BaseException exception) {
@@ -115,6 +129,10 @@ public class AdminFaqController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminFaqService.updateFaq(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_FAQS);
         } catch (BaseException exception) {

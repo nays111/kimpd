@@ -33,13 +33,13 @@ public class JwtService {
 
     /**
      * WebAdmin JWT 생성
-     * @param userId
+     * @param adminIdx
      * @return String
      */
-    public String createWebAdminJwt(String userId) {
+    public String createWebAdminJwt(int adminIdx) {
         Date now = new Date();
         return Jwts.builder()
-                .claim("userId", userId)
+                .claim("adminIdx", adminIdx)
                 .setIssuedAt(now)
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
@@ -78,5 +78,31 @@ public class JwtService {
 
         // 3. userIdx 추출
         return claims.getBody().get("userIdx", Integer.class);
+    }
+
+    /**
+     * JWT에서 adminIdx 추출
+     * @return int
+     * @throws BaseException
+     */
+    public int getAdminIdx() throws BaseException {
+        // 1. JWT 추출
+        String accessToken = getJwt();
+        if (accessToken == null || accessToken.length() == 0) {
+            throw new BaseException(EMPTY_JWT);
+        }
+
+        // 2. JWT parsing
+        Jws<Claims> claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .parseClaimsJws(accessToken);
+        } catch (Exception ignored) {
+            throw new BaseException(INVALID_JWT);
+        }
+
+        // 3. userIdx 추출
+        return claims.getBody().get("adminIdx", Integer.class);
     }
 }

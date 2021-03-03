@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import com.clnine.kimpd.src.WebAdmin.banner.models.*;
+import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import com.clnine.kimpd.src.WebAdmin.user.models.AdminGetUserRes;
 import com.clnine.kimpd.src.WebAdmin.user.models.AdminPatchUserReq;
 import com.clnine.kimpd.src.WebAdmin.user.models.AdminPostUserReq;
@@ -24,6 +25,7 @@ import java.util.List;
 public class AdminBannerController {
     private final AdminBannerProvider adminBannerProvider;
     private final AdminBannerService adminBannerService;
+    private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
      * 광고 전체 조회 API
@@ -37,6 +39,10 @@ public class AdminBannerController {
         List<AdminGetBannersRes> getBannersResList;
 
         try{
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             getBannersResList = adminBannerProvider.getBannerList();
             AdminGetBannersListRes bannerList = new AdminGetBannersListRes(getBannersResList);
             return new BaseResponse<>(SUCCESS_READ_BANNERS, bannerList);
@@ -60,6 +66,10 @@ public class AdminBannerController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminGetBannersRes adminGetBannersRes = adminBannerProvider.retrieveBannerInfo(bannerIdx);
             return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetBannersRes);
         } catch (BaseException exception) {
@@ -111,6 +121,10 @@ public class AdminBannerController {
 
         // 2. Post Banner
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminBannerService.createBanners(parameters);
             return new BaseResponse<>(SUCCESS_POST_BANNERS);
         } catch (BaseException exception) {
@@ -160,6 +174,10 @@ public class AdminBannerController {
         }
         
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminBannerService.updateBanner(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
         } catch (BaseException exception) {

@@ -3,6 +3,7 @@ package com.clnine.kimpd.src.WebAdmin.casting;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.WebAdmin.casting.models.*;
+import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class AdminCastingController {
     private final AdminCastingProvider adminCastingProvider;
     private final AdminCastingService adminCastingService;
+    private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
      * 섭외 전체 조회 API
@@ -30,6 +32,10 @@ public class AdminCastingController {
         List<AdminGetCastingsRes> getInquiriesResList;
 
         try{
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             getInquiriesResList = adminCastingProvider.getCastingList();
             AdminGetCastingsListRes castingList = new AdminGetCastingsListRes(getInquiriesResList);
             return new BaseResponse<>(SUCCESS_READ_INQUIRIES, castingList);
@@ -53,36 +59,14 @@ public class AdminCastingController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminGetCastingRes adminGetCastingRes = adminCastingProvider.retrieveCastingInfo(castingIdx);
             return new BaseResponse<>(SUCCESS_READ_INQUIRIES, adminGetCastingRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-    /**
-     * 1:1문의 답글 API
-     * [PATCH] /faqs
-     * @RequestBody AdminPatchFaqsReq
-     * @return BaseResponse<Void>
-     */
-//    @ResponseBody
-//    @PatchMapping("/inquiries")
-//    @CrossOrigin(origins = "*")
-//    public BaseResponse<Void> patchInquiries(@RequestBody AdminPatchInquiriesReq parameters) {
-//        if (parameters.getInquiryIdx() <= 0) {
-//            return new BaseResponse<>(EMPTY_INQUIRY_IDX);
-//        }
-//
-//        if (parameters.getInquiryAnswer() == null || parameters.getInquiryAnswer().length() <= 0) {
-//            return new BaseResponse<>(EMPTY_INQUIRY_ANSWER);
-//        }
-//
-//        try {
-//            adminInquiryService.updateInquiry(parameters);
-//            return new BaseResponse<>(SUCCESS_PATCH_FAQS);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
 }

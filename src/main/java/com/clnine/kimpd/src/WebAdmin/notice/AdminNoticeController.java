@@ -3,6 +3,7 @@ package com.clnine.kimpd.src.WebAdmin.notice;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.WebAdmin.notice.models.*;
+import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class AdminNoticeController {
     private final AdminNoticeProvider adminNoticeProvider;
     private final AdminNoticeService adminNoticeService;
+    private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
      * 공지사항 전체 조회 API
@@ -30,6 +32,10 @@ public class AdminNoticeController {
         List<AdminGetNoticesRes> getNoticesResList;
 
         try{
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             getNoticesResList = adminNoticeProvider.getNoticeList();
             AdminGetNoticesListRes noticeList = new AdminGetNoticesListRes(getNoticesResList);
             return new BaseResponse<>(SUCCESS_READ_NOTICES, noticeList);
@@ -53,6 +59,10 @@ public class AdminNoticeController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminGetNoticeRes adminGetNoticeRes = adminNoticeProvider.retrieveNoticeInfo(noticeIdx);
             return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetNoticeRes);
         } catch (BaseException exception) {
@@ -81,6 +91,10 @@ public class AdminNoticeController {
 
         // 2. Post Notice
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminNoticeService.createNotices(parameters);
             return new BaseResponse<>(SUCCESS_POST_NOTICES);
         } catch (BaseException exception) {
@@ -111,6 +125,10 @@ public class AdminNoticeController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminNoticeService.updateNotice(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
         } catch (BaseException exception) {

@@ -1,5 +1,6 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
+import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import com.clnine.kimpd.utils.AES128;
@@ -128,7 +129,7 @@ public class AdminUserInfoProvider {
     /**
      * 로그인
      * @param adminPostLoginReq
-     * @return PostLoginRes
+     * @return AdminPostLoginRes
      * @throws BaseException
      */
     public AdminPostLoginRes login(AdminPostLoginReq adminPostLoginReq) throws BaseException {
@@ -149,11 +150,10 @@ public class AdminUserInfoProvider {
         }
 
         // 3. Create JWT
-        String jwt = jwtService.createWebAdminJwt(webAdmin.getId());
+        String jwt = jwtService.createWebAdminJwt(webAdmin.getAdminIdx());
 
         // 4. PostLoginRes 변환하여 return
-        String id = webAdmin.getId();
-        return new AdminPostLoginRes(id, jwt);
+        return new AdminPostLoginRes(webAdmin.getAdminIdx(), jwt);
     }
 
     /**
@@ -205,7 +205,8 @@ public class AdminUserInfoProvider {
         // 1. DB에서 UserInfo 조회
         WebAdmin adminInfo;
         try {
-            adminInfo = webAdminInfoRepository.findById(userId).orElse(null);
+            adminInfo = webAdminInfoRepository.findByIdAndStatus(userId, "ACTIVE");
+
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
@@ -233,5 +234,32 @@ public class AdminUserInfoProvider {
 
     public Boolean isNicknameUseable(String nickname) {
         return !adminUserInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE");
+    }
+
+    public Boolean checkJWT() {
+        boolean check = false;
+        try {
+            int adminIdx = jwtService.getAdminIdx();
+            check = retrieveAdminInfoByAdminIdx(adminIdx);
+            return check;
+        } catch (BaseException exception) {
+            return false;
+        }
+    }
+
+    public boolean retrieveAdminInfoByAdminIdx(int adminIdx) {
+        WebAdmin adminInfo;
+        try {
+            adminInfo = webAdminInfoRepository.findByAdminIdxAndStatus(adminIdx, "ACTIVE");
+
+        } catch (Exception ignored) {
+            return false;
+        }
+
+        if (adminInfo == null || !adminInfo.getStatus().equals("ACTIVE")) {
+            return false;
+        }
+
+        return true;
     }
 }

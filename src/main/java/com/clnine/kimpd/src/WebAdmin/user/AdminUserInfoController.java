@@ -37,6 +37,9 @@ public class AdminUserInfoController {
     @CrossOrigin(origins = "*")
     public BaseResponse<AdminGetUsersListRes> getUsers(@RequestParam(required = false) String word) {
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
             List<AdminGetUsersRes> adminGetUsersResList = adminUserInfoProvider.retrieveUserInfoList(word);
             AdminGetUsersListRes userInfo = new AdminGetUsersListRes(adminGetUsersResList);
 
@@ -61,6 +64,9 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
             AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userIdx);
             return new BaseResponse<>(SUCCESS_READ_USER, adminGetUserRes);
         } catch (BaseException exception) {
@@ -150,6 +156,10 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminUserInfoService.updateUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_USER);
         } catch (BaseException exception) {
@@ -178,6 +188,10 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminUserInfoService.updateUserPw(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_USER_PASSWORD);
         } catch (BaseException exception) {
@@ -218,6 +232,10 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateAdminInfo(parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -264,6 +282,10 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminUserInfoService.deleteUserInfo(userId);
             return new BaseResponse<>(SUCCESS_DELETE_USER);
         } catch (BaseException exception) {
@@ -345,11 +367,14 @@ public class AdminUserInfoController {
 
         // 2. Post UserInfo
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
 }

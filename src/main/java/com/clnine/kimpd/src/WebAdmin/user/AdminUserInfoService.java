@@ -81,7 +81,7 @@ public class AdminUserInfoService {
         }
 
         // 4. JWT 생성
-        String jwt = jwtService.createWebAdminJwt(admin.getId());
+        String jwt = jwtService.createWebAdminJwt(admin.getAdminIdx());
 
         // 5. UserInfoLoginRes로 변환하여 return
         String webAdminId = admin.getId();
