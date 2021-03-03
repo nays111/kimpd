@@ -3,6 +3,7 @@ package com.clnine.kimpd.src.WebAdmin.inquiry;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.WebAdmin.inquiry.models.*;
+import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class AdminInquiryController {
     private final AdminInquiryProvider adminInquiryProvider;
     private final AdminInquiryService adminInquiryService;
+    private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
      * 1:1문의 전체 조회 API
@@ -30,6 +32,10 @@ public class AdminInquiryController {
         List<AdminGetInquiriesRes> getInquiriesResList;
 
         try{
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             getInquiriesResList = adminInquiryProvider.getInquiryList();
             AdminGetInquiriesListRes InquiryList = new AdminGetInquiriesListRes(getInquiriesResList);
             return new BaseResponse<>(SUCCESS_READ_INQUIRIES, InquiryList);
@@ -53,6 +59,10 @@ public class AdminInquiryController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminGetInquiryRes adminGetInquiryRes = adminInquiryProvider.retrieveInquiryInfo(inquiryIdx);
             return new BaseResponse<>(SUCCESS_READ_INQUIRIES, adminGetInquiryRes);
         } catch (BaseException exception) {
@@ -79,6 +89,10 @@ public class AdminInquiryController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminInquiryService.updateInquiry(parameters);
             return new BaseResponse<>(SUCCESS_PATCH_FAQS);
         } catch (BaseException exception) {

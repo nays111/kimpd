@@ -15,9 +15,16 @@ import javax.persistence.*;
 @Table(name = "WebAdmin") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
 public class WebAdmin extends BaseEntity{
     /**
-     * 어드민 ID
+     * 유저 인덱스
      */
     @Id // PK를 의미하는 어노테이션
+    @Column(name = "adminIdx", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int adminIdx;
+
+    /**
+     * 어드민 ID
+     */
     @Column(name = "id", nullable = false)
     private String id;
 
