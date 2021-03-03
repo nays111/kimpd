@@ -329,17 +329,17 @@ public class AdminUserInfoController {
             }
         }
 
-        if(parameters.getUserType() == 3 || parameters.getUserType() == 6){
-            if(parameters.getCorporationBusinessName() == null || parameters.getCorporationBusinessName().length() == 0){
+        if (parameters.getUserType() == 3 || parameters.getUserType() == 6){
+            if (parameters.getCorporationBusinessName() == null || parameters.getCorporationBusinessName().length() == 0){
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
-            if(parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
+            if (parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
-            if(parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
+            if (parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
-            if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
+            if (parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
         }
@@ -356,7 +356,7 @@ public class AdminUserInfoController {
             return new BaseResponse<>(DUPLICATED_EMAIL);
         }
 
-        if(parameters.getNickname() == null){
+        if (parameters.getNickname() == null){
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
         else{
