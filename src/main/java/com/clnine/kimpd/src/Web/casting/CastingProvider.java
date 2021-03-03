@@ -185,13 +185,6 @@ public class CastingProvider {
 
     /**
      * 받은 섭외 요청 리스트 조회 API (보낸 것과 다름)
-     * @param expertIdx
-     * @param duration
-     * @param castingStatus
-     * @param page
-     * @param size
-     * @return
-     * @throws BaseException
      */
     public List<GetMyReceivedCastingRes> getMyReceivedCastingRes(int expertIdx,Integer duration,Integer castingStatus,int page,int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
@@ -209,7 +202,6 @@ public class CastingProvider {
         Timestamp end1 = Timestamp.valueOf(end3);
         Timestamp end2 = Timestamp.valueOf(end6);
         Timestamp now1 = Timestamp.valueOf(now);
-
 
         if(duration==null){ //전체기간 조회
             if(castingStatus==null){//전체조회
@@ -239,12 +231,10 @@ public class CastingProvider {
 
             int castingIdx = casting.getCastingIdx();
             int userIdx = userInfo1.getUserIdx();
-            String nickname = userInfo1.getNickname();//todo 제작사가 들어가야함
+            String nickname = userInfo1.getNickname();
             if(nickname==null){
                 nickname="닉네임 없음";
             }
-
-
             String profileImageURL = userInfo1.getProfileImageURL();
             if(profileImageURL==null){
                 profileImageURL="프로필 사진 없음";
@@ -276,8 +266,6 @@ public class CastingProvider {
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
             String castingDate = sDate.format(createdAt);//4
 
-
-
             GetMyReceivedCastingRes getMyReceivedCastingRes = new GetMyReceivedCastingRes(userIdx,nickname,profileImageURL,projectName,castingIdx,castingStatusString,castingTerm,castingDate,castingPrice);
 
             getMyReceivedCastingResList.add(getMyReceivedCastingRes);
@@ -285,11 +273,6 @@ public class CastingProvider {
 
         return getMyReceivedCastingResList;
     }
-
-
-
-
-
     /**
      * 섭외 상세내역 조회
      * @param castingIdx
@@ -324,6 +307,4 @@ public class CastingProvider {
         GetCastingRes getCastingRes = new GetCastingRes(castingIdx,projectIdx,projectName,projectMaker,projectStartDate,projectEndDate,projectManager,projectDescription,projectFileURL,castingPrice,castingStartDate,castingEndDate,castingPriceDate,castingWork,castingMessage);
         return getCastingRes;
     }
-
-
 }

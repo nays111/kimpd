@@ -97,6 +97,8 @@ public enum BaseResponseStatus {
     INVALID_BUSINESS_NUMBER(false,2092,"사업자 등록번호 형식을 확인해주세요.(-제외 10자리)"),
     INVALID_CORP_BUSINESS_NUMBER(false,2093,"법인 사업자 등록번호 형식을 확인해주세요.(-제외 10자리)"),
     NO_SELECT_AGREE_SHOW_DB(false,2094,"인재 DB 공개여부를 체크해주세요."),
+    WRONG_CASTING_STATUS_SEARCH(false,2096,"올바른 섭외 상태를 선택해주세요."),
+    WRONG_DURATION(false,2097,"올바른 기한을 선택해주세요."),
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),

@@ -20,6 +20,6 @@ public class KimpdApplication {
 
 	@Bean
 	public BarobillApiService barobillApiService() throws MalformedURLException {
-		return new BarobillApiService(BarobillApiProfile.RELEASE);
+		return new BarobillApiService(BarobillApiProfile.RELEASE_SSL);
 	}
 }

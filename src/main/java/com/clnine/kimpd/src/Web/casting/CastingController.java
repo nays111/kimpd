@@ -100,7 +100,6 @@ public class CastingController {
 
     /**
      * 받은 캐스팅 리스트 조회 API
-     *
      * @param castingStatus
      * @param duration
      * @param page
@@ -117,7 +116,16 @@ public class CastingController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
+        if(castingStatus!=null){
+            if(castingStatus!=1 || castingStatus!=2 || castingStatus!=3 || castingStatus!=4){
+                return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
+            }
+        }
+        if(duration!=null){
+            if(duration!=1 || duration!=2){
+                return new BaseResponse<>(WRONG_DURATION);
+            }
+        }
         List<GetMyReceivedCastingRes> getMyReceivedCastingResList;
         try {
             getMyReceivedCastingResList = castingProvider.getMyReceivedCastingRes(userIdx, duration, castingStatus, page, 6);
@@ -143,12 +151,9 @@ public class CastingController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        System.out.println(castingStatus);
         if(castingStatus<2 || castingStatus>4){
             return new BaseResponse<>(WRONG_CASTING_STATUS);
         }
-
-
         try {
             castingService.patchCastingStatus(castingStatus, patchCastingStatusReq);
             return new BaseResponse<>(SUCCESS);
@@ -179,13 +184,8 @@ public class CastingController {
         }
 
     }
-
-
-
-
-
     /**
-     * [2021.02.06] 12. 섭외 요청하기  API
+     * 섭외 요청하기  API
      * @param postCastingReq
      * @return
      */
@@ -199,9 +199,6 @@ public class CastingController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        //int expertIdx = postCastingReq.getUserIdx();
-
-
         /**
          * 프로젝트를 불러오지 않고 수기로 신규 신청하는 경우
          */
@@ -246,13 +243,6 @@ public class CastingController {
             if(postCastingReq.getCastingMessage()==null || postCastingReq.getCastingMessage().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_MESSAGE);
             }
-            /**
-             * 프로젝트를 불러오지 않은 채로 수기로 입력하여 섭외 신청을 한 경우
-             * 입력한 프로젝트 정보로 -> 프로젝트 생성
-             * 프로젝트 생성해서 나온 객체를 섭외 엔티티에 저장
-             * int PROJECT(USERIDX, PROJECT 해당) 함수
-             * CASTING(USERIDX, EXPERTIDX, PROJECT, CASTING 해당) 함수수
-             */
             try{
                 castingService.PostCasting(postCastingReq,userIdx,expertIdx);
                 return new BaseResponse<>(SUCCESS);
@@ -262,9 +252,6 @@ public class CastingController {
         }else{
             /**
              * 프로젝트를 불러오는 경우
-             * 1. projectIdx 로 프로젝트를 찾아온다.
-             * 2. 찾은 projectIdx로 project 객체 가져온다
-             * 3. project 객체, userIdx, expertIdx로 캐스팅 삽입
              */
             if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE);
@@ -294,7 +281,7 @@ public class CastingController {
     }
 
     /**
-     * [2021.02.09] 17.섭외 상세내역 조회 API
+     * 섭외 요청 상세내역 조회 API
      * @param castingIdx
      * @return
      */
@@ -317,7 +304,7 @@ public class CastingController {
     }
 
     /**
-     * [2021.02.09] 18. 재섭외 요청
+     * 재섭외 요청 API
      * @param castingIdx
      * @return
      */
