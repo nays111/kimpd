@@ -142,6 +142,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_MY_ALARMS(false,3048,"알림 리스트 조회에 실패했습니다."),
     DID_NOT_INSERT_CASTING_CONDITION(false,3049,"섭외 조건을 입력해주세요."),
     FAILED_SAVE_NEW_PASSWORD(false,3050,"비밀번호 수정에 실패했습니다."),
+    FAILED_TO_SAVE_BASKETS(false,3051,"장바구니 담기에 실패했습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),

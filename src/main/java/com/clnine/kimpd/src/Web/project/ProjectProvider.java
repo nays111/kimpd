@@ -25,6 +25,19 @@ public class ProjectProvider {
     private final UserInfoRepository userInfoRepository;
     private final ProjectRepository projectRepository;
 
+    public Project retrieveProjectByProjectIdx(int projectIdx) throws BaseException{
+        Project project;
+        try{
+            project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }
+        if(project==null){
+            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }
+        return project;
+    }
+
 
     /**
      * 프로젝트 수정할 때 쓰는 프로젝트 상세 조회
