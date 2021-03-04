@@ -17,6 +17,6 @@ public class PostExpertsReq {
     private String castingStartDate;
     private String castingEndDate;
     private Integer minimumCastingPrice;
-    private int page;
-    private int sort;
+    private Integer page;
+    private Integer sort;
 }

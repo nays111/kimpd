@@ -101,6 +101,13 @@ public enum BaseResponseStatus {
     WRONG_DURATION(false,2097,"올바른 기한을 선택해주세요."),
     EMPTY_EXPERT_TO_POST_BASKET(false,2098,"장바구니에 담을 전문가를 선택해주세요."),
     EMPTY_PROJECT_INDEX(false,2099,"어떤 프로젝트에 담을지 선택해주세요."),
+    TOO_LONG_INTRODUCE(false,2100,"전문가 소개가 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    TOO_LONG_CAREER(false,2101,"경력 소개가 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    TOO_LONG_ETC(false,2102,"기타 사항이 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    EMPTY_PAGE(false,2103,"페이지 번호를 입력해주세요."),
+    EMPTY_SORT_OPTION(false,2104,"정렬 옵션을 선택해주세요."),
+    WRONG_SORT_OPTION(false,2105,"잘못된 정렬 옵션입니다."),
+
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),

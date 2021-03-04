@@ -11,11 +11,12 @@ import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.review.ReviewRepository;
 import com.clnine.kimpd.src.Web.review.models.GetReviewListRes;
 import com.clnine.kimpd.src.Web.review.models.Review;
+import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,28 +37,22 @@ public class ExpertProvider {
     private final UserJobCategoryRepository userJobCategoryRepository;
     private final ExpertRepository expertRepository;
     private final UserGenreCategoryRepository userGenreCategoryRepository;
+    private final UserInfoProvider userInfoProvider;
 
     /**
      * 전문가 상세보기
-     * @param userIdx
-     * @return
-     * @throws BaseException
      */
+    @Transactional(readOnly = true)
     public GetExpertRes getExpertRes(int userIdx) throws BaseException {
-        UserInfo userInfo;
-        try {
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         String userProfileImage = userInfo.getProfileImageURL();
         String nickname = userInfo.getNickname();
         String city = userInfo.getCity();
         String introduce = userInfo.getIntroduce();
         String career = userInfo.getCareer();
         List<String> userJobCategoryChildName = categoryProvider.getJobCategoryChildName(userInfo);
-
         String etc = userInfo.getEtc();
+
         int projectCount = projectRepository.countAllByUserInfoAndStatus(userInfo, "ACTIVE");
         int reviewCount = reviewRepository.countAllByEvaluatedUserInfoAndStatus(userInfo, "ACTIVE");
         List<Portfolio> portfolioList = portfolioRepository.findAllByUserInfo(userInfo);
@@ -81,23 +76,19 @@ public class ExpertProvider {
             Date reviewCreatedAt = reviewList.get(i).getCreatedAt();
             SimpleDateFormat sDate = new SimpleDateFormat("yy.MM.dd");
             String reviewMadeTime = sDate.format(reviewCreatedAt);
-
             GetReviewListRes getReviewListRes = new GetReviewListRes(reviewIdx, reviewerUserIdx, reviewNickname, reviewUserImageProfile, star, description, reviewMadeTime);
             getReviewListResList.add(getReviewListRes);
         }
         float average = (float) (Math.round((sum / reviewCount) * 10) / 10.0);
-
         GetExpertRes getExpertRes = new GetExpertRes(userIdx, userProfileImage, nickname, city, userJobCategoryChildName,average, reviewCount, introduce, career, etc,getPortfolioListResList, getReviewListResList, projectCount);
         return getExpertRes;
     }
 
-
     /**
      * 전문가 리스트 검색
-     * @throws BaseException
      */
+    @Transactional(readOnly = true)
     public GetExpertsRes findExperts(PostExpertsReq postExpertsReq) throws BaseException{
-
         String word = postExpertsReq.getWord();
         List<Long> jobCategoryParentIdx = postExpertsReq.getJobCategoryParentIdx();
         List<Long> jobCategoryChildIdx = postExpertsReq.getJobCategoryChildIdx();
@@ -105,23 +96,14 @@ public class ExpertProvider {
         List<String> city = postExpertsReq.getCity();
         String castingStartDate = postExpertsReq.getCastingStartDate();
         String castingEndDate = postExpertsReq.getCastingEndDate();
-        //Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
+        Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         int page = postExpertsReq.getPage();
         int sort = postExpertsReq.getSort();
-
-
-
-
         int pageSearch = (page-1)*5;
 
-        List<Object[]> resultList = null;
-
-
         if(jobCategoryParentIdx.size()==0 || jobCategoryParentIdx.isEmpty() || jobCategoryParentIdx==null){
-            jobCategoryParentIdx.add(1L);
-            jobCategoryParentIdx.add(2L);
-            jobCategoryParentIdx.add(3L);
-            jobCategoryParentIdx.add(4L);
+            jobCategoryParentIdx.add(1L);jobCategoryParentIdx.add(2L);
+            jobCategoryParentIdx.add(3L);jobCategoryParentIdx.add(4L);
             jobCategoryParentIdx.add(5L);
         }
         if(jobCategoryChildIdx.size()==0 || jobCategoryChildIdx.isEmpty()){
@@ -135,23 +117,10 @@ public class ExpertProvider {
             }
         }
         if(city.size()==0 || city.isEmpty() ){
-            city.add("서울");
-            city.add("경기");
-            city.add("인천");
-            city.add("부산");
-            city.add("대구");
-            city.add("대전");
-            city.add("광주");
-            city.add("울산");
-            city.add("세종");
-            city.add("강원");
-            city.add("경남");
-            city.add("경북");
-            city.add("전남");
-            city.add("전북");
-            city.add("충남");
-            city.add("충북");
-            city.add("제주");
+            city.add("서울");city.add("경기");city.add("인천");city.add("부산");city.add("대구");
+            city.add("대전");city.add("광주");city.add("울산");city.add("세종");city.add("강원");
+            city.add("경남");city.add("경북");city.add("전남");city.add("전북");city.add("충남");
+            city.add("충북");city.add("제주");
         }
         if(castingStartDate==null || castingStartDate.length()==0){
             castingStartDate="";
@@ -159,46 +128,37 @@ public class ExpertProvider {
         if(castingEndDate==null || castingEndDate.length()==0){
             castingEndDate="999999";
         }
-        Integer minimumCastingPrice;
-        if(postExpertsReq.getMinimumCastingPrice()==null){
+        if(minimumCastingPrice==null){
             minimumCastingPrice=999999999;
-        }else{
-            minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         }
 
-
-        List<Object[]> resultList2 = null;
-
+        List<Object[]> resultList = null;
+        List<Object[]> sizeResultList = null;
         if(sort==1){ //퍙점순 정렬
             resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
-            resultList2 = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
+            sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
         } else if(sort==2){ //섭외순 정렬
             resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
-            resultList2 = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
-
+            sizeResultList = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
         }
-        int size = resultList2.size();
 
+        int size = sizeResultList.size(); //검색 결과 건수
         List<GetUsersRes> getUsersResList = resultList.stream().map(getUsersRes-> new GetUsersRes(
                 Integer.parseInt(String.valueOf(getUsersRes[0])), //userIdx
                 (String) getUsersRes[1], //profileImageURL
                 (String) getUsersRes[2], //nickname
-                (String) getUsersRes[3],
-                (String) getUsersRes[4],
-                Float.parseFloat(String.valueOf(getUsersRes[5])),
-                Integer.parseInt(String.valueOf(getUsersRes[6]))
+                (String) getUsersRes[3], //jobCategoryChildName
+                (String) getUsersRes[4], //introduce
+                Float.parseFloat(String.valueOf(getUsersRes[5])), //평점
+                Integer.parseInt(String.valueOf(getUsersRes[6])) //평가 개수
         )).collect(Collectors.toList());
 
         GetExpertsRes getExpertsRes = new GetExpertsRes(size,getUsersResList);
         return getExpertsRes;
     }
 
-
     /**
      * 내 정보 조회 (전문가일 경우)
-     * @param userIdx
-     * @return
-     * @throws BaseException
      */
     public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
         UserInfo userInfo;

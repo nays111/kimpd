@@ -38,7 +38,6 @@ public class CategoryProvider {
     public List<GetJobCategoryChildRes>getJobCategoryChild(int jobCategoryParentIdx) throws BaseException{
         List<JobCategoryChild> jobCategoryChildList = null;
         JobCategoryParent jobCategoryParent=null;
-        //parentIdx가지고 parent객체를 찾는다.
         try{
             jobCategoryParent= jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryParentIdx);
         }catch(Exception ignored){
@@ -72,9 +71,6 @@ public class CategoryProvider {
 
     /**
      * 대표 2차 직종만 들고오기
-     * @param userInfo
-     * @return
-     * @throws BaseException
      */
     public String getMainJobCategoryChild(UserInfo userInfo) throws BaseException{
 
@@ -88,6 +84,9 @@ public class CategoryProvider {
         return mainJobCategoryChildName;
     }
 
+    /**
+     * 2차 메인 직종 이름 가져오기
+     */
     public List<String> getJobCategoryChildName(UserInfo userInfo) throws BaseException{
 
         List<UserJobCategory> userJobCategoryList = new ArrayList<>();
@@ -101,7 +100,6 @@ public class CategoryProvider {
             String jobCategoryChildName = userJobCategoryList.get(i).getJobCategoryChild().getJobCategoryChildName();
             jobCategoryChildNameList.add(jobCategoryChildName);
         }
-
         return jobCategoryChildNameList;
     }
 }

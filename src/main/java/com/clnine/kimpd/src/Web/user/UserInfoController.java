@@ -6,6 +6,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,18 +20,15 @@ import static com.clnine.kimpd.config.secret.Secret.barobillCertyKey;
 import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 
-@RestController
-@CrossOrigin
-@RequestMapping(value = "/users")
-@RequiredArgsConstructor
+@RestController @CrossOrigin @RequestMapping(value = "/users") @RequiredArgsConstructor
 public class UserInfoController {
     private final UserInfoProvider userInfoProvider;
     private final UserInfoService userInfoService;
     private final JwtService jwtService;
     private final BarobillApiService barobillApiService;
 
-    @ResponseBody
-    @PostMapping("")
+    @ResponseBody @PostMapping("")
+    @Operation(summary = "회원가입 API")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
         if (parameters.getUserType() > 6 || parameters.getUserType()==0) {
             return new BaseResponse<>(INVALID_USER_TYPE);
@@ -65,17 +63,12 @@ public class UserInfoController {
         if (!isRegexPhoneNumber(parameters.getPhoneNum())) {
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
-//        if(parameters.getAgreeAdvertisement()!=0 || parameters.getAgreeAdvertisement()!=1){
-//            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
-//        }
         if(parameters.getCity()==null || parameters.getCity().length()==0){
             return new BaseResponse<>(EMPTY_CITY);
         }
-
         if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {
             return new BaseResponse<>(EMPTY_ADDRESS);
         }
-
         /**
          * 필수 X 입력 아닌사항
          */
@@ -92,7 +85,6 @@ public class UserInfoController {
                 return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
             }
         }
-
         if (parameters.getBusinessImageURL() != null) {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
@@ -137,13 +129,6 @@ public class UserInfoController {
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
             }
         }
-//        if(parameters.getAgreeShowDB()!=null){
-//            if(parameters.getAgreeShowDB()!=0 || parameters.getAgreeShowDB()!=1){
-//                return new BaseResponse<>(NO_SELECT_AGREE_SHOW_DB);
-//            }
-//        }
-
-
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS, postUserRes);
@@ -152,8 +137,8 @@ public class UserInfoController {
         }
     }
 
-    @ResponseBody
-    @GetMapping("/duplicated-id")
+    @ResponseBody @GetMapping("/duplicated-id")
+    @Operation(summary = "아이디 중복 체크 API")
     public BaseResponse<Void> checkIdDuplicate(@RequestParam(value = "id") String id) {
         if (id == null || id.length() == 0) {
             return new BaseResponse<>(EMPTY_ID);
@@ -164,8 +149,8 @@ public class UserInfoController {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
-    @ResponseBody
-    @GetMapping("/duplicated-nickname")
+    @ResponseBody @GetMapping("/duplicated-nickname")
+    @Operation(summary = "닉네임 중복 체크 API")
     public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value = "nickname") String nickname) {
         if (nickname == null || nickname.length() == 0) {
             return new BaseResponse<>(EMPTY_NICKNAME);
@@ -178,6 +163,7 @@ public class UserInfoController {
     }
 
     @GetMapping("/phone-auth")
+    @Operation(summary = "휴대폰 인증 API",description = "휴대폰 번호는 -를 빼고 입력하세요.")
     public BaseResponse<String> phoneAuth(@RequestParam(value = "phoneNum") String phoneNum) throws IOException, ParseException {
         if (phoneNum == null || phoneNum.length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -193,11 +179,10 @@ public class UserInfoController {
         }
     }
 
-    @ResponseBody
-    @PostMapping("/phone-auth")
+    @ResponseBody @PostMapping("/phone-auth")
+    @Operation(summary="휴대폰 인증번호 검사 API",description = "인증번호는 3분 이내의 가장 최신 것만 유효합니다.")
     public BaseResponse<Void> phoneAuthCheck(@RequestBody PostCertificationCodeReq postCertificationCodeReq) throws BaseException {
         //전송된 휴대폰 번호로 Certifiacte 테이블 조회
-
         System.out.println(postCertificationCodeReq.getCode());
         if (postCertificationCodeReq.getPhoneNum() == null || postCertificationCodeReq.getPhoneNum().length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -208,7 +193,6 @@ public class UserInfoController {
         if (postCertificationCodeReq.getCode() == null) {
             return new BaseResponse<>(EMPTY_CODE);
         }
-
         try {
             int code = userInfoProvider.checkPhoneNumCode(postCertificationCodeReq.getPhoneNum());
             if(code== postCertificationCodeReq.getCode()){
@@ -221,8 +205,8 @@ public class UserInfoController {
         }
     }
 
-    @ResponseBody
-    @PostMapping("/login")
+    @ResponseBody @PostMapping("/login")
+    @Operation(summary="로그인 API",description = "JWT를 반환합니다")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters){
         if(parameters.getId()==null||parameters.getId().length()==0){
             return new BaseResponse<>(EMPTY_ID);
@@ -237,7 +221,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/jwt")
+    @GetMapping("/jwt") @ResponseBody
+    @Operation(summary="JWT 검사 API",description = "유저에 대한 요약 정보를 반환합니다.")
     public BaseResponse<GetUserRes> jwt() {
         GetUserRes getUserRes;
         try {
@@ -249,8 +234,8 @@ public class UserInfoController {
         }
     }
 
-
-    @GetMapping("/id")
+    @GetMapping("/id") @ResponseBody
+    @Operation(summary="아이디 찾기 API",description = "입력한 휴대폰 번호로 이전에 가입했던 ID를 보냅니다. (휴대폰 번호는 -를 빼고 입력해주세요.)")
     public BaseResponse<GetIdRes> lostId(@RequestParam(value="phoneNum")String phoneNumber){
         if(phoneNumber==null || phoneNumber.length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
@@ -265,7 +250,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/password")
+    @GetMapping("/password") @ResponseBody
+    @Operation(summary="비밀번호 찾기 API",description = "입력했던 메일로 새로운 랜덤한 비밀번호를 발급합니다.")
     public BaseResponse<GetNewPasswordRes> lostPassword(@RequestParam(value="email") String userEmail){
         if(userEmail==null || userEmail.length()==0){
             return new BaseResponse<>(EMPTY_EMAIL);
@@ -278,10 +264,10 @@ public class UserInfoController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
 
-    @GetMapping("/corp-auth")
+    @GetMapping("/corp-auth") @ResponseBody
+    @Operation(summary="사업자 인증 API",description = "사업자 번호는 10자리입니다 (-를 빼고 입력해주세요.)")
     public BaseResponse<String> getCorpState(@RequestParam(value="corpNum",required = true)String corpNum) throws RemoteException {
         if(corpNum==null || corpNum.length()==0){
             return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
@@ -298,8 +284,8 @@ public class UserInfoController {
         }
     }
 
-
-    @GetMapping("/{userIdx}")
+    @GetMapping("/{userIdx}") @ResponseBody
+    @Operation(summary="마이페이지 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyUserInfoRes> getMyUserInfo(@PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
         try{
@@ -315,7 +301,8 @@ public class UserInfoController {
         }
     }
 
-    @PatchMapping("/{userIdx}")
+    @PatchMapping("/{userIdx}") @ResponseBody
+    @Operation(summary="회원 정보 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyUserInfo(@PathVariable(required = true,value="userIdx")int userIdx,
                                                 @RequestBody PatchMyUserInfoReq patchMyUserInfoReq){
         int userIdxJWT;
@@ -334,8 +321,8 @@ public class UserInfoController {
     }
 
 
-    @PatchMapping("/{userIdx}/type")
-    @ResponseBody
+    @PatchMapping("/{userIdx}/type") @ResponseBody
+    @Operation(summary="전문가 전환 API",description = "일반->전문가, 일반(개인사업자)->전문가(개인사업자), 일반(법인사업자)->전문가(법인사업자), 토큰이 필요합니다.")
     public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq,
                                                        @PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
@@ -352,8 +339,8 @@ public class UserInfoController {
         }
     }
 
-    @PatchMapping("{userIdx}/password")
-    @ResponseBody
+    @PatchMapping("{userIdx}/password") @ResponseBody
+    @Operation(summary="비밀번호 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyPassword(@RequestBody PatchUserPasswordReq patchUserPasswordReq,
                                                 @PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
@@ -385,8 +372,4 @@ public class UserInfoController {
         }
 
     }
-
-
-
-
 }
