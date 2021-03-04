@@ -6,6 +6,7 @@ import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.category.models.*;
 import com.clnine.kimpd.src.Web.expert.models.PatchMyExpertReq;
 import com.clnine.kimpd.src.Web.expert.models.Portfolio;
+import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +26,14 @@ public class ExpertService {
     private final JobCategoryParentRepository jobCategoryParentRepository;
     private final JobCategoryChildRepository jobCategoryChildRepository;
     private final GenreCategoryRepository genreCategoryRepository;
+    private final UserInfoProvider userInfoProvider;
 
     /**
      * 전문가 프로필 수정 (관리)
-     * @param patchMyExpertReq
-     * @param userIdx
-     * @throws BaseException
      */
     @Transactional
     public void patchMyExpert(PatchMyExpertReq patchMyExpertReq,int userIdx) throws BaseException{
-        UserInfo userInfo;
-        try {
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
+        UserInfo userInfo=userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         List<Integer> jobCategoryParentIdxList = patchMyExpertReq.getJobCategoryParentIdx();
         List<Integer> jobCategoryChildIdxList = patchMyExpertReq.getJobCategoryChildIdx();
         List<Integer> genreCategoryIdxList = patchMyExpertReq.getGenreCategoryIdx();
@@ -61,7 +55,6 @@ public class ExpertService {
         for(int i=0;i<userGenreCategoryList.size();i++){
             userGenreCategoryRepository.delete(userGenreCategoryList.get(i));
         }
-
         //새로운걸 저장
         for(int i=0;i<jobCategoryParentIdxList.size();i++){
             JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryParentIdxList.get(i));
@@ -78,7 +71,6 @@ public class ExpertService {
             Portfolio portfolio = new Portfolio(userInfo,portfolioFileURL.get(i));
             portfolioRepository.save(portfolio);
         }
-
 
         userInfo.setIntroduce(introduce);
         userInfo.setCareer(career);

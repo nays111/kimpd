@@ -1,6 +1,5 @@
 package com.clnine.kimpd.src.Web.user.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

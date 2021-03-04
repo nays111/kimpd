@@ -3,35 +3,20 @@ package com.clnine.kimpd.src.Web.expert;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.expert.models.*;
-import com.clnine.kimpd.src.Web.user.UserInfoProvider;
-
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
-import java.util.List;
-
-import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
-
-
-@RestController
-@RequiredArgsConstructor
-@RequestMapping
-@CrossOrigin
+@RestController @RequiredArgsConstructor @RequestMapping @CrossOrigin
 public class ExpertController {
     private final ExpertProvider expertProvider;
-    private final UserInfoProvider userInfoProvider;
     private final JwtService jwtService;
     private final ExpertService expertService;
 
-    /**
-     * [2021.02.07] 전문가 상세 조회 API
-     * @param userIdx
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/experts/{userIdx}")
+    @ResponseBody @GetMapping("/experts/{userIdx}")
+    @Operation(summary="전문가 상세 조회 API")
     public BaseResponse<GetExpertRes> getExpert(@PathVariable(required = true,value = "userIdx")int userIdx){
         try{
             GetExpertRes getExpertRes = expertProvider.getExpertRes(userIdx);
@@ -41,13 +26,15 @@ public class ExpertController {
         }
     }
 
-    /**
-     * [2021.02.11] 전문가 리스트 조회(검색) API
-     */
-    @PostMapping("/experts")
-    @ResponseBody
+    @PostMapping("/experts") @ResponseBody
+    @Operation(summary="전문가 리스트 조회(검색) API")
     public BaseResponse<GetExpertsRes> getExperts(@RequestBody PostExpertsReq postExpertsReq){
-        //todo validation 추가
+        if(postExpertsReq.getPage()==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
+        if(postExpertsReq.getSort()==null){
+            return new BaseResponse<>(EMPTY_SORT_OPTION);
+        }
         try{
             GetExpertsRes getUsersResList = expertProvider.findExperts(postExpertsReq);
             return new BaseResponse<>(SUCCESS,getUsersResList);
@@ -56,8 +43,8 @@ public class ExpertController {
         }
     }
 
-    @PatchMapping("/users/{userIdx}/profile")
-    @ResponseBody
+    @PatchMapping("/users/{userIdx}/profile") @ResponseBody
+    @Operation(summary="전문가 프로필 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyProfileForExpert(@RequestBody PatchMyExpertReq patchMyExpertReq,
                                                         @PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
@@ -67,16 +54,14 @@ public class ExpertController {
             return new BaseResponse<>(exception.getStatus());
         }
         if(patchMyExpertReq.getIntroduce().length()>500){
-
+            return new BaseResponse<>(TOO_LONG_INTRODUCE);
         }
         if(patchMyExpertReq.getCareer().length()>500){
-
+            return new BaseResponse<>(TOO_LONG_CAREER);
         }
         if(patchMyExpertReq.getEtc().length()>500){
-
+            return new BaseResponse<>(TOO_LONG_ETC);
         }
-
-
         try{
             expertService.patchMyExpert(patchMyExpertReq,userIdx);
             return new BaseResponse<String>(SUCCESS);
@@ -85,8 +70,8 @@ public class ExpertController {
         }
     }
 
-    @GetMapping("/users/{userIdx}/profile")
-    @ResponseBody
+    @GetMapping("/users/{userIdx}/profile") @ResponseBody
+    @Operation(summary="전문가 프로필 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyExpertRes> getMyExpertRes(@PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
         try{
@@ -101,7 +86,4 @@ public class ExpertController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-
-
 }
