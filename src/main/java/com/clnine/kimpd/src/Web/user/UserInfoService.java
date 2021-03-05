@@ -62,14 +62,14 @@ public class UserInfoService {
         String password;
         String city = postUserReq.getCity();
         String address = postUserReq.getAddress();
-        int agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
+        Integer agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
         String privateBusinessName = postUserReq.getPrivateBusinessName();
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
         String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         String nickname = postUserReq.getNickname();
-        int agreeShowDB = postUserReq.getAgreeShowDB();
+        Integer agreeShowDB = postUserReq.getAgreeShowDB();
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {

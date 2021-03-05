@@ -44,7 +44,7 @@ public class UserInfo extends BaseEntity {
     private String address;
 
     @Column(name="agreeAdvertisement")
-    private int agreeAdvertisement=0;
+    private Integer agreeAdvertisement;
 
     @Column(name="privateBusinessName")
     private String privateBusinessName;//개인 사업자명
@@ -86,17 +86,17 @@ public class UserInfo extends BaseEntity {
 
 
     @Column(name="agreeShowDB")
-    private int agreeShowDB=1;
+    private Integer agreeShowDB;
 
     @Column(name="status")
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,
                     String email, String phoneNum, String city,String address,
-                    int agreeAdvertisement, String privateBusinessName,
+                    Integer agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
                     String corporationBusinessName, String corporationBusinessNumber,
-                    String nickname,int agreeShowDB) {
+                    String nickname,Integer agreeShowDB) {
         this.userType = userType;
         this.id = id;
         this.password = password;
