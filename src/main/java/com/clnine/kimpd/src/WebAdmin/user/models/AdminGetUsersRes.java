@@ -5,6 +5,11 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 public class AdminGetUsersRes {
-    private final int userId;
+    private final int userIdx;
+    private final String userType;
+    private final String id;
     private final String email;
+    private final String phoneNum;
+    private final String city;
+    private final String status;
 }

@@ -31,6 +31,18 @@ public enum BaseResponseStatus {
     SUCCESS_GET_PARENT_JOB_CATEGORY(true,1028,"1차 직종 카테고리 조회에 성공하였습니다."),
     SUCCESS_GET_GENRE_CATEGORY(true,1029,"장르 카테고리 조회에 성공하였습니다."),
     SUCCESS_GET_CHILD_JOB_CATEGORY(true,1030,"2차 직종 카테고리 조회에 성공하였습니다."),
+
+    // 1500 : admin 성공
+    SUCCESS_READ_BANNERS(true,1500,"광고 조회에 성공하였습니다."),
+    SUCCESS_PATCH_BANNERS(true, 1501, "광고 수정에 성공하였습니다."),
+    SUCCESS_POST_BANNERS(true, 1502, "광고 등록에 성공하였습니다."),
+    SUCCESS_READ_NOTICES(true,1503,"공지사항 조회에 성공하였습니다."),
+    SUCCESS_POST_NOTICES(true, 1504, "공지사항 등록에 성공하였습니다."),
+    SUCCESS_PATCH_NOTICES(true, 1505, "공지사항 수정에 성공하였습니다."),
+    SUCCESS_READ_FAQS(true,1506,"FAQ 조회에 성공하였습니다."),
+    SUCCESS_POST_FAQS(true, 1507, "FAQ 등록에 성공하였습니다."),
+    SUCCESS_PATCH_FAQS(true, 1508, "FAQ 수정에 성공하였습니다."),
+    SUCCESS_READ_INQUIRIES(true,1509,"1:1문의 조회에 성공하였습니다."),
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -108,6 +120,23 @@ public enum BaseResponseStatus {
     EMPTY_SORT_OPTION(false,2104,"정렬 옵션을 선택해주세요."),
     WRONG_SORT_OPTION(false,2105,"잘못된 정렬 옵션입니다."),
 
+    //2500 : admin 오류
+    EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
+    EMPTY_BANNER_IDX(false, 2501, "광고 인덱스가 비었습니다."),
+    EMPTY_BANNER_LINK(false, 2502, "광고 링크가 비었습니다."),
+    EMPTY_BANNER_START_DATE(false, 2503, "광고 시작일이 비었습니다."),
+    EMPTY_BANNER_END_DATE(false, 2504, "광고 종료일이 비었습니다."),
+    EMPTY_BANNER_IMAGE(false, 2505, "광고 이미지가 비었습니다."),
+    NOT_VALID_START_DATE(false, 2506, "광고 시작일이 광고 종료일보다 늦을 수 없습니다."),
+    EMPTY_NOTICE_IDX(false, 2507, "공지사항 인덱스가 비었습니다."),
+    EMPTY_NOTICE_TITLE(false, 2508, "공지사항 제목이 비었습니다."),
+    EMPTY_NOTICE_DESCRIPTION(false, 2509, "공지사항 설명이 비었습니다."),
+    EMPTY_FAQ_IDX(false, 2510, "FAQ 인덱스가 비었습니다."),
+    EMPTY_FAQ_QUESTION(false, 2511, "FAQ 질문이 비었습니다."),
+    EMPTY_FAQ_ANSWER(false, 2512, "FAQ 답변이 비었습니다."),
+    EMPTY_INQUIRY_IDX(false, 2513, "1:1문의 인덱스가 비었습니다."),
+    EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
+
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
     NOT_FOUND_USER(false, 3010, "존재하지 않는 회원입니다."),
@@ -152,6 +181,25 @@ public enum BaseResponseStatus {
     DID_NOT_INSERT_CASTING_CONDITION(false,3049,"섭외 조건을 입력해주세요."),
     FAILED_SAVE_NEW_PASSWORD(false,3050,"비밀번호 수정에 실패했습니다."),
     FAILED_TO_SAVE_BASKETS(false,3051,"장바구니 담기에 실패했습니다."),
+
+    //3500 : admin 오류
+    FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
+    FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),
+    FAILED_TO_POST_BANNER(false,3502,"광고 등록에 실패하였습니다."),
+    FAILED_TO_GET_NOTICES(false,3503,"공지사항 조회하는데 실패했습니다."),
+    FAILED_TO_POST_NOTICES(false,3504,"공지사항 등록에 실패하였습니다."),
+    FAILED_TO_PATCH_NOTICES(false, 3505, "공지사항 수정에 실패하였습니다."),
+    FAILED_TO_GET_FAQS(false,3506,"FAQ 조회하는데 실패했습니다."),
+    FAILED_TO_POST_FAQS(false,3507,"FAQ 등록에 실패하였습니다."),
+    FAILED_TO_PATCH_FAQS(false, 3508, "FAQ 수정에 실패하였습니다."),
+    //FAILED_TO_GET_INQUIRIES(false,3509,"1:1문의 조회하는데 실패했습니다."),
+    FAILED_TO_GET_INQUIRY_FILE(false,3510,"1:1문의 파일 조회하는데 실패했습니다."),
+    FAILED_TO_PATCH_INQUIRIES(false, 3511, "1:1문의 수정에 실패하였습니다."),
+    DUPLICATED_ID(false, 3512, "이미 존재하는 닉네임입니다."),
+    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 닉네임입니다."),
+    DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
+    DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
+    NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
