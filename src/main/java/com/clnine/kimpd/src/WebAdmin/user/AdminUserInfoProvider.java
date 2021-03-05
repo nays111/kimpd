@@ -1,6 +1,8 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
+import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.config.secret.Secret;
+import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.utils.JwtService;
@@ -31,51 +33,103 @@ public class AdminUserInfoProvider {
      * @return List<UserInfoRes>
      * @throws BaseException
      */
-    public List<AdminGetUserRes> retrieveUserInfoList(String word) throws BaseException {
+    public List<AdminGetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<AdminUserInfo> adminUserInfoList;
         try {
-            if (word == null) { // 전체 조회
-                adminUserInfoList = adminUserInfoRepository.findByStatus("ACTIVE");
-            } else { // 검색 조회
-                adminUserInfoList = adminUserInfoRepository.findByStatusAndNicknameIsContaining("ACTIVE", word);
-            }
+            adminUserInfoList = adminUserInfoRepository.findAll();
+
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. UserInfoRes로 변환하여 return
         return adminUserInfoList.stream().map(adminUserInfo -> {
-            int id = adminUserInfo.getId();
+            int userIdx = adminUserInfo.getUserIdx();
+            String userType = null;
+            if(adminUserInfo.getUserType() == 1){
+                userType = "클라이언트";
+            }
+            else if(adminUserInfo.getUserType() == 2){
+                userType = "제작사-개인";
+            }
+            else if(adminUserInfo.getUserType() == 3){
+                userType = "제작사-법인";
+            }
+            else if(adminUserInfo.getUserType() == 4){
+                userType = "전문가-클라이언트";
+            }
+            else if(adminUserInfo.getUserType() == 5){
+                userType = "전문가-개인";
+            }
+            else if(adminUserInfo.getUserType() == 6){
+                userType = "전문가-법인";
+            }
+
+            String id = adminUserInfo.getId();
             String email = adminUserInfo.getEmail();
-            String nickname = adminUserInfo.getNickname();
-            String phoneNumber = adminUserInfo.getPhoneNumber();
-            return new AdminGetUserRes(id, email, nickname, phoneNumber);
+            String phoneNum = adminUserInfo.getPhoneNum();
+            String city = adminUserInfo.getCity();
+            String status = adminUserInfo.getStatus();
+            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, city, status);
         }).collect(Collectors.toList());
     }
 
     /**
      * 회원 조회
-     * @param userId
+     * @param userIdx
      * @return UserInfoDetailRes
      * @throws BaseException
      */
-    public AdminGetUserRes retrieveUserInfo(int userId) throws BaseException {
+    public AdminGetUserRes retrieveUserInfo(int userIdx) throws BaseException {
         // 1. DB에서 userId로 UserInfo 조회
-        AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userId);
-
+        AdminUserInfo adminUserInfo = retrieveUserInfoByUserId(userIdx);
         // 2. UserInfoRes로 변환하여 return
-        int id = adminUserInfo.getId();
+        String userType = null;
+        if(adminUserInfo.getUserType() == 1){
+            userType = "클라이언트";
+        }
+        else if(adminUserInfo.getUserType() == 2){
+            userType = "제작사-개인";
+        }
+        else if(adminUserInfo.getUserType() == 3){
+            userType = "제작사-법인";
+        }
+        else if(adminUserInfo.getUserType() == 4){
+            userType = "전문가-클라이언트";
+        }
+        else if(adminUserInfo.getUserType() == 5){
+            userType = "전문가-개인";
+        }
+        else if(adminUserInfo.getUserType() == 6){
+            userType = "전문가-법인";
+        }
+        String id = adminUserInfo.getId();
         String email = adminUserInfo.getEmail();
+        String phoneNum = adminUserInfo.getPhoneNum();
+        String city = adminUserInfo.getCity();
         String nickname = adminUserInfo.getNickname();
-        String phoneNumber = adminUserInfo.getPhoneNumber();
-        return new AdminGetUserRes(id, email, nickname, phoneNumber);
+        String profileImageURL = adminUserInfo.getProfileImageURL();
+        String introduce = adminUserInfo.getIntroduce();
+        String career = adminUserInfo.getCareer();
+        String etc = adminUserInfo.getEtc();
+        String minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
+        String privateBusinessName = adminUserInfo.getPrivateBusinessName();
+        String businessNumber = adminUserInfo.getBusinessNumber();
+        String businessImageURL = adminUserInfo.getBusinessImageURL();
+        String corporationBusinessName = adminUserInfo.getCorporationBusinessName();
+        String corporationBusinessNumber = adminUserInfo.getCorporationBusinessNumber();
+        String status = adminUserInfo.getStatus();
+
+        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, city, nickname, profileImageURL,
+                introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber,
+                businessImageURL, corporationBusinessName, corporationBusinessNumber, status);
     }
 
     /**
      * 로그인
      * @param adminPostLoginReq
-     * @return PostLoginRes
+     * @return AdminPostLoginRes
      * @throws BaseException
      */
     public AdminPostLoginRes login(AdminPostLoginReq adminPostLoginReq) throws BaseException {
@@ -96,34 +150,28 @@ public class AdminUserInfoProvider {
         }
 
         // 3. Create JWT
-        String jwt = jwtService.createWebAdminJwt(webAdmin.getId());
+        String jwt = jwtService.createWebAdminJwt(webAdmin.getAdminIdx());
 
         // 4. PostLoginRes 변환하여 return
-        String id = webAdmin.getId();
-        return new AdminPostLoginRes(id, jwt);
+        return new AdminPostLoginRes(webAdmin.getAdminIdx(), jwt);
     }
 
     /**
      * 회원 조회
-     * @param userId
+     * @param userIdx
      * @return UserInfo
      * @throws BaseException
      */
-    public AdminUserInfo retrieveUserInfoByUserId(int userId) throws BaseException {
+    public AdminUserInfo retrieveUserInfoByUserId(int userIdx) throws BaseException {
         // 1. DB에서 UserInfo 조회
         AdminUserInfo adminUserInfo;
         try {
-            adminUserInfo = adminUserInfoRepository.findById(userId).orElse(null);
+            adminUserInfo = adminUserInfoRepository.findById(userIdx).orElse(null);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
-        // 2. 존재하는 회원인지 확인
-        if (adminUserInfo == null || !adminUserInfo.getStatus().equals("ACTIVE")) {
-            throw new BaseException(NOT_FOUND_USER);
-        }
-
-        // 3. UserInfo를 return
+        // 2. UserInfo를 return
         return adminUserInfo;
     }
 
@@ -134,32 +182,31 @@ public class AdminUserInfoProvider {
      * @throws BaseException
      */
     public AdminUserInfo retrieveUserInfoByEmail(String email) throws BaseException {
-        // 1. email을 이용해서 UserInfo DB 접근
-        List<AdminUserInfo> existsAdminUserInfoList;
+        List<AdminUserInfo> existsUserInfoList;
         try {
-            existsAdminUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
+            existsUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
         // 2. 존재하는 UserInfo가 있는지 확인
-        AdminUserInfo adminUserInfo;
-        if (existsAdminUserInfoList != null && existsAdminUserInfoList.size() > 0) {
-            adminUserInfo = existsAdminUserInfoList.get(0);
+        AdminUserInfo userInfo;
+        if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
+            userInfo = existsUserInfoList.get(0);
         } else {
             throw new BaseException(NOT_FOUND_USER);
         }
 
         // 3. UserInfo를 return
-        return adminUserInfo;
+        return userInfo;
     }
 
-    //
-    public WebAdmin retrieveUserInfoByWebAdminId(String userId) throws BaseException {
+    public WebAdmin retrieveUserInfoByWebAdminId(String id) throws BaseException {
         // 1. DB에서 UserInfo 조회
         WebAdmin adminInfo;
         try {
-            adminInfo = webAdminInfoRepository.findById(userId).orElse(null);
+            adminInfo = webAdminInfoRepository.findByIdAndStatus(id, "ACTIVE");
+
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
@@ -171,5 +218,48 @@ public class AdminUserInfoProvider {
 
         // 3. UserInfo를 return
         return adminInfo;
+    }
+
+    public Boolean isIdUseable(String id) {
+        return !adminUserInfoRepository.existsByIdAndStatus(id, "ACTIVE");
+    }
+
+    public Boolean isEmailUseable(String email) {
+        return !adminUserInfoRepository.existsByEmailAndStatus(email, "ACTIVE");
+    }
+
+    public Boolean isPhoneNumUseable(String phoneNum) {
+        return !adminUserInfoRepository.existsByPhoneNumAndStatus(phoneNum, "ACTIVE");
+    }
+
+    public Boolean isNicknameUseable(String nickname) {
+        return !adminUserInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE");
+    }
+
+    public Boolean checkJWT() {
+        boolean check = false;
+        try {
+            int adminIdx = jwtService.getAdminIdx();
+            check = retrieveAdminInfoByAdminIdx(adminIdx);
+            return check;
+        } catch (BaseException exception) {
+            return false;
+        }
+    }
+
+    public boolean retrieveAdminInfoByAdminIdx(int adminIdx) {
+        WebAdmin adminInfo;
+        try {
+            adminInfo = webAdminInfoRepository.findByAdminIdxAndStatus(adminIdx, "ACTIVE");
+
+        } catch (Exception ignored) {
+            return false;
+        }
+
+        if (adminInfo == null || !adminInfo.getStatus().equals("ACTIVE")) {
+            return false;
+        }
+
+        return true;
     }
 }

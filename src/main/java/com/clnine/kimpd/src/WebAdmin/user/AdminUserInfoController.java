@@ -33,17 +33,17 @@ public class AdminUserInfoController {
      * @return BaseResponse<GetUserListRes>
      */
     @ResponseBody
-    @GetMapping("/users") // (GET) 127.0.0.1:9000/web-admin/users
+    @GetMapping("/users") // (GET) 127.0.0.1:8080/web-admin/users
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetUserListRes> getUsers(@RequestParam(required = false) String word) {
+    public BaseResponse<AdminGetUsersListRes> getUsers(@RequestParam(required = false) String word) {
         try {
-            List<AdminGetUserRes> adminGetUserResList = adminUserInfoProvider.retrieveUserInfoList(word);
-            AdminGetUserListRes userInfo = new AdminGetUserListRes(adminGetUserResList);
-            if (word == null) {
-                return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
-            } else {
-                return new BaseResponse<>(SUCCESS_READ_SEARCH_USERS, userInfo);
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
             }
+            List<AdminGetUsersRes> adminGetUsersResList = adminUserInfoProvider.retrieveUserInfoList(word);
+            AdminGetUsersListRes userInfo = new AdminGetUsersListRes(adminGetUsersResList);
+
+            return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -51,20 +51,23 @@ public class AdminUserInfoController {
 
     /**
      * 회원 조회 API
-     * [GET] /users/:userId
-     * @PathVariable userId
+     * [GET] /users/:userIdx
+     * @PathVariable userIdx
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
-    @GetMapping("/users/{userId}")
+    @GetMapping("/users/{userIdx}")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userId) {
-        if (userId == null || userId <= 0) {
+    public BaseResponse<AdminGetUserRes> getUser(@PathVariable Integer userIdx) {
+        if (userIdx == null || userIdx <= 0) {
             return new BaseResponse<>(EMPTY_USERID);
         }
 
         try {
-            AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userId);
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+            AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userIdx);
             return new BaseResponse<>(SUCCESS_READ_USER, adminGetUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -72,7 +75,7 @@ public class AdminUserInfoController {
     }
 
     /**
-     * 회원가입 API
+     * admin 회원가입 API
      * [POST] /sign-up
      * @RequestBody PostUserReq
      * @return BaseResponse<PostUserRes>
@@ -80,7 +83,7 @@ public class AdminUserInfoController {
     @ResponseBody
     @PostMapping("/sign-up")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminPostUserRes> postUsers(@RequestBody AdminPostUserReq parameters) {
+    public BaseResponse<AdminPostAdminRes> postUsers(@RequestBody AdminPostAdminReq parameters) {
         // 1. Body Parameter Validation
         if (parameters.getId() == null || parameters.getId().length() == 0) {
             return new BaseResponse<>(EMPTY_USERID);
@@ -91,26 +94,124 @@ public class AdminUserInfoController {
 
         // 2. Post UserInfo
         try {
-            AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
+            AdminPostAdminRes adminPostAdminRes = adminUserInfoService.createAdminInfo(parameters);
+            return new BaseResponse<>(SUCCESS_POST_USER, adminPostAdminRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 비밀번호 수정 API
-     * [PATCH] /password
+     * 회원 정보 수정 API
+     * [PATCH] /users/{userIdx}
      * @RequestBody PatchUserReq
+     * * @PathVariable userIdx
      * @return BaseResponse<PatchUserRes>
      */
     @ResponseBody
-    @PatchMapping("/password")
+    @PatchMapping("/users")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminPatchUserPwRes> patchUsers(@RequestBody AdminPatchUserPwReq parameters) {
+    public BaseResponse<Void> patchUsers(@RequestBody AdminPatchUserReq parameters) {
+        if (parameters.getUserType() == null || parameters.getUserType().length() <= 0){
+            return new BaseResponse<>(EMPTY_USER_TYPE);
+        }
+
+        if (parameters.getId() == null || parameters.getId().length() <= 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+
+        if (parameters.getEmail() == null || parameters.getEmail().length() <= 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+
+        if(parameters.getUserType().equals("제작사-개인") || parameters.getUserType().equals("전문가-개인")){
+            if(parameters.getPrivateBusinessName() == null || parameters.getPrivateBusinessName().length() == 0){
+                return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
+            }
+            if(parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+            if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+        }
+
+        if(parameters.getUserType().equals("제작사-법인") || parameters.getUserType().equals("전문가-법인")){
+            if(parameters.getCorporationBusinessName() == null || parameters.getCorporationBusinessName().length() == 0){
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
+            }
+            if(parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+            if(parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            }
+            if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+        }
+
+        if(parameters.getNickname() == null){
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+
+        try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
+            adminUserInfoService.updateUserInfo(parameters);
+            return new BaseResponse<>(SUCCESS_PATCH_USER);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 사용자 비밀번호 수정 API
+     * [PATCH] /user-password
+     * @RequestBody AdminPatchUserPwReq
+     * @return BaseResponse<Void>
+     */
+    @ResponseBody
+    @PatchMapping("/user-password")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<Void> patchUsersPassword(@RequestBody AdminPatchUserPwReq parameters) {
+
+        if (parameters.getUserIdx() <= 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+
+        System.out.println(parameters.getEmail());
+        if (parameters.getEmail() == null || parameters.getEmail().length() <= 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+
+        try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
+            adminUserInfoService.updateUserPw(parameters);
+            return new BaseResponse<>(SUCCESS_PATCH_USER_PASSWORD);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * admin 비밀번호 수정 API
+     * [PATCH] /admin-password
+     * @RequestBody AdminPatchAdminPwReq
+     * @return BaseResponse<AdminPatchAdminPwRes>
+     */
+    @ResponseBody
+    @PatchMapping("/admin-password")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<AdminPatchAdminPwRes> patchUsers(@RequestBody AdminPatchAdminPwReq parameters) {
 
 
-        if (parameters.getUserId() == null || parameters.getUserId().length() <= 0){
+        if (parameters.getId() == null || parameters.getId().length() <= 0){
             return new BaseResponse<>(EMPTY_USERID);
         }
 
@@ -131,14 +232,18 @@ public class AdminUserInfoController {
         }
 
         try {
-            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateUserInfo(parameters));
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
+            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateAdminInfo(parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 로그인 API
+     * admin 로그인 API
      * [POST] /sign-in
      * @RequestBody PostLoginReq
      * @return BaseResponse<PostLoginRes>
@@ -177,8 +282,97 @@ public class AdminUserInfoController {
         }
 
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             adminUserInfoService.deleteUserInfo(userId);
             return new BaseResponse<>(SUCCESS_DELETE_USER);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    /**
+     * 회원 등록 API
+     * [POST] /users
+     * @RequestBody PostNormalUserReq
+     * @return BaseResponse<PostNormalUserRes>
+     */
+    @ResponseBody
+    @PostMapping("/users")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<AdminPostUserRes> postNormalUsers(@RequestBody AdminPostUserReq parameters) {
+        // 1. Body Parameter Validation
+        if(parameters.getUserType() > 6 || parameters.getUserType() < 0){
+            return new BaseResponse<>(INVALID_USER_TYPE);
+        }
+        if (parameters.getId() == null || parameters.getId().length() == 0) {
+            return new BaseResponse<>(EMPTY_USERID);
+        }
+        if(parameters.getEmail() == null || parameters.getEmail().length() == 0){
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+        if(parameters.getPhoneNum() == null || parameters.getPhoneNum().length() == 0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+
+        if(parameters.getUserType() == 2 || parameters.getUserType() == 5){
+            if(parameters.getPrivateBusinessName() == null || parameters.getPrivateBusinessName().length() == 0){
+                return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
+            }
+            if(parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+            if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+        }
+
+        if (parameters.getUserType() == 3 || parameters.getUserType() == 6){
+            if (parameters.getCorporationBusinessName() == null || parameters.getCorporationBusinessName().length() == 0){
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
+            }
+            if (parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+            if (parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            }
+            if (parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+        }
+
+        if (adminUserInfoProvider.isIdUseable(parameters.getId()) == false) {
+            return new BaseResponse<>(DUPLICATED_ID);
+        }
+
+        if (adminUserInfoProvider.isEmailUseable(parameters.getEmail()) == false) {
+            return new BaseResponse<>(DUPLICATED_PHONE_NUMBER);
+        }
+
+        if (adminUserInfoProvider.isPhoneNumUseable(parameters.getPhoneNum()) == false) {
+            return new BaseResponse<>(DUPLICATED_EMAIL);
+        }
+
+        if (parameters.getNickname() == null){
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+        else{
+            if (adminUserInfoProvider.isNicknameUseable(parameters.getNickname()) == false) {
+                return new BaseResponse<>(DUPLICATED_NICKNAME);
+            }
+        }
+
+        // 2. Post UserInfo
+        try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
+            AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
+            return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
