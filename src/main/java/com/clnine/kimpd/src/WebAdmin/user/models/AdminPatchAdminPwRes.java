@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AdminPatchAdminPwRes {
-    private final String userId;
+    private final String id;
 }

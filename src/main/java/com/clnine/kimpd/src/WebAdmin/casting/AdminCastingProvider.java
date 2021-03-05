@@ -53,7 +53,7 @@ public class AdminCastingProvider {
                 castingStatus = "섭외거절";
             }
             else if(Casting.getCastingStatus() == 4){
-                castingStatus = "프로젝트 완료";
+                castingStatus = "작업완료";
             }
             String status = Casting.getStatus();
             return new AdminGetCastingsRes(castingIdx, userNickname, expertNickname, projectName, castingWork, castingStatus, status);

@@ -201,11 +201,11 @@ public class AdminUserInfoProvider {
         return userInfo;
     }
 
-    public WebAdmin retrieveUserInfoByWebAdminId(String userId) throws BaseException {
+    public WebAdmin retrieveUserInfoByWebAdminId(String id) throws BaseException {
         // 1. DB에서 UserInfo 조회
         WebAdmin adminInfo;
         try {
-            adminInfo = webAdminInfoRepository.findByIdAndStatus(userId, "ACTIVE");
+            adminInfo = webAdminInfoRepository.findByIdAndStatus(id, "ACTIVE");
 
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);

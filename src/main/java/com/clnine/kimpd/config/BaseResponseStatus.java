@@ -162,6 +162,7 @@ public enum BaseResponseStatus {
     DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 닉네임입니다."),
     DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
+    NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
 
 
     // 4000 : Database 오류

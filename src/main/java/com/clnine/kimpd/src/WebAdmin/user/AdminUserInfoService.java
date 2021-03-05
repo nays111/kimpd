@@ -332,24 +332,30 @@ public class AdminUserInfoService {
      */
     public AdminPatchAdminPwRes updateAdminInfo(AdminPatchAdminPwReq adminPatchAdminPwReq) throws BaseException {
         WebAdmin existsWebAdminInfo = null;
-        String password;
+        String password = null;
+
+        existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchAdminPwReq.getId());
 
         try {
-            existsWebAdminInfo = adminUserInfoProvider.retrieveUserInfoByWebAdminId(adminPatchAdminPwReq.getUserId());
-
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getPassword());
-            System.out.println(password);
-            if (!password.equals(existsWebAdminInfo.getPassword()))
-                throw new BaseException(FAILED_TO_PATCH_USER);
-            else {
-                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getNewPassword());
-                existsWebAdminInfo.setPassword(password);
-                webAdminInfoRepository.save(existsWebAdminInfo);
-            }
-            return new AdminPatchAdminPwRes(adminPatchAdminPwReq.getUserId());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_PATCH_USER);
         }
+
+        if (!password.equals(existsWebAdminInfo.getPassword()))
+            throw new BaseException(NOT_MATCH_PRESENT_PASSWORD);
+        else {
+            try {
+                password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(adminPatchAdminPwReq.getNewPassword());
+            } catch (Exception ignored) {
+                throw new BaseException(FAILED_TO_PATCH_USER);
+            }
+
+            existsWebAdminInfo.setPassword(password);
+            webAdminInfoRepository.save(existsWebAdminInfo);
+        }
+        return new AdminPatchAdminPwRes(adminPatchAdminPwReq.getId());
+
     }
 
     /**
