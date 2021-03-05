@@ -179,7 +179,7 @@ public class UserInfoController {
         }
     }
 
-    @ResponseBody @PostMapping("/phone-auth")
+    @PostMapping("/phone-auth")
     @Operation(summary="휴대폰 인증번호 검사 API",description = "인증번호는 3분 이내의 가장 최신 것만 유효합니다.")
     public BaseResponse<Void> phoneAuthCheck(@RequestBody PostCertificationCodeReq postCertificationCodeReq) throws BaseException {
         //전송된 휴대폰 번호로 Certifiacte 테이블 조회

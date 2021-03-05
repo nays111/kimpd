@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
+import static com.clnine.kimpd.config.secret.Secret.barbobillCorpNum;
+import static com.clnine.kimpd.config.secret.Secret.barobillCorpCertKey;
+
 @Service
 @RequiredArgsConstructor
 public class BarobillService {
@@ -35,8 +38,8 @@ public class BarobillService {
      */
     public int GetCorpState(String checkCorpNum) throws RemoteException {
 
-        String certKey = "1CD1F6A5-33A6-40E0-B5D6-0A4256685139";            // 인증키
-        String corpNum = "2648100466";            // 바로빌 회원 사업자번호 ('-' 제외, 10자리)
+        String certKey = barobillCorpCertKey;            // 인증키
+        String corpNum = barbobillCorpNum;            // 바로빌 회원 사업자번호 ('-' 제외, 10자리)
         //String checkCorpNum = "";
 
         CorpState result = barobillApiService.corpState.getCorpState(certKey, corpNum, checkCorpNum);
