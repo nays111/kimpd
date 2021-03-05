@@ -143,6 +143,9 @@ public class UserInfoController {
         if (id == null || id.length() == 0) {
             return new BaseResponse<>(EMPTY_ID);
         }
+        if (!isRegexId(id)) {
+            return new BaseResponse<>(INVALID_ID);
+        }
         if (userInfoProvider.isIdUsable(id) == true) {
             return new BaseResponse<>(SUCCESS);
         } else {
@@ -154,6 +157,9 @@ public class UserInfoController {
     public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value = "nickname") String nickname) {
         if (nickname == null || nickname.length() == 0) {
             return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+        if (!isRegexNickname(nickname)) {
+            return new BaseResponse<>(INVALID_NICKNAME);
         }
         if (userInfoProvider.isNicknameUsable(nickname) == true) {
             return new BaseResponse<>(SUCCESS);

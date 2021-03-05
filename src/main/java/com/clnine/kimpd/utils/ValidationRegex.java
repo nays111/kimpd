@@ -23,13 +23,13 @@ public class ValidationRegex {
         return matcher.find();
     }
     public static boolean isRegexId(String target){
-        String regex = "^[a-zA-Z]\\w{3,20}$";
+        String regex = "^[a-z]\\w{6,15}$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
     }
     public static boolean isRegexNickname(String target){
-        String regex = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\\*]{2,7}+$";
+        String regex = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\\*]{2,10}+$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();

@@ -86,7 +86,7 @@ public enum BaseResponseStatus {
     INVALID_USER_TYPE(false,2069,"잘못된 유저 타입입니다."),
     INVALID_ID(false,2070,"잘못된 ID 형식입니다."),
     INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
-    INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~7자리로 입력해주세요.)"),
+    INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~10자리로 입력해주세요.)"),
     EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
     EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
     WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
