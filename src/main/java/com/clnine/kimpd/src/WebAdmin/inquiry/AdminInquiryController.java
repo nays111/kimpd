@@ -84,10 +84,6 @@ public class AdminInquiryController {
             return new BaseResponse<>(EMPTY_INQUIRY_IDX);
         }
 
-        if (parameters.getInquiryAnswer() == null || parameters.getInquiryAnswer().length() <= 0) {
-            return new BaseResponse<>(EMPTY_INQUIRY_ANSWER);
-        }
-
         try {
             if(adminUserInfoProvider.checkJWT() == false){
                 return new BaseResponse<>(INVALID_JWT);

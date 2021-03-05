@@ -211,7 +211,7 @@ public class AdminUserInfoController {
     public BaseResponse<AdminPatchAdminPwRes> patchUsers(@RequestBody AdminPatchAdminPwReq parameters) {
 
 
-        if (parameters.getUserId() == null || parameters.getUserId().length() <= 0){
+        if (parameters.getId() == null || parameters.getId().length() <= 0){
             return new BaseResponse<>(EMPTY_USERID);
         }
 

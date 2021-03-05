@@ -27,13 +27,16 @@ public class AdminInquiryService {
      */
     public void updateInquiry(AdminPatchInquiriesReq adminPatchInquiriesReq) throws BaseException {
         AdminInquiry adminInquiry = null;
-
+        String inquiryAnswer = null;
         try {
             adminInquiry = adminInquiryProvider.retrieveInquiryByInquiryIdx(adminPatchInquiriesReq.getInquiryIdx());
             if(adminInquiry == null){
                 throw new BaseException(FAILED_TO_PATCH_INQUIRIES);
             }
-            adminInquiry.setInquiryAnswer(adminPatchInquiriesReq.getInquiryAnswer());
+            if(adminPatchInquiriesReq.getInquiryAnswer() != null && adminPatchInquiriesReq.getInquiryAnswer().length() != 0){
+                inquiryAnswer = adminPatchInquiriesReq.getInquiryAnswer();
+            }
+            adminInquiry.setInquiryAnswer(inquiryAnswer);
             adminInquiry.setStatus(adminPatchInquiriesReq.getStatus());
             adminInquiryRepository.save(adminInquiry);
             return ;
