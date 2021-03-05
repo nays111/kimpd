@@ -9,39 +9,123 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = false)
 @Data // from lombok
 @Entity // 필수, Class 를 Database Table화 해주는 것이다
-@Table(name = "AdminUserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
+@Table(name = "UserInfo") // Table 이름을 명시해주지 않으면 class 이름을 Table 이름으로 대체한다.
 public class AdminUserInfo extends BaseEntity {
     /**
      * 유저 ID
      */
     @Id // PK를 의미하는 어노테이션
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "userIdx", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int userIdx;
 
     /**
-     * 이메일
+     * 유저 타입
      */
-    @Column(name = "email", nullable = false, length = 100)
-    private String email;
+    @Column(name = "userType", nullable = false)
+    private int userType;
+
+    /**
+     * 아이디
+     */
+    @Column(name = "id", nullable = false)
+    private String id;
 
     /**
      * 비밀번호
      */
-    @Column(name = "password", nullable = false)
+    @Column(name="password",nullable = false)
     private String password;
 
     /**
-     * 닉네임
+     * 이메일
      */
-    @Column(name = "nickname", nullable = false, length = 30)
-    private String nickname;
+    @Column(name = "email", nullable = false)
+    private String email;
 
     /**
      * 전화번호
      */
-    @Column(name = "phoneNumber", length = 30)
-    private String phoneNumber;
+    @Column(name = "phoneNum", nullable = false)
+    private String phoneNum;
+
+    /**
+     * 도시
+     */
+    @Column(name = "city")
+    private String city;
+
+    /**
+     * 별명
+     */
+    @Column(name = "nickname")
+    private String nickname;
+
+    /**
+     * 프로필 이미지
+     */
+    @Column(name = "profileImageURL")
+    private String profileImageURL;
+
+    /**
+     * 전문가 소개
+     */
+    @Column(name = "introuduce")
+    private String introduce;
+
+    /**
+     * 주요 경력
+     */
+    @Column(name = "career")
+    private String career;
+
+    /**
+     * 기타 요청사항
+     */
+    @Column(name = "etc")
+    private String etc;
+
+    /**
+     * 최소 섭외 비용
+     */
+    @Column(name = "minimumCastingPrice")
+    private String minimumCastingPrice;
+
+    /**
+     * 개인 사업명
+     */
+    @Column(name = "privateBusinessName")
+    private String privateBusinessName;
+
+    /**
+     * 사업자 등록번호
+     */
+    @Column(name = "businessNumber")
+    private String businessNumber;
+
+    /**
+     * 사업자 등록 이미지
+     */
+    @Column(name = "businessImageURL")
+    private String businessImageURL;
+
+    /**
+     * 법인 사업자명
+     */
+    @Column(name = "corporationBusinessName")
+    private String corporationBusinessName;
+
+    /**
+     * 법인 사업자 번호
+     */
+    @Column(name = "corporationBusinessNumber")
+    private String corporationBusinessNumber;
+
+    @Column(name="agreeAdvertisement")
+    private int agreeAdvertisement=0;
+
+    @Column(name="agreeShowDB")
+    private int agreeShowDB=0;
 
     /**
      * 상태
@@ -49,10 +133,29 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(String email, String password, String nickname, String phoneNumber) {
-        this.email = email;
+    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String city,
+                         String nickname, String profileImageURL, String introduce, String career, String etc,
+                         String minimumCastingPrice, String privateBusinessName, String businessNumber,
+                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
+                         int agreeShowDB, String status) {
+        this.userType = userType;
+        this.id = id;
         this.password = password;
+        this.email = email;
+        this.phoneNum = phoneNum;
+        this.city = city;
         this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
+        this.profileImageURL = profileImageURL;
+        this.introduce = introduce;
+        this.career = career;
+        this.etc = etc;
+        this.minimumCastingPrice = minimumCastingPrice;
+        this.privateBusinessName = privateBusinessName;
+        this.businessNumber = businessNumber;
+        this.businessImageURL = businessImageURL;
+        this.corporationBusinessName = corporationBusinessName;
+        this.corporationBusinessNumber = corporationBusinessNumber;
+        this.agreeShowDB = agreeShowDB;
+        this.status = status;
     }
 }
