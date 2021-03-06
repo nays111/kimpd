@@ -10,6 +10,7 @@ import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
+import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -27,33 +28,15 @@ public class CastingService {
     private final CastingRepository castingRepository;
     private final CastingProvider castingProvider;
     private final AlarmRepository alarmRepository;
+    private final UserInfoProvider userInfoProvider;
 
     /**
      * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
-     * @param postCastingReq
-     * @param userIdx
-     * @param expertIdx
-     * @throws BaseException
      */
     @Transactional
     public void PostCasting(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException {
-
-        UserInfo userInfo;
-        try{
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
-
-        /**
-         * 전문가 객체 검색
-         */
-        UserInfo expertInfo;
-        try{
-            expertInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(expertIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
+        UserInfo userInfo=userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
         /**
          * 프로젝트 저장
          */

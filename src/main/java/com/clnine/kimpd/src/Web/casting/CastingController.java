@@ -6,6 +6,7 @@ import com.clnine.kimpd.src.Web.casting.models.*;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.GetUserRes;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -164,11 +165,9 @@ public class CastingController {
 
     /**
      * 받은 섭외 상세 조회 API
-     * @param castingIdx
-     * @return
      */
-    @ResponseBody
-    @GetMapping("/received-castings/{castingIdx}")
+    @ResponseBody @GetMapping("/received-castings/{castingIdx}")
+    @Operation(summary="받은 섭외 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getReceivedCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
         int userIdx;
         try{
@@ -182,7 +181,6 @@ public class CastingController {
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
     /**
      * 섭외 요청하기  API
@@ -280,13 +278,9 @@ public class CastingController {
         }
     }
 
-    /**
-     * 섭외 요청 상세내역 조회 API
-     * @param castingIdx
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/castings/{castingIdx}")
+
+    @ResponseBody @GetMapping("/castings/{castingIdx}")
+    @Operation(summary="섭외 요청 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
         int userIdx;
         try{
@@ -300,7 +294,6 @@ public class CastingController {
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
 
     /**

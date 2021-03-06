@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.project.models.*;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,22 +12,14 @@ import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
-@RestController
-@RequestMapping
-@RequiredArgsConstructor
-@CrossOrigin
+@RestController @RequestMapping @RequiredArgsConstructor @CrossOrigin
 public class ProjectController {
     private final JwtService jwtService;
     private final ProjectService projectService;
     private final ProjectProvider projectProvider;
 
-    /**
-     * 프로젝트 상세조회 API
-     * @param projectIdx
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/projects/{projectIdx}")
+    @ResponseBody @GetMapping("/projects/{projectIdx}")
+    @Operation(summary="프로젝트 상세 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyProjectRes> getMyProject(@PathVariable(value="projectIdx")int projectIdx){
         int userIdx;
         try{
@@ -35,7 +28,7 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
         try{
-            GetMyProjectRes getMyProjectRes = projectProvider.getMyProject(projectIdx);
+            GetMyProjectRes getMyProjectRes = projectProvider.getMyProject(projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS,getMyProjectRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -43,14 +36,8 @@ public class ProjectController {
     }
 
 
-    /**
-     * [2021.02.01] 24. 프로젝트 추가 API
-     * [POST] /projects
-     * @param postProjectReq
-     * @return
-     */
-    @ResponseBody
-    @PostMapping("/projects")
+    @ResponseBody @PostMapping("/projects")
+    @Operation(summary="프로젝트 추가 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postProject(@RequestBody PostProjectReq postProjectReq){
         int userIdx;
         try{
@@ -58,7 +45,6 @@ public class ProjectController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        //todo 프로젝트 request validation 추가
         if(postProjectReq.getProjectName()==null || postProjectReq.getProjectName().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_NAME);
         }
@@ -71,15 +57,12 @@ public class ProjectController {
         if(postProjectReq.getProjectEndDate()==null||postProjectReq.getProjectEndDate().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
         }
-
         if(postProjectReq.getProjectFileURL()!=null){
             //todo 첨부파일 정규식 처리
         }
-
         if(postProjectReq.getProjectManager()==null||postProjectReq.getProjectManager().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
         }
-
         if(postProjectReq.getProjectDescription()==null||postProjectReq.getProjectDescription().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
         }
@@ -88,7 +71,7 @@ public class ProjectController {
         }
 
         try{
-            projectService.PostProject(postProjectReq,userIdx);
+            projectService.postProject(postProjectReq,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -96,15 +79,8 @@ public class ProjectController {
 
     }
 
-    /**
-     * [2021.02.10] 25.프로젝트 수정 API
-     * @param projectIdx
-     * @param patchProjectReq
-     * @return
-     */
-
-    @ResponseBody
-    @PatchMapping("/projects/{projectIdx}")
+    @ResponseBody @PatchMapping("/projects/{projectIdx}")
+    @Operation(summary="프로젝트 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> updateProject(@PathVariable(required = true,value="projectIdx")int projectIdx,
                                               @RequestBody(required = true) PatchProjectReq patchProjectReq){
         int userIdx;
@@ -114,22 +90,15 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
         try{
-            projectService.UpdateProject(patchProjectReq,projectIdx);
+            projectService.updateProject(patchProjectReq,projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
 
-    /**
-     * [2021.02.11] 26.프로젝트 삭제 API
-     * @param projectIdx
-     * @return
-     */
-
-    @ResponseBody
-    @PatchMapping("/projects/{projectIdx}/status")
+    @ResponseBody @PatchMapping("/projects/{projectIdx}/status")
+    @Operation(summary="프로젝트 삭제 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> deleteProject(@PathVariable(required = true,value="projectIdx")int projectIdx){
         int userIdx;
         try{
@@ -138,20 +107,17 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
         try{
-            projectService.DeleteProject(projectIdx);
+            projectService.deleteProject(projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
-    @ResponseBody
-    @GetMapping("/projects")
-    public BaseResponse<List<GetProjectsRes>> getProjects(
-                                                          @RequestParam int page,
-                                                          @RequestParam(value = "duration", required = false) Integer duration
-                                                          ){
-        //jwt 검증
+    @ResponseBody @GetMapping("/projects")
+    @Operation(summary="내 프로젝트 리스트 조회 API",description = "토큰이 필요합니다.")
+    public BaseResponse<List<GetProjectsRes>> getProjects(@RequestParam int page,
+                                                          @RequestParam(value = "duration", required = false) Integer duration){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
@@ -168,13 +134,8 @@ public class ProjectController {
 
     }
 
-    /**
-     * [2021.02.05] 14. 프로젝트 리스트 조회 API (섭외 신청할 떄)
-     * projectIdx, projectName 만 리턴
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/project-list")
+    @ResponseBody @GetMapping("/project-list")
+    @Operation(summary="프로젝트 리스트 조회 API(섭외신청할 때, projectIdx,projectName만 리턴)",description = "토큰이 필요합니다.")
     public BaseResponse<List<GetProjectListRes>> getProjectList(){
         int userIdx;
         try{
@@ -190,13 +151,8 @@ public class ProjectController {
         }
     }
 
-    /**
-     * [2021.02.06] 15. 프로젝트 불러오기 API (섭외 신청할 때)
-     * @param projectIdx
-     * @return
-     */
-    @ResponseBody
-    @GetMapping("/project-list/{projectIdx}")
+    @ResponseBody @GetMapping("/project-list/{projectIdx}")
+    @Operation(summary="프로젝트 불러오기 API(섭외신청할 떄)",description = "토큰이 필요합니다.")
     public BaseResponse<GetProjectRes> getProjectWhenCasting(@PathVariable(required = true,value = "projectIdx")int projectIdx){
         int userIdx;
         try{
@@ -211,8 +167,4 @@ public class ProjectController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-    
-
-
 }

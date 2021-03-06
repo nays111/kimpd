@@ -44,6 +44,8 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
     //castingIdx로 섭외 상세 내역 조회
     Casting findAllByCastingIdxAndStatus(int castingIdx,String status);
 
+    Casting findByCastingIdxAndUserInfoAndStatus(int castingIdx,UserInfo userInfo,String status);
+
 
 
 
