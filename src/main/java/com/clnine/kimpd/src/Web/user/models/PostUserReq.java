@@ -1,10 +1,11 @@
 package com.clnine.kimpd.src.Web.user.models;
 
-import com.sun.istack.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
@@ -19,8 +20,9 @@ public class PostUserReq {
     private Integer agreeAdvertisement;
     private String phoneNum;
     private String city;
-    private String address;
 
+    @Nullable
+    private String address;
     @Nullable
     private String privateBusinessName;//개인사업자명
     @Nullable
