@@ -66,26 +66,33 @@ public class UserInfoController {
         if(parameters.getCity()==null || parameters.getCity().length()==0){
             return new BaseResponse<>(EMPTY_CITY);
         }
-        if (parameters.getAddress() == null || parameters.getAddress().length() == 0) {
-            return new BaseResponse<>(EMPTY_ADDRESS);
+//        if (parameters.getAddress() != null){
+//                if(parameters.getAddress().length() == 0) {
+//                    return new BaseResponse<>(EMPTY_ADDRESS);
+//                }
+//        }
+        if (parameters.getNickname().length() == 0 || parameters.getNickname()==null) {
+            return new BaseResponse<>(EMPTY_NICKNAME);
+        }
+        if (!isRegexNickname(parameters.getNickname())) {
+            return new BaseResponse<>(INVALID_NICKNAME);
+        }
+        if(parameters.getAgreeAdvertisement()==null){
+            return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
         }
         /**
          * 필수 X 입력 아닌사항
          */
-        if (parameters.getPrivateBusinessName() != null) {
+        if(parameters.getUserType()==2 || parameters.getUserType()==5){
             if (parameters.getPrivateBusinessName().length() == 0) {
-                return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
+                    return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
             }
-        }
-        if (parameters.getBusinessNumber() != null) {
             if (parameters.getBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
             if(parameters.getBusinessNumber().length()!=10){
                 return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
             }
-        }
-        if (parameters.getBusinessImageURL() != null) {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
@@ -93,42 +100,38 @@ public class UserInfoController {
                 return new BaseResponse<>(INVALID_IMAGE_TYPE);
             }
         }
-        if (parameters.getCorporationBusinessName() != null) {
+        if(parameters.getUserType()==3 || parameters.getUserType()==6){
             if (parameters.getCorporationBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
-        }
-        if (parameters.getCorporationBusinessNumber() != null) {
             if (parameters.getCorporationBusinessNumber().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
             if(parameters.getCorporationBusinessNumber().length()!=10){
                 return new BaseResponse<>(INVALID_CORP_BUSINESS_NUMBER);
             }
-        }
-        if (parameters.getNickname() != null) {
-            if (parameters.getNickname().length() == 0) {
-                return new BaseResponse<>(EMPTY_NICKNAME);
+            if (parameters.getBusinessImageURL().length() == 0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if (!isRegexNickname(parameters.getNickname())) {
-                return new BaseResponse<>(INVALID_NICKNAME);
+            if (!isRegexImageType(parameters.getBusinessImageURL())) {
+                return new BaseResponse<>(INVALID_IMAGE_TYPE);
             }
         }
-        if (parameters.getJobParentCategoryIdx() != null) {
+        if(parameters.getUserType()==4 || parameters.getUserType()==5 || parameters.getUserType()==6){
             if (parameters.getJobParentCategoryIdx().size() == 0) {
                 return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
             }
-        }
-        if (parameters.getJobChildCategoryIdx() != null) {
             if (parameters.getJobChildCategoryIdx().size() == 0) {
                 return new BaseResponse<>(NO_SELECT_JOB_CHILD_CATEGORY);
             }
-        }
-        if (parameters.getGenreCategoryIdx() != null) {
             if (parameters.getGenreCategoryIdx().size() == 0) {
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
             }
+            if(parameters.getAgreeShowDB()==null){
+                return new BaseResponse<>(NO_SELECT_AGREE_SHOW_DB);
+            }
         }
+
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS, postUserRes);

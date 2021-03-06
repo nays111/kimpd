@@ -23,7 +23,7 @@ public class ValidationRegex {
         return matcher.find();
     }
     public static boolean isRegexId(String target){
-        String regex = "^[a-z]\\w{6,15}$";
+        String regex = "^[a-z]\\w{5,15}$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
