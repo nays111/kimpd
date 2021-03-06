@@ -21,8 +21,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_CASTING;
-import static com.clnine.kimpd.config.BaseResponseStatus.NOT_FOUND_CASTING;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +46,16 @@ public class CastingProvider {
         }
         return casting;
     }
+    public Casting retrieveCastingAndUserInfo(int castingIdx,UserInfo userInfo) throws BaseException{
+        Casting casting;
+        try{
+            casting = castingRepository.findByCastingIdxAndUserInfoAndStatus(castingIdx,userInfo,"ACTIVE");
+        }catch(Exception ignored){
+            throw new BaseException(NOT_FOUND_CASTING);
+        }
+        if(casting==null){ throw new BaseException(NOT_FOUND_CASTING); }
+        return casting;
+    }
 
     /**
      * 섭외 요청 - 섭외 횟수 조회 (섭외중:3건, 섭외완료3건, 섭외거절3건, 프로젝트완료3건)
@@ -66,9 +76,6 @@ public class CastingProvider {
 
     /**
      * 섭외 받은 횟수 조회
-     * @param userIdx
-     * @return
-     * @throws BaseException
      */
     public CastingCountRes getReceivedCastingCount(int userIdx)throws BaseException{
         UserInfo userinfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
@@ -78,7 +85,6 @@ public class CastingProvider {
         int projectFinished = castingRepository.countAllByExpertAndCastingStatusAndStatus(userinfo,4,"ACTIVE");
         CastingCountRes castingCountRes = new CastingCountRes(castingGoing,castingAccepted,castingRejected,projectFinished);
         return castingCountRes;
-
     }
 
 
@@ -275,9 +281,6 @@ public class CastingProvider {
     }
     /**
      * 섭외 상세내역 조회
-     * @param castingIdx
-     * @return
-     * @throws BaseException
      */
     public GetCastingRes getCastingRes(int castingIdx) throws BaseException{
         Casting casting;
