@@ -119,6 +119,9 @@ public enum BaseResponseStatus {
     EMPTY_PAGE(false,2103,"페이지 번호를 입력해주세요."),
     EMPTY_SORT_OPTION(false,2104,"정렬 옵션을 선택해주세요."),
     WRONG_SORT_OPTION(false,2105,"잘못된 정렬 옵션입니다."),
+    EMPTY_NAME(false,2106,"이름을 입력해주세요."),
+    INVALID_NAME(false,2107,"잘못된 이름 형식입니다. (2~20자리 영문 한글 조합)"),
+    DIFFERENT_JWT_AND_USERIDX(false,2108,"유저 인덱스와 JWT 가 일치하지 않습니다."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
@@ -181,6 +184,8 @@ public enum BaseResponseStatus {
     DID_NOT_INSERT_CASTING_CONDITION(false,3049,"섭외 조건을 입력해주세요."),
     FAILED_SAVE_NEW_PASSWORD(false,3050,"비밀번호 수정에 실패했습니다."),
     FAILED_TO_SAVE_BASKETS(false,3051,"장바구니 담기에 실패했습니다."),
+    FAILED_TO_CHANGE_TO_EXPERT(false,3052,"전문가 전환에 실패했습니다."),
+    FAILED_TO_SEND_EMAIL(false,3053,"메일 전송에 실패했습니다."),
 
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
@@ -195,8 +200,8 @@ public enum BaseResponseStatus {
     //FAILED_TO_GET_INQUIRIES(false,3509,"1:1문의 조회하는데 실패했습니다."),
     FAILED_TO_GET_INQUIRY_FILE(false,3510,"1:1문의 파일 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_INQUIRIES(false, 3511, "1:1문의 수정에 실패하였습니다."),
-    DUPLICATED_ID(false, 3512, "이미 존재하는 닉네임입니다."),
-    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 닉네임입니다."),
+    DUPLICATED_ID(false, 3512, "이미 존재하는 아이디입니다."),
+    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 전화번호입니다."),
     DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
     NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),

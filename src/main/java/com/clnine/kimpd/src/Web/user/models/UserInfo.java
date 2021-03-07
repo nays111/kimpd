@@ -11,10 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Entity
-@Data
-@Table(name="UserInfo")
-@NoArgsConstructor
+@Entity @Data @Table(name="UserInfo") @NoArgsConstructor
 public class UserInfo extends BaseEntity {
 
     @Id
@@ -33,6 +30,9 @@ public class UserInfo extends BaseEntity {
 
     @Column(name="email",nullable = false)
     private String email;
+
+    @Column(name="name",nullable = false)
+    private String name;
 
     @Column(name="phoneNum",nullable = false)
     private String phoneNum;
@@ -92,7 +92,7 @@ public class UserInfo extends BaseEntity {
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,
-                    String email, String phoneNum, String city,String address,
+                    String email, String name, String phoneNum, String city,String address,
                     Integer agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
                     String corporationBusinessName, String corporationBusinessNumber,
@@ -101,6 +101,7 @@ public class UserInfo extends BaseEntity {
         this.id = id;
         this.password = password;
         this.email = email;
+        this.name = name;
         this.phoneNum = phoneNum;
         this.city = city;
         this.address = address;

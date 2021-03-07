@@ -17,6 +17,7 @@ public class PostUserReq {
     private String password;
     private String confirmPassword;
     private String email;
+    private String name;
     private Integer agreeAdvertisement;
     private String phoneNum;
     private String city;
