@@ -66,11 +66,12 @@ public class UserInfoController {
         if(parameters.getCity()==null || parameters.getCity().length()==0){
             return new BaseResponse<>(EMPTY_CITY);
         }
-//        if (parameters.getAddress() != null){
-//                if(parameters.getAddress().length() == 0) {
-//                    return new BaseResponse<>(EMPTY_ADDRESS);
-//                }
-//        }
+        if(parameters.getName()==null || parameters.getName().length()==0){
+            return new BaseResponse<>(EMPTY_NAME);
+        }
+        if(!isRegexName(parameters.getName())){
+            return new BaseResponse<>(INVALID_NAME);
+        }
         if (parameters.getNickname().length() == 0 || parameters.getNickname()==null) {
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
@@ -96,9 +97,6 @@ public class UserInfoController {
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if (!isRegexImageType(parameters.getBusinessImageURL())) {
-                return new BaseResponse<>(INVALID_IMAGE_TYPE);
-            }
         }
         if(parameters.getUserType()==3 || parameters.getUserType()==6){
             if (parameters.getCorporationBusinessName().length() == 0) {
@@ -112,9 +110,6 @@ public class UserInfoController {
             }
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
-            }
-            if (!isRegexImageType(parameters.getBusinessImageURL())) {
-                return new BaseResponse<>(INVALID_IMAGE_TYPE);
             }
         }
         if(parameters.getUserType()==4 || parameters.getUserType()==5 || parameters.getUserType()==6){
@@ -131,7 +126,6 @@ public class UserInfoController {
                 return new BaseResponse<>(NO_SELECT_AGREE_SHOW_DB);
             }
         }
-
         try {
             PostUserRes postUserRes = userInfoService.createUserInfo(parameters);
             return new BaseResponse<>(SUCCESS, postUserRes);
@@ -170,6 +164,30 @@ public class UserInfoController {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
+    @ResponseBody @GetMapping("/duplicated-info")
+    @Operation(summary="이메일, 휴대폰 중복 체크 API")
+    public BaseResponse<String> checkEmailAndPhoneNumDuplicate(@RequestParam(value="phoneNum")String phoneNum,
+                                                               @RequestParam(value="email")String email){
+        if(phoneNum==null || phoneNum.length()==0){
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+        if(email==null || email.length()==0){
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+        if(!isRegexEmail(email)){
+            return new BaseResponse<>(INVALID_EMAIL);
+        }
+        if(!isRegexPhoneNumber(phoneNum)){
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        if(userInfoProvider.isEmailUsable(email)==false){
+            return new BaseResponse<>(DUPLICATED_EMAIL);
+        }else if(userInfoProvider.isPhoneNumUsable(phoneNum)==false){
+            return new BaseResponse<>(DUPLICATED_PHONE_NUMBER);
+        }else{
+            return new BaseResponse<>(SUCCESS);
+        }
+    }
 
     @GetMapping("/phone-auth")
     @Operation(summary = "휴대폰 인증 API",description = "휴대폰 번호는 -를 빼고 입력하세요.")
@@ -181,7 +199,7 @@ public class UserInfoController {
         }
         int rand = (int) (Math.random() * 899999) + 100000;
         try {
-            userInfoService.PostSecureCode(rand, phoneNum);
+            userInfoService.postSecureCode(rand, phoneNum);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -191,8 +209,6 @@ public class UserInfoController {
     @PostMapping("/phone-auth")
     @Operation(summary="휴대폰 인증번호 검사 API",description = "인증번호는 3분 이내의 가장 최신 것만 유효합니다.")
     public BaseResponse<Void> phoneAuthCheck(@RequestBody PostCertificationCodeReq postCertificationCodeReq) throws BaseException {
-        //전송된 휴대폰 번호로 Certifiacte 테이블 조회
-        System.out.println(postCertificationCodeReq.getCode());
         if (postCertificationCodeReq.getPhoneNum() == null || postCertificationCodeReq.getPhoneNum().length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
@@ -205,6 +221,7 @@ public class UserInfoController {
         try {
             int code = userInfoProvider.checkPhoneNumCode(postCertificationCodeReq.getPhoneNum());
             if(code== postCertificationCodeReq.getCode()){
+                userInfoProvider.deletePhoneNumCertCode(postCertificationCodeReq.getPhoneNum());
                 return new BaseResponse<>(SUCCESS);
             }else{
                 return new BaseResponse<>(WRONG_SECURE_CODE);
@@ -245,15 +262,22 @@ public class UserInfoController {
 
     @GetMapping("/id") @ResponseBody
     @Operation(summary="아이디 찾기 API",description = "입력한 휴대폰 번호로 이전에 가입했던 ID를 보냅니다. (휴대폰 번호는 -를 빼고 입력해주세요.)")
-    public BaseResponse<GetIdRes> lostId(@RequestParam(value="phoneNum")String phoneNumber){
+    public BaseResponse<String> lostId(@RequestParam(value="phoneNum")String phoneNumber,
+                                       @RequestParam(value="name")String name){
         if(phoneNumber==null || phoneNumber.length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }else if(!isRegexPhoneNumber(phoneNumber)){
             return new BaseResponse<>(INVALID_PHONE_NUMBER);
         }
+        if(name==null || name.length()==0){
+            return new BaseResponse<>(EMPTY_NAME);
+        }
+        if(!isRegexName(name)){
+            return new BaseResponse<>(INVALID_NAME);
+        }
         try{
-            GetIdRes getIdRes = userInfoProvider.SendId(phoneNumber);
-            return new BaseResponse<>(SUCCESS,getIdRes);
+            userInfoProvider.sendId(phoneNumber,name);
+            return new BaseResponse<>(SUCCESS);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -261,15 +285,15 @@ public class UserInfoController {
 
     @GetMapping("/password") @ResponseBody
     @Operation(summary="비밀번호 찾기 API",description = "입력했던 메일로 새로운 랜덤한 비밀번호를 발급합니다.")
-    public BaseResponse<GetNewPasswordRes> lostPassword(@RequestParam(value="email") String userEmail){
+    public BaseResponse<String> lostPassword(@RequestParam(value="email") String userEmail){
         if(userEmail==null || userEmail.length()==0){
             return new BaseResponse<>(EMPTY_EMAIL);
         }else if(!isRegexEmail(userEmail)){
             return new BaseResponse<>(INVALID_EMAIL);
         }
         try {
-            GetNewPasswordRes getNewPasswordRes = userInfoService.patchUserPassword(userEmail);
-            return new BaseResponse<GetNewPasswordRes>(SUCCESS,getNewPasswordRes);
+            userInfoService.patchUserPassword(userEmail);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -340,6 +364,7 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
         try{
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);

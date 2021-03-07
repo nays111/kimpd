@@ -22,9 +22,6 @@ public class UserInfoProvider {
     private final CertificateRepository certificateRepository;
     private final CategoryProvider categoryProvider;
 
-    /**
-     * 로그인
-     */
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
         UserInfo userInfo = retrieveUserInfoById(postLoginReq.getId());
         String password;
@@ -66,9 +63,6 @@ public class UserInfoProvider {
         }
         return getUserRes;
     }
-    /**
-     * 유저 인덱스로 유저 찾기
-     */
     public UserInfo retrieveUserInfoByUserIdx(int userIdx) throws BaseException {
         UserInfo userInfo;
         try {
@@ -81,9 +75,6 @@ public class UserInfoProvider {
         }
         return userInfo;
     }
-    /**
-     * ID로 유저 찾기
-     */
     public UserInfo retrieveUserInfoById(String id) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -100,21 +91,11 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 사용 가능한 ID인지
-     */
-    public Boolean isIdUsable(String id) {
-        return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE");
-    }
-
-    /**
-     * 사용 가능한 닉네임인지
-     */
+    public Boolean isIdUsable(String id) { return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE"); }
+    public Boolean isPhoneNumUsable(String phoneNum){return !userInfoRepository.existsByPhoneNumAndStatus(phoneNum,"ACTIVE");}
+    public Boolean isEmailUsable(String email){return !userInfoRepository.existsByEmailAndStatus(email,"ACTIVE");}
     public Boolean isNicknameUsable(String nickname) { return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE"); }
 
-    /**
-     * 휴대폰 번호로 유저 찾기
-     */
     public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -131,9 +112,6 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 이메일로 유저 찾기
-     */
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -150,11 +128,9 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 휴대폰 번호로 인증번호 전송
-     */
-    public GetIdRes SendId(String phoneNum) throws BaseException {
-        UserInfo userInfo = retrieveUserInfoByPhoneNum(phoneNum);
+    public void sendId(String phoneNum,String name) throws BaseException {
+        UserInfo userInfo = userInfoRepository.findByPhoneNumAndNameAndStatus(phoneNum,name,"ACTIVE");
+        if(userInfo==null){ throw new BaseException(NOT_FOUND_USER); }
         String id = userInfo.getId();
         String message = "김피디입니다. 회원님의 ID 는 [" + id + "] 입니다.";
         try {
@@ -162,12 +138,8 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_SEND_MESSAGE);
         }
-        return new GetIdRes(id);
     }
 
-    /**
-     *휴대폰 인증번호 검사
-     */
     public int checkPhoneNumCode(String phoneNum) throws BaseException {
         Timestamp t1 = new Timestamp(System.currentTimeMillis());
         Timestamp t2 = new Timestamp(System.currentTimeMillis() - 180000); //3분
@@ -177,6 +149,10 @@ public class UserInfoProvider {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_SECURE_CODE);
         }
+    }
+    public void deletePhoneNumCertCode(String phoneNum) throws BaseException{
+        List<Certification> certificationList = certificateRepository.findAllByUserPhoneNum(phoneNum);
+        certificateRepository.deleteAll(certificationList);
     }
 
     public GetMyUserInfoRes getMyInfo(int userIdx) throws BaseException {

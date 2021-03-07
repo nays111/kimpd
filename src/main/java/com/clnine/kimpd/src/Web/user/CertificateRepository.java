@@ -5,10 +5,11 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 public interface CertificateRepository extends CrudRepository <Certification,Integer>{
 
     Certification findTopByUserPhoneNumAndCreatedAtBetweenOrderByCertificationIdxDesc(String phoneNum, Date now, Date end);
-    Certification findTopByUserPhoneNumOrderByCertificationIdxDesc(String phoneNum);
+    List<Certification> findAllByUserPhoneNum(String phoneNum);
 
 }
