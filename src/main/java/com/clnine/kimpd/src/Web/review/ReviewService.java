@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.review;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.Web.casting.CastingProvider;
 import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.review.models.PostReviewReq;
@@ -17,39 +18,24 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
-    private final UserInfoRepository userInfoRepository;
-    private final CastingRepository castingRepository;
     private final ReviewRepository reviewRepository;
     private final UserInfoProvider userInfoProvider;
+    private final CastingProvider castingProvider;
+    private final CastingRepository castingRepository;
 
-    /**
-     * 전문가 평가 API
-     * @param userIdx
-     * @param castingIdx
-     * @param postReviewReq
-     * @throws BaseException
-     */
     public void postReview(int userIdx,int castingIdx, PostReviewReq postReviewReq) throws BaseException{
-        UserInfo userInfo;
-                //= userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        try {
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
-        Casting casting;
-        try{
-            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
-        }catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_CASTING);
-        }
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
+        if(casting.getUserInfo()!=userInfo){ throw new BaseException(NO_CASTING); }
+        if(casting.getReview()!=null){ throw new BaseException(ALREADY_POST_REVIEW); }
+
         UserInfo expertInfo = casting.getExpert();
         float star = postReviewReq.getStar();
         String description = postReviewReq.getDescription();
         Review review = new Review(star,description,userInfo,expertInfo);
         casting.setReview(review);
-
         try{
+            castingRepository.save(casting);
             reviewRepository.save(review);
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_POST_REVIEW);

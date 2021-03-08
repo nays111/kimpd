@@ -8,8 +8,7 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class GetCastingsRes {
-    GetUserRes getUserRes;
-    CastingCountRes castingCountRes;
-    List<GetMyCastingRes> getMyCastingResList;
+public class GetMyCastingsRes {
+    int totalCount;
+    List<GetMyCastingDTO> getMyCastingResList;
 }

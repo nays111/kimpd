@@ -116,17 +116,29 @@ public class ProjectController {
 
     @ResponseBody @GetMapping("/projects")
     @Operation(summary="내 프로젝트 리스트 조회 API",description = "토큰이 필요합니다.")
-    public BaseResponse<List<GetProjectsRes>> getProjects(@RequestParam int page,
-                                                          @RequestParam(value = "duration", required = false) Integer duration){
+    public BaseResponse<GetProjectsRes> getProjects(@RequestParam Integer page,
+                                                    @RequestParam(value = "duration", required = false) Integer duration,
+                                                    @RequestParam(value = "sort", required = false)Integer sort){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(sort!=null){
+            if(sort!=1){
+                return new BaseResponse<>(WRONG_SORT_OPTION);
+            }
+        }
+        if(duration!=null){
+            if(duration!=1 || duration!=2){
+                return new BaseResponse<>(WRONG_DURATION);
+            }
+        }
+        if(page==null){ return new BaseResponse<>(EMPTY_PAGE); }
         try{
-            List<GetProjectsRes> getProjectsResList = projectProvider.getProjectsResList(userIdx,duration,page,9);
-            return new BaseResponse<>(SUCCESS,getProjectsResList);
+            GetProjectsRes getProjectsRes = projectProvider.getProjectsResList(userIdx,sort,duration,page,9);
+            return new BaseResponse<>(SUCCESS,getProjectsRes);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

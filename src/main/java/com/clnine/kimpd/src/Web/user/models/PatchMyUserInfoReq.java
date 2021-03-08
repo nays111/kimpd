@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 public class PatchMyUserInfoReq {
     private String profileImageURL;
     private String phoneNum;
-    private String name;
     private String email;
     /**
      * 개인 사업자용

@@ -2,6 +2,7 @@ package com.clnine.kimpd.src.Web.project.models;
 
 import com.clnine.kimpd.config.BaseEntity;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -24,13 +25,13 @@ public class Project extends BaseEntity {
     @Column(name="projectName",nullable = false)
     private String projectName;
 
-    @Column(name="projectMaker",nullable = false)
+    @Column(name="projectMaker")
     private String projectMaker;
 
-    @Column(name="projectStartDate",nullable = false)
+    @Column(name="projectStartDate")
     private String projectStartDate;
 
-    @Column(name="projectEndDate",nullable = false)
+    @Column(name="projectEndDate")
     private String projectEndDate;
 
     @Column(name="projectManager")
@@ -76,6 +77,11 @@ public class Project extends BaseEntity {
         this.projectStartDate = projectStartDate;
         this.projectEndDate = projectEndDate;
         this.projectFileURL = projectFileURL;
+        this.projectDescription = projectDescription;
+    }
+    public Project(UserInfo userInfo,String projectName,String projectDescription){
+        this.userInfo = userInfo;
+        this.projectName = projectName;
         this.projectDescription = projectDescription;
     }
 

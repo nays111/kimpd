@@ -6,6 +6,7 @@ import com.clnine.kimpd.src.Web.basket.models.GetBasketListRes;
 import com.clnine.kimpd.src.Web.basket.models.GetBasketsRes;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
+import com.clnine.kimpd.src.Web.project.ProjectProvider;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.GetProjectListRes;
 import com.clnine.kimpd.src.Web.project.models.Project;
@@ -29,6 +30,7 @@ public class BasketProvider {
     private final BasketRepository basketRepository;
     private final ProjectRepository projectRepository;
     private final CategoryProvider categoryProvider;
+    private final ProjectProvider projectProvider;
 
     /**
      * 내 장바구니 조회 API
@@ -42,16 +44,11 @@ public class BasketProvider {
         if(projectIdx==null){
             castingList = basketRepository.findAllByUserInfoAndCastingStatusAndStatus(userInfo,0,"ACTIVE");
         }else{
-            Project project;
-            try{
-                project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
-                projectBudget = project.getProjectBudget();
-            }catch(Exception ignored){
-                throw new BaseException(BaseResponseStatus.FAILED_TO_GET_PROJECTS);
+            Project project = projectProvider.retrieveProjectByProjectIdx(projectIdx);
+            if(project.getUserInfo()!=userInfo){
+                throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
             }
-            if(project==null){
-                throw new BaseException(BaseResponseStatus.FAILED_TO_GET_PROJECTS);
-            }
+            projectBudget = project.getProjectBudget();
             castingList = basketRepository.findAllByUserInfoAndCastingStatusAndProjectAndStatus(userInfo,0,project,"ACTIVE");
         }
         int castingExpertCount=castingList.size();

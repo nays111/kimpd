@@ -27,9 +27,6 @@ public class BasketService {
     private final UserInfoProvider userInfoProvider;
     private final ProjectProvider projectProvider;
 
-    /**
-     * 장바구니 담기
-     */
     @Transactional
     public void postBasket(int userIdx, PostBasketReq postBasketReq) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);

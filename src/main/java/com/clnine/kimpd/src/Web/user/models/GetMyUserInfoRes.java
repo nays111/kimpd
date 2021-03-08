@@ -11,6 +11,7 @@ public class GetMyUserInfoRes {
     private final int userIdx;
     private final String profileImageURL;
     private final String id;
+    private final String name;
     private final String nickname;
     private final String phoneNum;
     private final String email;

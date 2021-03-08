@@ -163,6 +163,7 @@ public class UserInfoProvider {
         String profileImageURL = userInfo.getProfileImageURL();
         String nickname = userInfo.getNickname();
         String id = userInfo.getId();
+        String name = userInfo.getName();
         String phoneNum = userInfo.getPhoneNum();
         String email = userInfo.getEmail();
 
@@ -182,13 +183,13 @@ public class UserInfoProvider {
         if (userInfo.getUserType() == 1 || userInfo.getUserType() == 4) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email).build();
         } else if (userInfo.getUserType() == 2 || userInfo.getUserType() == 5) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
                     .privateBusinessName(privateBusinessName)
@@ -197,7 +198,7 @@ public class UserInfoProvider {
         } else if (userInfo.getUserType() == 3 || userInfo.getUserType() == 6) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
                     .corpBusinessName(corpBusinessName)

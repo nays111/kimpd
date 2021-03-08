@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_USER;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -161,19 +161,13 @@ public class ExpertProvider {
      * 내 정보 조회 (전문가일 경우)
      */
     public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
-        UserInfo userInfo;
-        try {
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
-        if(userInfo==null){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        if(userInfo.getUserType()!=4 || userInfo.getUserType()!=5 || userInfo.getUserType()!=6){
+            throw new BaseException(NOT_EXPERT);
         }
         List<UserJobCategory> userJobCategoryList = userJobCategoryRepository.findByUserInfo(userInfo);
         List<UserGenreCategory> userGenreCategoryList = userGenreCategoryRepository.findByUserInfo(userInfo);
         List<Portfolio> portfolioList = portfolioRepository.findAllByUserInfo(userInfo);
-
 
         List<UserJobCategoryParentDTO> jobCategoryParentDTOS = new ArrayList<>();
         List<UserJobCategoryChildDTO> jobCategoryChildDTOS = new ArrayList<>();
@@ -191,7 +185,6 @@ public class ExpertProvider {
             }
         }
 
-
         if(userGenreCategoryList!=null){
             for(int i=0;i<userGenreCategoryList.size();i++){
                 UserGenreCategory userGenreCategory = userGenreCategoryList.get(i);
@@ -200,7 +193,6 @@ public class ExpertProvider {
                 genreCategoryDTOS.add(userGenreCategoryDTO);
             }
         }
-
 
         List<String> portfolioFileURL = new ArrayList<>();
         if(portfolioFileURL!=null){
@@ -224,8 +216,4 @@ public class ExpertProvider {
         GetMyExpertRes getMyExpertRes = new GetMyExpertRes(jobCategoryParentDTOS,jobCategoryChildDTOS,genreCategoryDTOS,introduce,career,portfolioFileURL,etc,minimumCastingPrice,castingStartPossibleDate,castingEndPossibleDate,agreeShowDB);
         return getMyExpertRes;
     }
-
-
-
-
 }
