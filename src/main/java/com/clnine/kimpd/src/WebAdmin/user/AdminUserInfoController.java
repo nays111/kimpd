@@ -1,29 +1,40 @@
 package com.clnine.kimpd.src.WebAdmin.user;
 
+import com.baroservice.api.BarobillApiService;
+import com.baroservice.ws.CorpState;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
+import com.clnine.kimpd.utils.BarobillService;
 import com.clnine.kimpd.utils.JwtService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.config.secret.Secret.*;
 
 @RestController
 @RequestMapping("/web-admin")
+@RequiredArgsConstructor
 public class AdminUserInfoController {
     private final AdminUserInfoProvider adminUserInfoProvider;
     private final AdminUserInfoService adminUserInfoService;
+    private final BarobillApiService barobillApiService;
     private final JwtService jwtService;
 
-    @Autowired
-    public AdminUserInfoController(AdminUserInfoProvider adminUserInfoProvider, AdminUserInfoService adminUserInfoService, JwtService jwtService) {
-        this.adminUserInfoProvider = adminUserInfoProvider;
-        this.adminUserInfoService = adminUserInfoService;
-        this.jwtService = jwtService;
-    }
+//    @Autowired
+//    public AdminUserInfoController(AdminUserInfoProvider adminUserInfoProvider, AdminUserInfoService adminUserInfoService,
+//                                   JwtService jwtService, BarobillApiService barobillApiService) {
+//        this.adminUserInfoProvider = adminUserInfoProvider;
+//        this.adminUserInfoService = adminUserInfoService;
+//        this.jwtService = jwtService;
+//        this.barobillApiService = barobillApiService;
+//    }
 
     /**
      * 회원 전체 조회 API
@@ -385,4 +396,30 @@ public class AdminUserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    /**
+     * 사업자 인증 API
+     * [GET] /corp-auth
+     * @RequestBody PostNormalUserReq
+     * @return BaseResponse<PostNormalUserRes>
+     */
+    @ResponseBody
+    @GetMapping("/corp-auth")
+    @CrossOrigin(origins = "*")
+    public BaseResponse<String> getCorpState(@RequestParam(value="corpNum",required = true)String corpNum) throws RemoteException {
+        if(corpNum==null || corpNum.length()==0){
+            return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+        }
+        if(corpNum.length()>13 || corpNum.length()<10){
+            return  new BaseResponse<>(WRONG_CORP_NUM);
+        }
+        CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
+        int state = corpState.getState();
+        if(state>=1){
+            return new BaseResponse<>(SUCCESS);
+        }else{
+            return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);
+        }
+    }
+
 }
