@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.clnine.kimpd.config.BaseResponseStatus.NOT_EXPERT;
+
 @Service
 @RequiredArgsConstructor
 public class ExpertService {
@@ -28,12 +30,13 @@ public class ExpertService {
     private final GenreCategoryRepository genreCategoryRepository;
     private final UserInfoProvider userInfoProvider;
 
-    /**
-     * 전문가 프로필 수정 (관리)
-     */
+
     @Transactional
     public void patchMyExpert(PatchMyExpertReq patchMyExpertReq,int userIdx) throws BaseException{
         UserInfo userInfo=userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        if(userInfo.getUserType()!=4 || userInfo.getUserType()!=5 || userInfo.getUserType()!=6){
+            throw new BaseException(NOT_EXPERT);
+        }
         List<Integer> jobCategoryParentIdxList = patchMyExpertReq.getJobCategoryParentIdx();
         List<Integer> jobCategoryChildIdxList = patchMyExpertReq.getJobCategoryChildIdx();
         List<Integer> genreCategoryIdxList = patchMyExpertReq.getGenreCategoryIdx();

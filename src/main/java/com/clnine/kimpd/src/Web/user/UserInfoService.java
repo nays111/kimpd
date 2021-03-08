@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.category.models.*;
+import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.AES128;
@@ -35,6 +36,7 @@ public class UserInfoService {
     private final JobCategoryChildRepository jobCategoryChildRepository;
     private final JobCategoryParentRepository jobCategoryParentRepository;
     private final UserJobCategoryRepository userJobCategoryRepository;
+    private final ProjectRepository projectRepository;
 
     @Transactional
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
@@ -93,6 +95,12 @@ public class UserInfoService {
             }
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
+        }
+        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
+        try{
+            projectRepository.save(project);
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_PROJECT);
         }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
@@ -213,7 +221,6 @@ public class UserInfoService {
 
         String profileImageURL = patchMyUserInfoReq.getProfileImageURL();
         String phoneNum = patchMyUserInfoReq.getPhoneNum();
-        String name = patchMyUserInfoReq.getName();
         String email = patchMyUserInfoReq.getEmail();
         String privateBusinessName = patchMyUserInfoReq.getPrivateBusinessName();
         String businessNumber = patchMyUserInfoReq.getBusinessNumber();
@@ -223,7 +230,6 @@ public class UserInfoService {
 
         userInfo.setProfileImageURL(profileImageURL);
         userInfo.setPhoneNum(phoneNum);
-        userInfo.setName(name);
         userInfo.setEmail(email);
         userInfo.setPrivateBusinessName(privateBusinessName);
         userInfo.setBusinessNumber(businessNumber);

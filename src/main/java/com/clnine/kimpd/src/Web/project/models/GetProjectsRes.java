@@ -3,12 +3,11 @@ package com.clnine.kimpd.src.Web.project.models;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public class GetProjectsRes {
-    private final int projectIdx;
-    private final String projectName;
-    private final String projectDescription;
-    private final String projectDate;
-    private final String projectBudget;
+    private final int totalCount;
+    private final List<GetProjectsDTO> getProjectsList;
 }

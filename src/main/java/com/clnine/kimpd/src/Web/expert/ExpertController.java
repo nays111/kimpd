@@ -53,6 +53,7 @@ public class ExpertController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
         if(patchMyExpertReq.getIntroduce().length()>500){
             return new BaseResponse<>(TOO_LONG_INTRODUCE);
         }
@@ -79,6 +80,7 @@ public class ExpertController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
         try{
             GetMyExpertRes getMyExpertRes = expertProvider.getMyExpertRes(userIdx);
             return new BaseResponse<>(SUCCESS,getMyExpertRes);

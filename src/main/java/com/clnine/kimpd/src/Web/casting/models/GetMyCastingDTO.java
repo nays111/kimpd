@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class GetMyCastingRes {
+public class GetMyCastingDTO {
     int userIdx; //전문가 인덱스
     String nickname;
     String profileImageURL;

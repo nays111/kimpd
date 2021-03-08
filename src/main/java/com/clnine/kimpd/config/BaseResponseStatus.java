@@ -186,6 +186,10 @@ public enum BaseResponseStatus {
     FAILED_TO_SAVE_BASKETS(false,3051,"장바구니 담기에 실패했습니다."),
     FAILED_TO_CHANGE_TO_EXPERT(false,3052,"전문가 전환에 실패했습니다."),
     FAILED_TO_SEND_EMAIL(false,3053,"메일 전송에 실패했습니다."),
+    NO_CASTING(false,3054,"본인이 한 섭외 신청이 아닙니다."),
+    ALREADY_POST_REVIEW(false,3035,"이미 평가를 한 상태입니다."),
+    NOT_EXPERT(false,3036,"전문가가 아닙니다."),
+    NOT_USER_PROJECT(false,3037,"프로젝트 소유자가 아닙니다."),
 
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),

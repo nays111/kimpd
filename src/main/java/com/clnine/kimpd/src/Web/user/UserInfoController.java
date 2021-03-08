@@ -81,9 +81,6 @@ public class UserInfoController {
         if(parameters.getAgreeAdvertisement()==null){
             return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
         }
-        /**
-         * 필수 X 입력 아닌사항
-         */
         if(parameters.getUserType()==2 || parameters.getUserType()==5){
             if (parameters.getPrivateBusinessName().length() == 0) {
                     return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
@@ -326,6 +323,7 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
         try{
             GetMyUserInfoRes getMyUserInfoRes = userInfoProvider.getMyInfo(userIdx);
             return new BaseResponse<>(SUCCESS, getMyUserInfoRes);
@@ -344,6 +342,7 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
         //todo requestbody validation
         try{
             userInfoService.patchMyUserInfo(userIdx,patchMyUserInfoReq);
@@ -365,6 +364,7 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
         if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
+
         try{
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);
@@ -383,6 +383,8 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
+
         if(patchUserPasswordReq.getCurrentPassword()==null || patchUserPasswordReq.getCurrentPassword().length()==0){
             return new BaseResponse<>(EMPTY_PASSWORD);
         }

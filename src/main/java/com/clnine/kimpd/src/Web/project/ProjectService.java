@@ -44,7 +44,10 @@ public class ProjectService {
     @Transactional
     public void updateProject(PatchProjectReq patchProjectReq,int projectIdx,int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        Project project = projectProvider.retrieveProjectByProjectIdxAndUserInfo(projectIdx,userInfo);
+        Project project = projectProvider.retrieveProjectByProjectIdx(projectIdx);
+        if(project.getUserInfo()!=userInfo){
+            throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
+        }
         project.setProjectName(patchProjectReq.getProjectName());
         project.setProjectMaker(patchProjectReq.getProjectMaker());
         project.setProjectStartDate(patchProjectReq.getProjectStartDate());
@@ -63,7 +66,10 @@ public class ProjectService {
     @Transactional
     public void deleteProject(int projectIdx,int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        Project project = projectProvider.retrieveProjectByProjectIdxAndUserInfo(projectIdx,userInfo);
+        Project project = projectProvider.retrieveProjectByProjectIdx(projectIdx);
+        if(project.getUserInfo()!=userInfo){
+            throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
+        }
         project.setStatus("INACTIVE");
         try{
             projectRepository.save(project);

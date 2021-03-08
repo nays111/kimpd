@@ -7,6 +7,7 @@ import com.clnine.kimpd.src.Web.basket.models.PostBasketCastingReq;
 import com.clnine.kimpd.src.Web.basket.models.PostBasketReq;
 import com.clnine.kimpd.src.Web.casting.models.CastingCountRes;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +21,8 @@ public class BasketController {
     private final BasketService basketService;
     private final BasketProvider basketProvider;
 
-    /**
-     * 장바구니 담기 API
-     */
-    @ResponseBody
-    @PostMapping("/baskets")
+    @ResponseBody @PostMapping("/baskets")
+    @Operation(summary = "장바구니 담기 API",description = "여러명의 유저를 한 프로젝트 안에 담는 방식입니다")
     public BaseResponse<String> postBasket(@RequestBody PostBasketReq postBasketReq){
         int userIdx;
         try{
