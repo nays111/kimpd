@@ -48,6 +48,11 @@ dependencies {
 	//mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	implementation files("src/main/java/com/clnine/kimpd/libs/barobill-api-cxf.jar")
+	compile group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
+	compile group: 'javax.xml.ws', name: 'jaxws-api', version: '2.3.1'
+	compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.3.1'
+
 	implementation 'org.apache.httpcomponents:httpclient:4.5'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.0'
 	implementation 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.6.RELEASE'
