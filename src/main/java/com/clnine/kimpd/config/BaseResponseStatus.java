@@ -113,6 +113,7 @@ public enum BaseResponseStatus {
     EMPTY_FAQ_ANSWER(false, 2512, "FAQ 답변이 비었습니다."),
     EMPTY_INQUIRY_IDX(false, 2513, "1:1문의 인덱스가 비었습니다."),
     EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
+    EMPTY_NAME(false, 2515, "이름을 입력해주세요."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),

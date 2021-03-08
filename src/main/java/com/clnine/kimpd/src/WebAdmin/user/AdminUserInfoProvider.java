@@ -36,12 +36,8 @@ public class AdminUserInfoProvider {
     public List<AdminGetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<AdminUserInfo> adminUserInfoList;
-        try {
-            adminUserInfoList = adminUserInfoRepository.findAll();
 
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_USER);
-        }
+        adminUserInfoList = adminUserInfoRepository.findAll();
 
         // 2. UserInfoRes로 변환하여 return
         return adminUserInfoList.stream().map(adminUserInfo -> {
@@ -107,6 +103,7 @@ public class AdminUserInfoProvider {
         String id = adminUserInfo.getId();
         String email = adminUserInfo.getEmail();
         String phoneNum = adminUserInfo.getPhoneNum();
+        String name = adminUserInfo.getName();
         String city = adminUserInfo.getCity();
         String nickname = adminUserInfo.getNickname();
         String profileImageURL = adminUserInfo.getProfileImageURL();
@@ -121,7 +118,7 @@ public class AdminUserInfoProvider {
         String corporationBusinessNumber = adminUserInfo.getCorporationBusinessNumber();
         String status = adminUserInfo.getStatus();
 
-        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, city, nickname, profileImageURL,
+        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, name, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber,
                 businessImageURL, corporationBusinessName, corporationBusinessNumber, status);
     }

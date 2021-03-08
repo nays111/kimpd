@@ -112,11 +112,6 @@ public class AdminUserInfoService {
         }
 
         // 2. 유저 정보 생성
-        Random random = new Random();
-        StringBuffer buffer = new StringBuffer();
-        int index;
-        char password;
-
         String newPassword = mailService.sendPwFindMail(postUserReq.getEmail());
         String hashPassword;
         try {
@@ -124,10 +119,12 @@ public class AdminUserInfoService {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
+
         int userType = postUserReq.getUserType();
         String id = postUserReq.getId();
         String email = postUserReq.getEmail();
         String phoneNum = postUserReq.getPhoneNum();
+        String name = postUserReq.getName();
         String city = postUserReq.getCity();
         String nickname = postUserReq.getNickname();
         String profileImageURL = postUserReq.getProfileImageURL();
@@ -144,7 +141,7 @@ public class AdminUserInfoService {
         if (userType == 4 || userType == 5 || userType == 6) {
             agreeShowDB = 1;
         }
-        AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, city, nickname, profileImageURL,
+        AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, name, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
                 corporationBusinessNumber, agreeShowDB, "ACTIVE");
 
@@ -218,6 +215,7 @@ public class AdminUserInfoService {
         adminUserInfo.setId(adminPatchUserReq.getId());
         adminUserInfo.setEmail(adminPatchUserReq.getEmail());
         adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
+        adminUserInfo.setName(adminPatchUserReq.getName());
         if (adminPatchUserReq.getCity() == null || adminPatchUserReq.getCity().length() == 0) {
             adminUserInfo.setCity(null);
         } else {
