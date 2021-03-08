@@ -151,7 +151,11 @@ public class AdminUserInfoController {
             }
         }
 
-        if(parameters.getNickname() == null){
+        if(parameters.getName() == null || parameters.getName().length() == 0){
+            return new BaseResponse<>(EMPTY_NAME);
+        }
+
+        if(parameters.getNickname() == null || parameters.getNickname().length() == 0){
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
 
@@ -356,7 +360,11 @@ public class AdminUserInfoController {
             return new BaseResponse<>(DUPLICATED_EMAIL);
         }
 
-        if (parameters.getNickname() == null){
+        if(parameters.getName() == null || parameters.getName().length() == 0){
+            return new BaseResponse<>(EMPTY_NAME);
+        }
+
+        if(parameters.getNickname() == null || parameters.getNickname().length() == 0){
             return new BaseResponse<>(EMPTY_NICKNAME);
         }
         else{

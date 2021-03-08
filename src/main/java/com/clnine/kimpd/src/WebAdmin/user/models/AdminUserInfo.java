@@ -50,6 +50,13 @@ public class AdminUserInfo extends BaseEntity {
     private String phoneNum;
 
     /**
+     * 전화번호
+     */
+    @Column(name = "name", nullable = false)
+    private String name;
+
+
+    /**
      * 도시
      */
     @Column(name = "city")
@@ -133,7 +140,7 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String city,
+    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String name, String city,
                          String nickname, String profileImageURL, String introduce, String career, String etc,
                          String minimumCastingPrice, String privateBusinessName, String businessNumber,
                          String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
@@ -143,6 +150,7 @@ public class AdminUserInfo extends BaseEntity {
         this.password = password;
         this.email = email;
         this.phoneNum = phoneNum;
+        this.name = name;
         this.city = city;
         this.nickname = nickname;
         this.profileImageURL = profileImageURL;

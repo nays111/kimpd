@@ -12,6 +12,7 @@ public class AdminPatchUserReq {
     private String id;
     private String email;
     private String phoneNum;
+    private String name;
     private String city;
     private String nickname;
     private String profileImageURL;

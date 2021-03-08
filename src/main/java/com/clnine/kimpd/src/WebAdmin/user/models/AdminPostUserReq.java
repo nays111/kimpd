@@ -12,6 +12,7 @@ public class AdminPostUserReq {
     private String id;
     private String email;
     private String phoneNum;
+    private String name;
     @Nullable
     private String city;
     @Nullable

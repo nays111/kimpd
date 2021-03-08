@@ -12,6 +12,7 @@ public class AdminGetUserRes {
     private final String id;
     private final String email;
     private final String phoneNum;
+    private final String name;
     @Nullable
     private final String city;
     @Nullable
