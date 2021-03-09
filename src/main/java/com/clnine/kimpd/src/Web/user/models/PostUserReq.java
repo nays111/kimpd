@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.Null;
 import java.util.ArrayList;
 
+
 @NoArgsConstructor(access = AccessLevel.PUBLIC) // Unit Test 를 위해 PUBLIC
 @Getter
 public class PostUserReq {
@@ -39,9 +40,7 @@ public class PostUserReq {
     @Nullable
     private ArrayList<Integer> genreCategoryIdx; //장르 카테고리 인덱스
     @Nullable
-    private ArrayList<Integer> jobParentCategoryIdx;
-    @Nullable
-    private ArrayList<Integer> jobChildCategoryIdx;
+    private ArrayList<ArrayList<Integer>> jobCategoryIdx;
     @Nullable
     private Integer agreeShowDB;
 }

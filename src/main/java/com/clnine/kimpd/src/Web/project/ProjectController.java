@@ -12,13 +12,17 @@ import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
-@RestController @RequestMapping @RequiredArgsConstructor @CrossOrigin
+@RestController
+@RequestMapping
+@RequiredArgsConstructor
+@CrossOrigin
 public class ProjectController {
     private final JwtService jwtService;
     private final ProjectService projectService;
     private final ProjectProvider projectProvider;
 
-    @ResponseBody @GetMapping("/projects/{projectIdx}")
+    @ResponseBody
+    @GetMapping("/projects/{projectIdx}")
     @Operation(summary="프로젝트 상세 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyProjectRes> getMyProject(@PathVariable(value="projectIdx")int projectIdx){
         int userIdx;
@@ -36,7 +40,8 @@ public class ProjectController {
     }
 
 
-    @ResponseBody @PostMapping("/projects")
+    @ResponseBody
+    @PostMapping("/projects")
     @Operation(summary="프로젝트 추가 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postProject(@RequestBody PostProjectReq postProjectReq){
         int userIdx;
@@ -79,7 +84,8 @@ public class ProjectController {
 
     }
 
-    @ResponseBody @PatchMapping("/projects/{projectIdx}")
+    @ResponseBody
+    @PatchMapping("/projects/{projectIdx}")
     @Operation(summary="프로젝트 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> updateProject(@PathVariable(required = true,value="projectIdx")int projectIdx,
                                               @RequestBody(required = true) PatchProjectReq patchProjectReq){
@@ -97,7 +103,8 @@ public class ProjectController {
         }
     }
 
-    @ResponseBody @PatchMapping("/projects/{projectIdx}/status")
+    @ResponseBody
+    @PatchMapping("/projects/{projectIdx}/status")
     @Operation(summary="프로젝트 삭제 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> deleteProject(@PathVariable(required = true,value="projectIdx")int projectIdx){
         int userIdx;
@@ -114,7 +121,8 @@ public class ProjectController {
         }
     }
 
-    @ResponseBody @GetMapping("/projects")
+    @ResponseBody
+    @GetMapping("/projects")
     @Operation(summary="내 프로젝트 리스트 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetProjectsRes> getProjects(@RequestParam Integer page,
                                                     @RequestParam(value = "duration", required = false) Integer duration,
@@ -142,8 +150,6 @@ public class ProjectController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-
-
     }
 
     @ResponseBody @GetMapping("/project-list")

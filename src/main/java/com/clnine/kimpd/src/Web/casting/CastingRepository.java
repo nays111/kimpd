@@ -65,4 +65,8 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
 
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
+
+
+    List<Casting> findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(UserInfo userInfo,String status,String startDate,String endDate);
+
 }

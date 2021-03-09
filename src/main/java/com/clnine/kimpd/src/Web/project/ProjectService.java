@@ -16,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_POST_PROJECT;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectProvider projectProvider;
