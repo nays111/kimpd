@@ -20,14 +20,18 @@ import static com.clnine.kimpd.config.secret.Secret.barobillCertyKey;
 import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 
-@RestController @CrossOrigin @RequestMapping(value = "/users") @RequiredArgsConstructor
+@RestController
+@CrossOrigin
+@RequestMapping(value = "/users")
+@RequiredArgsConstructor
 public class UserInfoController {
     private final UserInfoProvider userInfoProvider;
     private final UserInfoService userInfoService;
     private final JwtService jwtService;
     private final BarobillApiService barobillApiService;
 
-    @ResponseBody @PostMapping("")
+    @ResponseBody
+    @PostMapping("")
     @Operation(summary = "회원가입 API")
     public BaseResponse<PostUserRes> postUsers(@RequestBody PostUserReq parameters) {
         if (parameters.getUserType() > 6 || parameters.getUserType()==0) {
@@ -110,11 +114,8 @@ public class UserInfoController {
             }
         }
         if(parameters.getUserType()==4 || parameters.getUserType()==5 || parameters.getUserType()==6){
-            if (parameters.getJobParentCategoryIdx().size() == 0) {
+            if (parameters.getJobCategoryIdx().size() == 0 ) {
                 return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
-            }
-            if (parameters.getJobChildCategoryIdx().size() == 0) {
-                return new BaseResponse<>(NO_SELECT_JOB_CHILD_CATEGORY);
             }
             if (parameters.getGenreCategoryIdx().size() == 0) {
                 return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
@@ -228,7 +229,8 @@ public class UserInfoController {
         }
     }
 
-    @ResponseBody @PostMapping("/login")
+    @ResponseBody
+    @PostMapping("/login")
     @Operation(summary="로그인 API",description = "JWT를 반환합니다")
     public BaseResponse<PostLoginRes> login(@RequestBody PostLoginReq parameters){
         if(parameters.getId()==null||parameters.getId().length()==0){
@@ -244,7 +246,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/jwt") @ResponseBody
+    @GetMapping("/jwt")
+    @ResponseBody
     @Operation(summary="JWT 검사 API",description = "유저에 대한 요약 정보를 반환합니다.")
     public BaseResponse<GetUserRes> jwt() {
         GetUserRes getUserRes;
@@ -257,7 +260,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/id") @ResponseBody
+    @GetMapping("/id")
+    @ResponseBody
     @Operation(summary="아이디 찾기 API",description = "입력한 휴대폰 번호로 이전에 가입했던 ID를 보냅니다. (휴대폰 번호는 -를 빼고 입력해주세요.)")
     public BaseResponse<String> lostId(@RequestParam(value="phoneNum")String phoneNumber,
                                        @RequestParam(value="name")String name){
@@ -280,12 +284,14 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/password") @ResponseBody
+    @GetMapping("/password")
+    @ResponseBody
     @Operation(summary="비밀번호 찾기 API",description = "입력했던 메일로 새로운 랜덤한 비밀번호를 발급합니다.")
     public BaseResponse<String> lostPassword(@RequestParam(value="email") String userEmail){
         if(userEmail==null || userEmail.length()==0){
             return new BaseResponse<>(EMPTY_EMAIL);
-        }else if(!isRegexEmail(userEmail)){
+        }
+        if(!isRegexEmail(userEmail)){
             return new BaseResponse<>(INVALID_EMAIL);
         }
         try {
@@ -296,7 +302,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/corp-auth") @ResponseBody
+    @GetMapping("/corp-auth")
+    @ResponseBody
     @Operation(summary="사업자 인증 API",description = "사업자 번호는 10자리입니다 (-를 빼고 입력해주세요.)")
     public BaseResponse<String> getCorpState(@RequestParam(value="corpNum",required = true)String corpNum) throws RemoteException {
         if(corpNum==null || corpNum.length()==0){
@@ -314,7 +321,8 @@ public class UserInfoController {
         }
     }
 
-    @GetMapping("/{userIdx}") @ResponseBody
+    @GetMapping("/{userIdx}")
+    @ResponseBody
     @Operation(summary="마이페이지 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyUserInfoRes> getMyUserInfo(@PathVariable(required = true,value = "userIdx")int userIdx){
         int userIdxJWT;
@@ -323,7 +331,9 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
         try{
             GetMyUserInfoRes getMyUserInfoRes = userInfoProvider.getMyInfo(userIdx);
             return new BaseResponse<>(SUCCESS, getMyUserInfoRes);
@@ -332,7 +342,8 @@ public class UserInfoController {
         }
     }
 
-    @PatchMapping("/{userIdx}") @ResponseBody
+    @PatchMapping("/{userIdx}")
+    @ResponseBody
     @Operation(summary="회원 정보 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyUserInfo(@PathVariable(required = true,value="userIdx")int userIdx,
                                                 @RequestBody PatchMyUserInfoReq patchMyUserInfoReq){
@@ -342,8 +353,52 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
-        //todo requestbody validation
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
+        if (patchMyUserInfoReq.getPhoneNum() == null || patchMyUserInfoReq.getPhoneNum().length() == 0) {
+            return new BaseResponse<>(EMPTY_PHONE_NUMBER);
+        }
+        if (!isRegexPhoneNumber(patchMyUserInfoReq.getPhoneNum())) {
+            return new BaseResponse<>(INVALID_PHONE_NUMBER);
+        }
+        if (patchMyUserInfoReq.getEmail() == null || patchMyUserInfoReq.getEmail().length() == 0) {
+            return new BaseResponse<>(EMPTY_EMAIL);
+        }
+        if (!isRegexEmail(patchMyUserInfoReq.getEmail())) {
+            return new BaseResponse<>(INVALID_EMAIL);
+        }
+        int userType;
+        try{
+             userType = userInfoProvider.getUserTypeByUserIdx(userIdx);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+        if(userType==2 || userType==5){
+            if (patchMyUserInfoReq.getBusinessNumber().length() == 0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
+            }
+            if(patchMyUserInfoReq.getBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
+            }
+            if (patchMyUserInfoReq.getPrivateBusinessName().length() == 0) {
+                return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
+            }
+        }
+        if(userType==3 || userType==6){
+            if (patchMyUserInfoReq.getCorpBusinessName().length() == 0) {
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
+            }
+            if (patchMyUserInfoReq.getCorpBusinessNumber().length() == 0) {
+                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            }
+            if(patchMyUserInfoReq.getCorpBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_CORP_BUSINESS_NUMBER);
+            }
+            if (patchMyUserInfoReq.getBusinessImageURL().length() == 0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+        }
         try{
             userInfoService.patchMyUserInfo(userIdx,patchMyUserInfoReq);
             return new BaseResponse<>(SUCCESS);
@@ -353,7 +408,8 @@ public class UserInfoController {
     }
 
 
-    @PatchMapping("/{userIdx}/type") @ResponseBody
+    @PatchMapping("/{userIdx}/type")
+    @ResponseBody
     @Operation(summary="전문가 전환 API",description = "일반->전문가, 일반(개인사업자)->전문가(개인사업자), 일반(법인사업자)->전문가(법인사업자), 토큰이 필요합니다.")
     public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq,
                                                        @PathVariable(required = true,value = "userIdx")int userIdx){
@@ -363,8 +419,9 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
-
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
         try{
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);
@@ -373,7 +430,8 @@ public class UserInfoController {
         }
     }
 
-    @PatchMapping("{userIdx}/password") @ResponseBody
+    @PatchMapping("{userIdx}/password")
+    @ResponseBody
     @Operation(summary="비밀번호 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyPassword(@RequestBody PatchUserPasswordReq patchUserPasswordReq,
                                                 @PathVariable(required = true,value = "userIdx")int userIdx){
@@ -383,8 +441,9 @@ public class UserInfoController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
-
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
         if(patchUserPasswordReq.getCurrentPassword()==null || patchUserPasswordReq.getCurrentPassword().length()==0){
             return new BaseResponse<>(EMPTY_PASSWORD);
         }

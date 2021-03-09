@@ -21,7 +21,8 @@ public class BasketController {
     private final BasketService basketService;
     private final BasketProvider basketProvider;
 
-    @ResponseBody @PostMapping("/baskets")
+    @ResponseBody
+    @PostMapping("/baskets")
     @Operation(summary = "장바구니 담기 API",description = "여러명의 유저를 한 프로젝트 안에 담는 방식입니다")
     public BaseResponse<String> postBasket(@RequestBody PostBasketReq postBasketReq){
         int userIdx;

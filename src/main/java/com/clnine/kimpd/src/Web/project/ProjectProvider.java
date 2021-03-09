@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class ProjectProvider {
     private final ProjectRepository projectRepository;
     private final UserInfoProvider userInfoProvider;

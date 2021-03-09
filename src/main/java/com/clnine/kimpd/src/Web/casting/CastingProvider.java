@@ -43,16 +43,7 @@ public class CastingProvider {
         }
         return casting;
     }
-    public Casting retrieveCastingAndUserInfo(int castingIdx,UserInfo userInfo) throws BaseException{
-        Casting casting;
-        try{
-            casting = castingRepository.findByCastingIdxAndUserInfoAndStatus(castingIdx,userInfo,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(NOT_FOUND_CASTING);
-        }
-        if(casting==null){ throw new BaseException(NOT_FOUND_CASTING); }
-        return casting;
-    }
+
     public Casting retrieveCastingByCastingIdx(int castingIdx) throws BaseException{
         Casting casting;
         try{
@@ -66,6 +57,7 @@ public class CastingProvider {
 
     public CastingCountRes getCastingCount(int userIdx)throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
         int castingGoing = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,1,"ACTIVE");
         int castingAccepted = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,2,"ACTIVE");
         int castingRejected = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,3,"ACTIVE");
@@ -78,7 +70,8 @@ public class CastingProvider {
 
     public CastingCountRes getReceivedCastingCount(int userIdx)throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        if(userInfo.getUserType()!=4 || userInfo.getUserType()!=5 || userInfo.getUserType()!=6){
+
+        if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
         int castingGoing = castingRepository.countAllByExpertAndCastingStatusAndStatus(userInfo,1,"ACTIVE");
@@ -95,8 +88,10 @@ public class CastingProvider {
      */
     public GetMyCastingsRes getMyCastingRes(int casterIdx, Integer duration, Integer castingStatus, int page, int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(casterIdx);
+
         List<Casting> castingList = null;
         int totalCount = 0;
+
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();

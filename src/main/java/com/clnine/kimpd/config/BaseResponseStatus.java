@@ -122,6 +122,8 @@ public enum BaseResponseStatus {
     EMPTY_NAME(false,2106,"이름을 입력해주세요."),
     INVALID_NAME(false,2107,"잘못된 이름 형식입니다. (2~20자리 영문 한글 조합)"),
     DIFFERENT_JWT_AND_USERIDX(false,2108,"유저 인덱스와 JWT 가 일치하지 않습니다."),
+    EMPTY_YEAR(false,2109,"년도를 입력해주세요."),
+    EMPTY_MONTH(false,2110,"월을 입력해주세요."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),

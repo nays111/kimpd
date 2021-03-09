@@ -22,6 +22,11 @@ public class UserInfoProvider {
     private final CertificateRepository certificateRepository;
     private final CategoryProvider categoryProvider;
 
+    public int getUserTypeByUserIdx(int userIdx) throws BaseException{
+        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+        return userInfo.getUserType();
+    }
+
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
         UserInfo userInfo = retrieveUserInfoById(postLoginReq.getId());
         String password;
@@ -35,7 +40,26 @@ public class UserInfoProvider {
         }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
-        return new PostLoginRes(userIdx, jwt);
+        String nickname = userInfo.getNickname();
+        if(nickname==null){
+            nickname="닉네임 없음";
+        }
+        String profileImageURL = userInfo.getProfileImageURL();
+        if(profileImageURL==null){
+            profileImageURL="프로필 사진 없음";
+        }
+        int userType = userInfo.getUserType();
+        String stringUserType = null;
+        PostLoginRes postLoginRes=null;
+        if (userType == 1 || userType==2 || userType==3) {
+            stringUserType = "일반회원";
+            postLoginRes = new PostLoginRes(userIdx,jwt, nickname, profileImageURL, stringUserType);
+        } else if (userType == 4 || userType ==5 || userType==6) {
+            stringUserType = "전문가회원";
+            String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
+            postLoginRes = new PostLoginRes(userIdx,jwt,nickname,profileImageURL,stringUserType,jobCategoryChildName);
+        }
+        return postLoginRes;
     }
     /**
      * 유저 요약 정보
@@ -63,6 +87,7 @@ public class UserInfoProvider {
         }
         return getUserRes;
     }
+
     public UserInfo retrieveUserInfoByUserIdx(int userIdx) throws BaseException {
         UserInfo userInfo;
         try {
@@ -75,6 +100,7 @@ public class UserInfoProvider {
         }
         return userInfo;
     }
+
     public UserInfo retrieveUserInfoById(String id) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -91,10 +117,21 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    public Boolean isIdUsable(String id) { return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE"); }
-    public Boolean isPhoneNumUsable(String phoneNum){return !userInfoRepository.existsByPhoneNumAndStatus(phoneNum,"ACTIVE");}
-    public Boolean isEmailUsable(String email){return !userInfoRepository.existsByEmailAndStatus(email,"ACTIVE");}
-    public Boolean isNicknameUsable(String nickname) { return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE"); }
+    public Boolean isIdUsable(String id) {
+        return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE");
+    }
+
+    public Boolean isPhoneNumUsable(String phoneNum){
+        return !userInfoRepository.existsByPhoneNumAndStatus(phoneNum,"ACTIVE");
+    }
+
+    public Boolean isEmailUsable(String email){
+        return !userInfoRepository.existsByEmailAndStatus(email,"ACTIVE");
+    }
+
+    public Boolean isNicknameUsable(String nickname) {
+        return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE");
+    }
 
     public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException {
         List<UserInfo> existsUserInfoList;
@@ -150,6 +187,7 @@ public class UserInfoProvider {
             throw new BaseException(FAILED_TO_GET_SECURE_CODE);
         }
     }
+
     public void deletePhoneNumCertCode(String phoneNum) throws BaseException{
         List<Certification> certificationList = certificateRepository.findAllByUserPhoneNum(phoneNum);
         certificateRepository.deleteAll(certificationList);
@@ -157,29 +195,21 @@ public class UserInfoProvider {
 
     public GetMyUserInfoRes getMyInfo(int userIdx) throws BaseException {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
-        /**
-         * 공통 컬럼
-         */
+
         String profileImageURL = userInfo.getProfileImageURL();
         String nickname = userInfo.getNickname();
         String id = userInfo.getId();
         String name = userInfo.getName();
         String phoneNum = userInfo.getPhoneNum();
         String email = userInfo.getEmail();
-
-        /**
-         * 개인 사업자용
-         */
         String privateBusinessName = userInfo.getPrivateBusinessName();
         String businessNumber = userInfo.getBusinessNumber();
         String businessImageURL = userInfo.getBusinessImageURL();
-
-        /**
-         * 법인 사업자용
-         */
         String corpBusinessName = userInfo.getCorporationBusinessName();
         String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
+
         GetMyUserInfoRes getMyUserInfoRes = null;
+
         if (userInfo.getUserType() == 1 || userInfo.getUserType() == 4) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)

@@ -69,13 +69,12 @@ public class UserInfoService {
         } catch (Exception exception) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-        ArrayList<Integer> jobParentCategoryIdxList = postUserReq.getJobParentCategoryIdx();
-        ArrayList<Integer> jobChildCategoryIdxList = postUserReq.getJobChildCategoryIdx();
+        ArrayList<ArrayList<Integer>>jobCategoryIdxList = postUserReq.getJobCategoryIdx();
         try{
-            if(jobChildCategoryIdxList!=null && jobParentCategoryIdxList!=null){
-                for(int i=0;i<jobParentCategoryIdxList.size();i++){
-                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
-                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+            if(jobCategoryIdxList!=null){
+                for(int i=0;i<jobCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryIdxList.get(i).get(0));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobCategoryIdxList.get(i).get(1));
                     UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
                     userJobCategoryRepository.save(userJobCategory);
                 }
@@ -96,12 +95,12 @@ public class UserInfoService {
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
         }
-        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
-        try{
-            projectRepository.save(project);
-        }catch (Exception exception){
-            throw new BaseException(FAILED_TO_POST_PROJECT);
-        }
+//        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
+//        try{
+//            projectRepository.save(project);
+//        }catch (Exception exception){
+//            throw new BaseException(FAILED_TO_POST_PROJECT);
+//        }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
         return new PostUserRes(userIdx, jwt);
@@ -149,13 +148,12 @@ public class UserInfoService {
     @Transactional
     public void changeUserTypeToExpert(int userIdx, PatchUserTypeReq patchUserTypeReq)throws BaseException{
         UserInfo userInfo= userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        List<Integer> jobParentCategoryIdxList = patchUserTypeReq.getJobParentCategoryIdx();
-        List<Integer> jobChildCategoryIdxList = patchUserTypeReq.getJobChildCategoryIdx();
+        ArrayList<ArrayList<Integer>>jobCategoryIdxList = patchUserTypeReq.getJobCategoryIdx();
         try{
-            if(jobChildCategoryIdxList!=null && jobParentCategoryIdxList!=null){
-                for(int i=0;i<jobParentCategoryIdxList.size();i++){
-                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
-                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+            if(jobCategoryIdxList!=null){
+                for(int i=0;i<jobCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryIdxList.get(i).get(0));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobCategoryIdxList.get(i).get(1));
                     UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
                     userJobCategoryRepository.save(userJobCategory);
                 }
@@ -163,6 +161,7 @@ public class UserInfoService {
         }catch(Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_JOB_CATEGORY);
         }
+
         List<Integer> genreCategoryIdxList = patchUserTypeReq.getGenreCategoryIdx();
         try{
             if(genreCategoryIdxList!=null){
@@ -189,6 +188,7 @@ public class UserInfoService {
             throw new BaseException(FAILED_TO_CHANGE_TO_EXPERT);
         }
     }
+
     @Transactional
     public void patchMyPassword(int userIdx, PatchUserPasswordReq patchUserPasswordReq) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
@@ -214,6 +214,7 @@ public class UserInfoService {
             throw new BaseException(FAILED_SAVE_NEW_PASSWORD);
         }
     }
+
 
     @Transactional
     public void patchMyUserInfo(int userIdx,PatchMyUserInfoReq patchMyUserInfoReq) throws BaseException{

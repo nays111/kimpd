@@ -1,12 +1,7 @@
 package com.clnine.kimpd.src.Web.inquiry;
 
 import com.clnine.kimpd.config.BaseException;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryCategoryRes;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryListRes;
-import com.clnine.kimpd.src.Web.inquiry.models.Inquiry;
-import com.clnine.kimpd.src.Web.inquiry.models.InquiryCategory;
-import com.clnine.kimpd.src.Web.report.models.GetReportCategoryRes;
-import com.clnine.kimpd.src.Web.report.models.ReportCategory;
+import com.clnine.kimpd.src.Web.inquiry.models.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,11 +24,6 @@ public class InquiryProvider {
     private final InquiryCategoryRepository inquiryCategoryRepository;
     private final InquiryRepository inquiryRepository;
 
-    /**
-     * 1:1문의 카테고리 조회 API
-     * @return
-     * @throws BaseException
-     */
     public List<GetInquiryCategoryRes> getInquiryCategoryList() throws BaseException{
         List<InquiryCategory> inquiryCategoryList;
         try{
@@ -48,17 +38,21 @@ public class InquiryProvider {
         }).collect(Collectors.toList());
     }
 
-    public List<GetInquiryListRes> getInquiryListRes(int page,int size) throws BaseException{
+
+    public GetInquiriesRes getInquiryListRes(int page, int size) throws BaseException{
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"inquiryIdx"));
         List<Inquiry> inquiryList;
+        int totalCount = 0;
         try{
             inquiryList = inquiryRepository.findAllByStatus("ACTIVE",pageable);
+            totalCount = inquiryRepository.countAllByStatus("ACTIVE");
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_INQUIRIES);
         }
-        List<GetInquiryListRes> getInquiryListResList = new ArrayList<>();
+        int temp = totalCount;
+        List<GetInquiriesDTO> getInquiryListResList = new ArrayList<>();
         for(int i=0;i<inquiryList.size();i++){
-            int no = inquiryList.size()+1-i;
+            int no = temp;
             int inquiryIdx = inquiryList.get(i).getInquiryIdx();
             String answerStatus=null;
             if(inquiryList.get(i).getInquiryAnswer()==null){
@@ -71,10 +65,12 @@ public class InquiryProvider {
             Date createdAt = inquiryList.get(i).getCreatedAt();
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
             String createdDate = sDate.format(createdAt);//4
-            GetInquiryListRes getInquiryListRes = new GetInquiryListRes(no,inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
-            getInquiryListResList.add(getInquiryListRes);
+            GetInquiriesDTO getInquiriesDTO = new GetInquiriesDTO(no,inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
+            getInquiryListResList.add(getInquiriesDTO);
+            temp--;
         }
+        GetInquiriesRes getInquiriesRes = new GetInquiriesRes(totalCount,getInquiryListResList);
 
-        return getInquiryListResList;
+        return getInquiriesRes;
     }
 }
