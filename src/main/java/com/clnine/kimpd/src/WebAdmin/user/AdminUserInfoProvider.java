@@ -65,9 +65,9 @@ public class AdminUserInfoProvider {
             String id = adminUserInfo.getId();
             String email = adminUserInfo.getEmail();
             String phoneNum = adminUserInfo.getPhoneNum();
-            String city = adminUserInfo.getCity();
+            String nickname = adminUserInfo.getNickname();
             String status = adminUserInfo.getStatus();
-            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, city, status);
+            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, nickname, status);
         }).collect(Collectors.toList());
     }
 

@@ -37,7 +37,7 @@ public class AdminBannerProvider {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_BANNERS);
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         return bannerList.stream().map(Banner ->{
             int bannerIdx = Banner.getBannerIdx();
             String bannerImageURL = Banner.getBannerImageURL();
