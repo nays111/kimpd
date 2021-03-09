@@ -2,6 +2,8 @@ package com.clnine.kimpd.src.Web.expert;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
+import com.clnine.kimpd.src.Web.casting.CastingRepository;
+import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.category.UserGenreCategoryRepository;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
@@ -38,6 +40,7 @@ public class ExpertProvider {
     private final ExpertRepository expertRepository;
     private final UserGenreCategoryRepository userGenreCategoryRepository;
     private final UserInfoProvider userInfoProvider;
+    private final CastingRepository castingRepository;
 
     /**
      * 전문가 상세보기
@@ -162,7 +165,7 @@ public class ExpertProvider {
      */
     public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        if(userInfo.getUserType()!=4 || userInfo.getUserType()!=5 || userInfo.getUserType()!=6){
+        if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
         List<UserJobCategory> userJobCategoryList = userJobCategoryRepository.findByUserInfo(userInfo);
@@ -215,5 +218,59 @@ public class ExpertProvider {
 
         GetMyExpertRes getMyExpertRes = new GetMyExpertRes(jobCategoryParentDTOS,jobCategoryChildDTOS,genreCategoryDTOS,introduce,career,portfolioFileURL,etc,minimumCastingPrice,castingStartPossibleDate,castingEndPossibleDate,agreeShowDB);
         return getMyExpertRes;
+    }
+
+    public GetMyExpertSchedulesManage getMyExpertSchedule(int userIdx,String year,String month) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
+            throw new BaseException(NOT_EXPERT);
+        }
+        String startMonth = year+month+"01";
+
+        String size=null;
+        if(month.equals("02")){
+            size="28";
+        }else if(month.equals("01")||month.equals("03")||month.equals("05")||month.equals("07")||month.equals("08")||month.equals("10")||month.equals("12")){
+            size="31";
+        }else if(month.equals("04")||month.equals("06")||month.equals("09")||month.equals("11")){
+            size="30";
+        }
+        ArrayList<Integer> dayList = new ArrayList<>();
+        String endMonth = year+month+size;
+        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(userInfo,"ACTIVE",endMonth,startMonth);
+
+        List<GetMyExpertSchedulesManage> getMyExpertSchedulesManageList = new ArrayList<>();
+        for(int i=0;i<castingList.size();i++){
+            //System.out.println(castingList.get(i).getCastingStartDate()+" "+castingList.get(i).getCastingEndDate());
+            String startDate;
+            if(castingList.get(i).getCastingStartDate().compareTo(startMonth)<0){
+                startDate = startMonth;
+            }else{
+                startDate = castingList.get(i).getCastingStartDate();
+            }
+            String endDate;
+            if(castingList.get(i).getCastingEndDate().compareTo(endMonth)>0){
+                endDate = endMonth;
+            }else{
+                endDate = castingList.get(i).getCastingEndDate();
+            }
+            //System.out.println(startDate+" "+endDate);
+            int startDay = Integer.parseInt(startDate.substring(6));
+            int endDay = Integer.parseInt(endDate.substring(6));
+            //System.out.println(startDay+" "+endDay);
+            for(int j=startDay;j<=endDay;j++){
+                dayList.add(j);
+            }
+        }
+
+        ArrayList<Integer> resultList = new ArrayList<Integer>();
+        for (int i = 0; i < dayList.size(); i++) {
+            if (!resultList.contains(dayList.get(i))) {
+                resultList.add(dayList.get(i));
+            }
+        }
+        GetMyExpertSchedulesManage getMyExpertSchedulesManage = new GetMyExpertSchedulesManage(resultList);
+        return getMyExpertSchedulesManage;
+
     }
 }

@@ -34,7 +34,7 @@ public class ExpertService {
     @Transactional
     public void patchMyExpert(PatchMyExpertReq patchMyExpertReq,int userIdx) throws BaseException{
         UserInfo userInfo=userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-        if(userInfo.getUserType()!=4 || userInfo.getUserType()!=5 || userInfo.getUserType()!=6){
+        if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
         List<Integer> jobCategoryParentIdxList = patchMyExpertReq.getJobCategoryParentIdx();
