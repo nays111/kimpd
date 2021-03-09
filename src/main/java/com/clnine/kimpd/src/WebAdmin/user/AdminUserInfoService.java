@@ -168,6 +168,9 @@ public class AdminUserInfoService {
         int agreeShowDB = 0;
 
         adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
+        if(adminUserInfo == null){
+            throw new BaseException(FAILED_TO_PATCH_USER);
+        }
 
         if (!adminPatchUserReq.getId().equals(adminUserInfo.getId())) {
             if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
@@ -354,31 +357,5 @@ public class AdminUserInfoService {
         }
         return new AdminPatchAdminPwRes(adminPatchAdminPwReq.getId());
 
-    }
-
-    /**
-     * 회원 탈퇴
-     *
-     * @param userId
-     * @throws BaseException
-     */
-    public void deleteUserInfo(int userId) throws BaseException {
-        // 1. 존재하는 UserInfo가 있는지 확인 후 저장
-        AdminUserInfo adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(userId);
-
-        // 2-1. 해당 UserInfo를 완전히 삭제
-//        try {
-//            userInfoRepository.delete(userInfo);
-//        } catch (Exception exception) {
-//            throw new BaseException(DATABASE_ERROR_USER_INFO);
-//        }
-
-        // 2-2. 해당 UserInfo의 status를 INACTIVE로 설정
-        adminUserInfo.setStatus("INACTIVE");
-        try {
-            adminUserInfoRepository.save(adminUserInfo);
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_DELETE_USER);
-        }
     }
 }
