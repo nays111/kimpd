@@ -17,6 +17,7 @@ public enum BaseResponseStatus {
     SUCCESS_DELETE_USER(true, 1015, "회원 탈퇴에 성공하였습니다."),
     SUCCESS_PATCH_USER(true, 1016, "회원정보 수정에 성공하였습니다."),
     SUCCESS_READ_SEARCH_USERS(true, 1017, "회원 검색 조회에 성공하였습니다."),
+    SUCCESS_USER_BE_INACTIVE(true,1018,"상대방이 신고 5회 이상 당해 탈퇴처리되었습니다."),
     //Kimpd response code
     SUCCESS_SEND_TEMP_PASSWORD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
     SUCCESS_CHECK_ID(true,1019,"사용할 수 있는 ID입니다"),
@@ -124,6 +125,7 @@ public enum BaseResponseStatus {
     DIFFERENT_JWT_AND_USERIDX(false,2108,"유저 인덱스와 JWT 가 일치하지 않습니다."),
     EMPTY_YEAR(false,2109,"년도를 입력해주세요."),
     EMPTY_MONTH(false,2110,"월을 입력해주세요."),
+    EMPTY_REPORT_CATEGORY(false,2111,"신고 유형 카테고리를 입력해주세요."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
