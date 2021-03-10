@@ -12,6 +12,7 @@ import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
@@ -23,11 +24,16 @@ public class ReviewService {
     private final CastingProvider castingProvider;
     private final CastingRepository castingRepository;
 
+    @Transactional
     public void postReview(int userIdx,int castingIdx, PostReviewReq postReviewReq) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
-        if(casting.getUserInfo()!=userInfo){ throw new BaseException(NO_CASTING); }
-        if(casting.getReview()!=null){ throw new BaseException(ALREADY_POST_REVIEW); }
+        if(casting.getUserInfo()!=userInfo){
+            throw new BaseException(NO_CASTING);
+        }
+        if(casting.getReview()!=null){
+            throw new BaseException(ALREADY_POST_REVIEW);
+        }
 
         UserInfo expertInfo = casting.getExpert();
         float star = postReviewReq.getStar();

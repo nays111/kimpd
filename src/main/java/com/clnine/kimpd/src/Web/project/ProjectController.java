@@ -139,11 +139,13 @@ public class ProjectController {
             }
         }
         if(duration!=null){
-            if(duration!=1 || duration!=2){
+            if(duration!=1 && duration!=2){
                 return new BaseResponse<>(WRONG_DURATION);
             }
         }
-        if(page==null){ return new BaseResponse<>(EMPTY_PAGE); }
+        if(page==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try{
             GetProjectsRes getProjectsRes = projectProvider.getProjectsResList(userIdx,sort,duration,page,9);
             return new BaseResponse<>(SUCCESS,getProjectsRes);

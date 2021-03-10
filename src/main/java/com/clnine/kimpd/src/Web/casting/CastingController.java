@@ -75,12 +75,12 @@ public class CastingController {
             return new BaseResponse<>(exception.getStatus());
         }
         if(castingStatus!=null){
-            if(castingStatus!=1 || castingStatus!=2 || castingStatus!=3 || castingStatus!=4){
+            if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4){
                 return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
             }
         }
         if(duration!=null){
-            if(duration!=1 || duration!=2){
+            if(duration!=1 && duration!=2){
                 return new BaseResponse<>(WRONG_DURATION);
             }
         }
@@ -113,12 +113,12 @@ public class CastingController {
             return new BaseResponse<>(exception.getStatus());
         }
         if(castingStatus!=null){
-            if(castingStatus!=1 || castingStatus!=2 || castingStatus!=3 || castingStatus!=4){
+            if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4){
                 return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
             }
         }
         if(duration!=null){
-            if(duration!=1 || duration!=2){
+            if(duration!=1 && duration!=2){
                 return new BaseResponse<>(WRONG_DURATION);
             }
         }
@@ -147,7 +147,7 @@ public class CastingController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        if(castingStatus<2 || castingStatus>4){
+        if(castingStatus<2 && castingStatus>4){
             return new BaseResponse<>(WRONG_CASTING_STATUS);
         }
         try {
