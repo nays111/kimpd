@@ -123,7 +123,10 @@ public class ExpertProvider {
             city.add("서울");city.add("경기");city.add("인천");city.add("부산");city.add("대구");
             city.add("대전");city.add("광주");city.add("울산");city.add("세종");city.add("강원");
             city.add("경남");city.add("경북");city.add("전남");city.add("전북");city.add("충남");
-            city.add("충북");city.add("제주");
+            city.add("충북");city.add("제주");city.add("전국");
+        }
+        if(city!=null || city.size()!=0){
+            city.add("전국");
         }
         if(castingStartDate==null || castingStartDate.length()==0){
             castingStartDate="";
@@ -235,11 +238,13 @@ public class ExpertProvider {
         }else if(month.equals("04")||month.equals("06")||month.equals("09")||month.equals("11")){
             size="30";
         }
-        ArrayList<Integer> dayList = new ArrayList<>();
+
         String endMonth = year+month+size;
+
+        ArrayList<Integer> dayList = new ArrayList<>();
         List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(userInfo,"ACTIVE",endMonth,startMonth);
 
-        List<GetMyExpertSchedulesManage> getMyExpertSchedulesManageList = new ArrayList<>();
+        //List<GetMyExpertSchedulesManage> getMyExpertSchedulesManageList = new ArrayList<>();
         for(int i=0;i<castingList.size();i++){
             //System.out.println(castingList.get(i).getCastingStartDate()+" "+castingList.get(i).getCastingEndDate());
             String startDate;

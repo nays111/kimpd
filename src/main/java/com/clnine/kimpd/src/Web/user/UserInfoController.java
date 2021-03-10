@@ -407,7 +407,6 @@ public class UserInfoController {
         }
     }
 
-
     @PatchMapping("/{userIdx}/type")
     @ResponseBody
     @Operation(summary="전문가 전환 API",description = "일반->전문가, 일반(개인사업자)->전문가(개인사업자), 일반(법인사업자)->전문가(법인사업자), 토큰이 필요합니다.")
@@ -465,6 +464,5 @@ public class UserInfoController {
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
 }

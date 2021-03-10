@@ -192,6 +192,8 @@ public enum BaseResponseStatus {
     ALREADY_POST_REVIEW(false,3035,"이미 평가를 한 상태입니다."),
     NOT_EXPERT(false,3036,"전문가가 아닙니다."),
     NOT_USER_PROJECT(false,3037,"프로젝트 소유자가 아닙니다."),
+    ALREADY_EXPERT(false,3038,"이미 전문가입니다."),
+    SAME_PASSWORD_BEFORE_CHANGE(false,3039,"이전 비밀번호와 다른 비밀번호를 입력해주세요."),
 
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
