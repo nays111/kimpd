@@ -147,8 +147,15 @@ public class UserInfoService {
     }
     @Transactional
     public void changeUserTypeToExpert(int userIdx, PatchUserTypeReq patchUserTypeReq)throws BaseException{
+
         UserInfo userInfo= userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
+        if(userInfo.getUserType()==4 || userInfo.getUserType()==5 || userInfo.getUserType()==6){
+            throw new BaseException(ALREADY_EXPERT);
+        }
+
         ArrayList<ArrayList<Integer>>jobCategoryIdxList = patchUserTypeReq.getJobCategoryIdx();
+
         try{
             if(jobCategoryIdxList!=null){
                 for(int i=0;i<jobCategoryIdxList.size();i++){
@@ -174,7 +181,9 @@ public class UserInfoService {
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
         }
+
         userInfo.setAgreeShowDB(patchUserTypeReq.getAgreeShowDB());
+
         if(userInfo.getUserType()==1){
             userInfo.setUserType(4);
         }else if(userInfo.getUserType()==2){
@@ -192,21 +201,28 @@ public class UserInfoService {
     @Transactional
     public void patchMyPassword(int userIdx, PatchUserPasswordReq patchUserPasswordReq) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
         String password;
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_LOGIN);
         }
+
         if (!patchUserPasswordReq.getCurrentPassword().equals(password)) {
             throw new BaseException(WRONG_CURRENT_PASSWORD);
         }
         String newPassword = patchUserPasswordReq.getNewPassword();
+
+        if(password.equals(newPassword)){
+            throw new BaseException(SAME_PASSWORD_BEFORE_CHANGE);
+        }
         try {
             newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
+
         userInfo.setPassword(newPassword);
         try{
             userInfoRepository.save(userInfo);
