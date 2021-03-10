@@ -1,16 +1,15 @@
 package com.clnine.kimpd.src.Web.review;
 
-import com.baroservice.api.BarobillApiService;
-import com.baroservice.ws.CorpState;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.Web.review.models.GetMyReviewsListDTO;
 import com.clnine.kimpd.src.Web.review.models.GetMyReviewsRes;
 import com.clnine.kimpd.src.Web.review.models.PostReviewReq;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -22,16 +21,10 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final JwtService jwtService;
     private final ReviewProvider reviewProvider;
-    private final BarobillApiService barobillApiService;
 
-    /**
-     * 평가하기 API
-     * @param castingIdx
-     * @param postReviewReq
-     * @return
-     */
     @ResponseBody
     @PostMapping("/castings/{castingIdx}/reviews")
+    @Operation(summary = "평가하기 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postReview(@PathVariable(required = true,value="castingIdx")int castingIdx,
                                             @RequestBody PostReviewReq postReviewReq){
         int userIdx;
@@ -54,28 +47,37 @@ public class ReviewController {
         }
     }
 
-    /**
-     * 평가리스트 조회 API
-     */
+
     @ResponseBody
     @GetMapping("/castings/reviews")
-    public BaseResponse<List<GetMyReviewsRes>>getReviews(@RequestParam(value="reviewStatus",required = false)Integer reviewStatus,
-                                                         @RequestParam(value = "duration",required = false)Integer duration,
-                                                         @RequestParam(value="page",required = true)int page){
+    @Operation(summary = "평가 내역 리스트 조회 API",description = "토큰이 필요합니다.")
+    public BaseResponse<GetMyReviewsRes>getReviews(@RequestParam(value="reviewStatus",required = false)Integer reviewStatus,
+                                                   @RequestParam(value = "duration",required = false)Integer duration,
+                                                   @RequestParam(value="page",required = true)Integer page){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        List<GetMyReviewsRes> getMyReviewsResList;
+        if(reviewStatus!=null){
+            if(reviewStatus!=1 && reviewStatus!=2){
+                return new BaseResponse<>(WRONG_REVIEW_STATUS);
+            }
+        }
+        if(duration!=null){
+            if(duration!=1 && duration!=2){
+                return new BaseResponse<>(WRONG_DURATION);
+            }
+        }
+        if(page==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try{
-            getMyReviewsResList = reviewProvider.getMyReviewsRes(userIdx,duration,reviewStatus,page,6);
-            return new BaseResponse<>(SUCCESS,getMyReviewsResList);
+            GetMyReviewsRes getMyReviewsRes = reviewProvider.getMyReviewsRes(userIdx,duration,reviewStatus,page,6);
+            return new BaseResponse<>(SUCCESS, getMyReviewsRes);
         }catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-
 }

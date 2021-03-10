@@ -60,12 +60,17 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
 
 
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
-    List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
+    int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status);
 
+
+    List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
+    int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status);
 
     List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
-    List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
+    int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end);
 
+    List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
+    int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end);
 
     List<Casting> findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(UserInfo userInfo,String status,String startDate,String endDate);
 

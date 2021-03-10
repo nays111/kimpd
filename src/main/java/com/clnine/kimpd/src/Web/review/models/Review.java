@@ -26,10 +26,6 @@ public class Review extends BaseEntity {
     @Column(name="description")
     private String description;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="castingIdx")
-//    private Casting casting;
-
     /**
      * 평가한 사람
      */

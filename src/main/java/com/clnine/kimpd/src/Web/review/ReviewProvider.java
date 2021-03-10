@@ -5,8 +5,8 @@ import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.project.models.Project;
+import com.clnine.kimpd.src.Web.review.models.GetMyReviewsListDTO;
 import com.clnine.kimpd.src.Web.review.models.GetMyReviewsRes;
-import com.clnine.kimpd.src.Web.review.models.Review;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +28,13 @@ public class ReviewProvider {
     private final UserInfoProvider userInfoProvider;
     private final CastingRepository castingRepository;
     private final CategoryProvider categoryProvider;
-    private final ReviewRepository reviewRepository;
 
-
-    public List<GetMyReviewsRes> getMyReviewsRes(int casterIdx,Integer duration,Integer reviewStatus,int page,int size) throws BaseException {
+    public GetMyReviewsRes getMyReviewsRes(int casterIdx, Integer duration, Integer reviewStatus, int page, int size) throws BaseException {
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(casterIdx);
-        System.out.println(userInfo.getUserIdx());
+
         List<Casting> castingList = null;
+        int totalCount = 0;
+
         Pageable pageable = PageRequest.of(page,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
@@ -50,36 +50,45 @@ public class ReviewProvider {
         Timestamp now1 = Timestamp.valueOf(now);
 
         /**
-         * 프로젝트 완료된것만 조회
+         * 작업 완료된것만 조회
          */
         if(duration==null){
             if(reviewStatus==null){ //전체 기간 -> 전체 조회
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,4,"ACTIVE",pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,4,"ACTIVE");
             }else if(reviewStatus==1){ //전체 기간 -> 평가 대기 조회
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(userInfo,4,"ACTIVE",pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(userInfo,4,"ACTIVE");
             }else if(reviewStatus==2){ //전체 기간 -> 평가 완료 조회
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(userInfo,4,"ACTIVE",pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(userInfo,4,"ACTIVE");
             }
         }else if(duration==1){
             if(reviewStatus==null){
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1);
             }else if(reviewStatus==1){
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1);
             }else if(reviewStatus==2){
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end1,now1);
             }
         }else if(duration==2){
             if(reviewStatus==null){ //전체 기간 -> 6개월 조회
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1);
             }else if(reviewStatus==1){
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1);
             }else if(reviewStatus==2){
                 castingList = castingRepository.findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1,pageable);
+                totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,4,"ACTIVE",end2,now1);
             }
 
         }
 
-        List<GetMyReviewsRes> getMyReviewsResList = new ArrayList<>();
+        List<GetMyReviewsListDTO> getMyReviewsListDTOList = new ArrayList<>();
 
         for(int i=0;i<castingList.size();i++){
             Casting casting = castingList.get(i);
@@ -90,20 +99,22 @@ public class ReviewProvider {
             int userIdx = expertInfo.getUserIdx();
             String nickname = expertInfo.getNickname();
             String categoryJobName = categoryProvider.getMainJobCategoryChild(expertInfo);
+
             String profileImageURL = expertInfo.getProfileImageURL();
             if(profileImageURL==null){
                 profileImageURL="프로필 사진 없음";
             }
+
             String introduce = expertInfo.getIntroduce();
             if(introduce==""){
                 introduce="소개 없음";
             }
+
             String castingStartDate = "20"+casting.getCastingStartDate();
             String castingEndDate = "20"+casting.getCastingEndDate();
             String castingTerm = castingStartDate+"~"+castingEndDate;
             castingTerm = castingTerm.replace("/",".");
             String projectName = project.getProjectName();
-            System.out.println(projectName);
             String castingPrice = casting.getCastingPrice();
             String reviewState = null;
             float star = 0;
@@ -115,11 +126,12 @@ public class ReviewProvider {
                 star = casting.getReview().getStar();
             }
 
-            GetMyReviewsRes getMyReviewsRes = new GetMyReviewsRes(userIdx,nickname,
+            GetMyReviewsListDTO getMyReviewsListDTO = new GetMyReviewsListDTO(userIdx,nickname,
                     profileImageURL,categoryJobName,introduce,castingIdx,castingTerm,projectName,castingPrice,reviewState,star);
 
-            getMyReviewsResList.add(getMyReviewsRes);
+            getMyReviewsListDTOList.add(getMyReviewsListDTO);
         }
-        return getMyReviewsResList;
+        GetMyReviewsRes getMyReviewsRes = new GetMyReviewsRes(totalCount,getMyReviewsListDTOList);
+        return getMyReviewsRes;
     }
 }
