@@ -55,18 +55,11 @@ public class CastingController {
     }
 
 
-    /**
-     * [2021.02.07] 16. 캐스팅 리스트 조회 API
-     *
-     * @param castingStatus
-     * @param duration
-     * @param page
-     * @return
-     */
     @ResponseBody
     @GetMapping("/castings")
-    public BaseResponse<GetMyCastingsRes> getCastings(@RequestParam(value = "castingStatus", required = false) Integer castingStatus,
-                                                           @RequestParam(value = "duration", required = false) Integer duration,
+    @Operation(summary = "캐스팅 리스트 조회 API",description = "castingStatus(1:섭외중, 2:섭외완료, 3:섭외거절, 4:작업완료,5:전체), duration(0:전체,1:최근 3개월,2:최근 6개월), 토큰이 필요합니다.")
+    public BaseResponse<GetMyCastingsRes> getCastings(@RequestParam(value = "castingStatus", required = true) Integer castingStatus,
+                                                           @RequestParam(value = "duration", required = true) Integer duration,
                                                            @RequestParam(value = "page", required = true) Integer page) {
         int userIdx;
         try {
@@ -74,18 +67,21 @@ public class CastingController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        if(castingStatus!=null){
-            if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4){
-                return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
-            }
+        if(castingStatus==null){
+            return new BaseResponse<>(EMPTY_CASTING_STATUS);
         }
-        if(duration!=null){
-            if(duration!=1 && duration!=2){
-                return new BaseResponse<>(WRONG_DURATION);
-            }
+        if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4 && castingStatus!=5){
+            return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
         }
-        if(page==null){ return new BaseResponse<>(EMPTY_PAGE); }
-
+        if(duration==null){
+            return new BaseResponse<>(EMPTY_DURATION);
+        }
+        if(duration!=1 && duration!=2 && duration!=0){
+            return new BaseResponse<>(WRONG_DURATION);
+        }
+        if(page==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try {
             GetMyCastingsRes getMyCastingsRes = castingProvider.getMyCastingRes(userIdx, duration, castingStatus, page, 6);
             return new BaseResponse<>(SUCCESS, getMyCastingsRes);
@@ -94,17 +90,12 @@ public class CastingController {
         }
     }
 
-    /**
-     * 받은 캐스팅 리스트 조회 API
-     * @param castingStatus
-     * @param duration
-     * @param page
-     * @return
-     */
+
     @ResponseBody
     @GetMapping("/received-castings")
-    public BaseResponse<GetMyReceivedCastingsRes> getReceivedCastings(@RequestParam(value = "castingStatus", required = false) Integer castingStatus,
-                                                                           @RequestParam(value = "duration", required = false) Integer duration,
+    @Operation(summary = "받은 섭외 리스트 조회 API(전문가만 사용할 수 있습니다.)",description = "castingStatus(1:미확인 승인요청, 2:섭외승인, 3:섭외거절, 4:진행/완료내역,5:전체), duration(0:전체,1:최근 3개월,2:최근 6개월), 토큰이 필요합니다.")
+    public BaseResponse<GetMyReceivedCastingsRes> getReceivedCastings(@RequestParam(value = "castingStatus", required = true) Integer castingStatus,
+                                                                           @RequestParam(value = "duration", required = true) Integer duration,
                                                                            @RequestParam(value = "page", required = true) Integer page) {
         int userIdx;
         try {
@@ -112,17 +103,21 @@ public class CastingController {
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-        if(castingStatus!=null){
-            if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4){
-                return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
-            }
+        if(castingStatus==null){
+            return new BaseResponse<>(EMPTY_CASTING_STATUS);
         }
-        if(duration!=null){
-            if(duration!=1 && duration!=2){
-                return new BaseResponse<>(WRONG_DURATION);
-            }
+        if(castingStatus!=1 && castingStatus!=2 && castingStatus!=3 && castingStatus!=4 && castingStatus!=5){
+            return new BaseResponse<>(WRONG_CASTING_STATUS_SEARCH);
         }
-        if(page==null){ return new BaseResponse<>(EMPTY_PAGE); }
+        if(duration==null){
+            return new BaseResponse<>(EMPTY_DURATION);
+        }
+        if(duration!=1 && duration!=2 && duration!=0){
+            return new BaseResponse<>(WRONG_DURATION);
+        }
+        if(page==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try {
             GetMyReceivedCastingsRes getMyReceivedCastingsRes  = castingProvider.getMyReceivedCastingRes(userIdx, duration, castingStatus, page, 6);
             return new BaseResponse<>(SUCCESS, getMyReceivedCastingsRes);

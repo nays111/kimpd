@@ -41,13 +41,7 @@ public class UserInfoProvider {
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
         String nickname = userInfo.getNickname();
-        if(nickname==null){
-            nickname="닉네임 없음";
-        }
         String profileImageURL = userInfo.getProfileImageURL();
-        if(profileImageURL==null){
-            profileImageURL="프로필 사진 없음";
-        }
         int userType = userInfo.getUserType();
         String stringUserType = null;
         PostLoginRes postLoginRes=null;
@@ -67,13 +61,7 @@ public class UserInfoProvider {
     public GetUserRes getUserRes(int userIdx) throws BaseException {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
         String nickname = userInfo.getNickname();
-        if(nickname==null){
-            nickname="닉네임 없음";
-        }
         String profileImageURL = userInfo.getProfileImageURL();
-        if(profileImageURL==null){
-            profileImageURL="프로필 사진 없음";
-        }
         int userType = userInfo.getUserType();
         String stringUserType = null;
         GetUserRes getUserRes=null;

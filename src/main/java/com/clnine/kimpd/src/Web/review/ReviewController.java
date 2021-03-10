@@ -51,7 +51,7 @@ public class ReviewController {
     @ResponseBody
     @GetMapping("/castings/reviews")
     @Operation(summary = "평가 내역 리스트 조회 API",description = "토큰이 필요합니다.")
-    public BaseResponse<GetMyReviewsRes>getReviews(@RequestParam(value="reviewStatus",required = false)Integer reviewStatus,
+    public BaseResponse<GetMyReviewsRes>getReviews(@RequestParam(value="reviewStatus",required = true)Integer reviewStatus,
                                                    @RequestParam(value = "duration",required = false)Integer duration,
                                                    @RequestParam(value="page",required = true)Integer page){
         int userIdx;
@@ -60,15 +60,17 @@ public class ReviewController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(reviewStatus!=null){
-            if(reviewStatus!=1 && reviewStatus!=2){
-                return new BaseResponse<>(WRONG_REVIEW_STATUS);
-            }
+        if(reviewStatus==null){
+            return new BaseResponse<>(EMPTY_REVIEW_STATUS);
         }
-        if(duration!=null){
-            if(duration!=1 && duration!=2){
-                return new BaseResponse<>(WRONG_DURATION);
-            }
+        if(reviewStatus!=1 && reviewStatus!=2 && reviewStatus!=0){
+            return new BaseResponse<>(WRONG_REVIEW_STATUS);
+        }
+        if(duration==null){
+            return new BaseResponse<>(EMPTY_DURATION);
+        }
+        if(duration!=1 && duration!=2 && duration!=0){
+            return new BaseResponse<>(WRONG_DURATION);
         }
         if(page==null){
             return new BaseResponse<>(EMPTY_PAGE);

@@ -127,6 +127,9 @@ public enum BaseResponseStatus {
     EMPTY_MONTH(false,2110,"월을 입력해주세요."),
     EMPTY_REPORT_CATEGORY(false,2111,"신고 유형 카테고리를 입력해주세요."),
     WRONG_REVIEW_STATUS(false,2112,"잘못된 평가 상태입니다."),
+    EMPTY_DURATION(false,2113,"조회할 기간을 입력해주세요."),
+    EMPTY_CASTING_STATUS(false,2114,"섭외 상태를 입력해주세요."),
+    EMPTY_REVIEW_STATUS(false,2115,"평가 상태를 입력해주세요."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
