@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Entity @Data @Table(name="UserInfo") @NoArgsConstructor
+@Entity
+@Data
+@Table(name="UserInfo")
+@NoArgsConstructor
 public class UserInfo extends BaseEntity {
 
     @Id
@@ -58,13 +61,13 @@ public class UserInfo extends BaseEntity {
     private String corporationBusinessNumber;//법인 사업자번호
 
     @Column(name="nickname")
-    private String nickname="";//닉네임
+    private String nickname;//닉네임
 
     /**
      * 전문가 전용 컬럼
      */
     @Column(name="profileImageURL")
-    private String profileImageURL;//프로필이미지
+    private String profileImageURL="";//프로필이미지
 
     @Column(name="introduce")
     private String introduce="";

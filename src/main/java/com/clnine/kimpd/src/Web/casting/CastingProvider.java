@@ -107,8 +107,8 @@ public class CastingProvider {
         Timestamp now1 = Timestamp.valueOf(now);
 
 
-        if(duration==null){ //전체기간 조회
-            if(castingStatus==null){//전체조회
+        if(duration==0){ //전체기간 조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0,pageable);
                 totalCount = castingRepository.countAllByUserInfoAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0);
             }else{
@@ -116,7 +116,7 @@ public class CastingProvider {
                 totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE");
             }
         }else if(duration==1){ //최근 3개월 조회
-            if(castingStatus==null){//전체조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1,pageable);
                 totalCount = castingRepository.countAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1);
             }else{
@@ -124,7 +124,7 @@ public class CastingProvider {
                 totalCount = castingRepository.countAllByUserInfoAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end1,now1);
             }
         }else if(duration==2){ //최근 6개월 조회
-            if(castingStatus==null){//전체조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1,pageable);
                 totalCount = castingRepository.countAllByUserInfoAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1);
             }else{
@@ -149,13 +149,9 @@ public class CastingProvider {
             String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo1);
 
             String profileImageURL = userInfo1.getProfileImageURL();
-            if(profileImageURL==null){
-                profileImageURL="프로필 사진 없음";
-            }
+
             String introduce = userInfo1.getIntroduce();
-            if(introduce==""){
-                introduce="소개 없음";
-            }
+
             int castingStatus1 = casting.getCastingStatus();
 
             String castingStatusString = null;
@@ -166,11 +162,11 @@ public class CastingProvider {
             }else if(castingStatus1==3){
                 castingStatusString="섭외거절";
             }else if(castingStatus1==4){
-                castingStatusString="프로젝트 완료";
+                castingStatusString="작업 완료";
             }
 
-            String castingStartDate = "20"+casting.getCastingStartDate();
-            String castingEndDate = "20"+casting.getCastingEndDate();
+            String castingStartDate = casting.getCastingStartDate();
+            String castingEndDate = casting.getCastingEndDate();
             String castingTerm = castingStartDate+"~"+castingEndDate;
             castingTerm = castingTerm.replace("/",".");
             String projectName = project.getProjectName();
@@ -207,8 +203,8 @@ public class CastingProvider {
         Timestamp end2 = Timestamp.valueOf(end6);
         Timestamp now1 = Timestamp.valueOf(now);
 
-        if(duration==null){ //전체기간 조회
-            if(castingStatus==null){//전체조회
+        if(duration==0){ //전체기간 조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0,pageable);
                 totalCount = castingRepository.countAllByExpertAndStatusAndCastingStatusNotOrderByCastingIdxDesc(userInfo,"ACTIVE",0);
             }else{
@@ -216,7 +212,7 @@ public class CastingProvider {
                 totalCount = castingRepository.countAllByExpertAndCastingStatusAndStatusOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE");
             }
         }else if(duration==1){ //최근 3개월 조회
-            if(castingStatus==null){//전체조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1,pageable);
                 totalCount = castingRepository.countAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end1,now1);
             }else{
@@ -224,7 +220,7 @@ public class CastingProvider {
                 totalCount = castingRepository.countAllByExpertAndCastingStatusAndStatusAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,castingStatus,"ACTIVE",end1,now1);
             }
         }else if(duration==2){ //최근 6개월 조회
-            if(castingStatus==null){//전체조회
+            if(castingStatus==5){//전체조회
                 castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1,pageable);
                 totalCount =castingRepository.countAllByExpertAndStatusAndCastingStatusNotAndCreatedAtBetweenOrderByCastingIdxDesc(userInfo,"ACTIVE",0,end2,now1);
             }else{
@@ -242,17 +238,8 @@ public class CastingProvider {
             int castingIdx = casting.getCastingIdx();
             int userIdx = userInfo1.getUserIdx();
             String nickname = userInfo1.getNickname();
-            if(nickname==null){
-                nickname="닉네임 없음";
-            }
             String profileImageURL = userInfo1.getProfileImageURL();
-            if(profileImageURL==null){
-                profileImageURL="프로필 사진 없음";
-            }
-            String introduce = userInfo1.getIntroduce();
-            if(introduce==""){
-                introduce="소개 없음";
-            }
+
             int castingStatus1 = casting.getCastingStatus();
 
             String castingStatusString = null;
@@ -265,14 +252,15 @@ public class CastingProvider {
             }else if(castingStatus1==4){
                 castingStatusString="진행/완료내역";
             }
-
-            String castingStartDate = "20"+casting.getCastingStartDate();
-            String castingEndDate = "20"+casting.getCastingEndDate();
+            String castingStartDate = casting.getCastingStartDate();
+            String castingEndDate = casting.getCastingEndDate();
             String castingTerm = castingStartDate+"~"+castingEndDate;
             castingTerm = castingTerm.replace("/",".");
+
             String projectName = project.getProjectName();
             String castingPrice = casting.getCastingPrice();
-            Date createdAt = casting.getCreatedAt();
+
+            Date createdAt = casting.getUpdatedAt();
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
             String castingDate = sDate.format(createdAt);//4
 

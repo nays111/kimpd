@@ -21,6 +21,7 @@ public class GetUserRes {
         this.userType = userType;
         this.jobCategoryChildName = jobCategoryChildName;
     }
+
     @Builder
     public GetUserRes(int userIdx, String nickname, String profileImageURL, String userType) {
         this.userIdx = userIdx;
@@ -28,4 +29,5 @@ public class GetUserRes {
         this.profileImageURL = profileImageURL;
         this.userType = userType;
     }
+
 }
