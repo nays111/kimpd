@@ -5,14 +5,14 @@ import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.report.models.GetReportCategoryRes;
 import com.clnine.kimpd.src.Web.report.models.PostReportReq;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.EMPTY_REPORT_DESCRIPTION;
-import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @RestController
 @CrossOrigin
@@ -22,14 +22,16 @@ public class ReportController {
     private final JwtService jwtService;
     private final ReportService reportService;
 
-    /**
-     * 신고유형 카테고리 조회 API
-     * @return
-     * @throws BaseException
-     */
     @ResponseBody
     @GetMapping("/report-categories")
+    @Operation(summary = "신고유형 카테고리 조회 API")
     public BaseResponse<List<GetReportCategoryRes>> getReportCategories()throws BaseException {
+        int userIdx;
+        try{
+            userIdx = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
         List<GetReportCategoryRes> getReportCategoryResList;
         try{
             getReportCategoryResList = reportProvider.getReportCategory();
@@ -39,14 +41,9 @@ public class ReportController {
         }
     }
 
-    /**
-     * 신고하기 API
-     * @param reportedUserIdx
-     * @param postReportReq
-     * @return
-     */
     @ResponseBody
     @PostMapping("/castings/{userIdx}/reports")
+    @Operation(summary = "신고하기 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postReport(@PathVariable(required = true,value="userIdx")int reportedUserIdx,
                                            @RequestBody PostReportReq postReportReq){
         int reporterUserIdx;
@@ -55,20 +52,21 @@ public class ReportController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-
         if(postReportReq.getReportDescription()==null || postReportReq.getReportDescription().length()==0){
             return new BaseResponse<>(EMPTY_REPORT_DESCRIPTION);
         }
-
+        if(postReportReq.getReportCategoryIdx()==null){
+            return new BaseResponse<>(EMPTY_REPORT_CATEGORY);
+        }
         try{
             reportService.postReport(reporterUserIdx,reportedUserIdx,postReportReq);
-
-
-
-            return new BaseResponse<>(SUCCESS);
+            if(reportService.deleteUserByReport(reportedUserIdx)==true){
+                return new BaseResponse<>(SUCCESS);
+            }else{
+                return new BaseResponse<>(SUCCESS_USER_BE_INACTIVE);
+            }
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
 }
