@@ -55,8 +55,18 @@ public class AdminCastingProvider {
             else if(Casting.getCastingStatus() == 4){
                 castingStatus = "작업완료";
             }
+            String reviewStatus = null;
+            int reviewIdx = 0;
+            if(Casting.getReview() == null){
+                reviewIdx = 0;
+                reviewStatus = "평가 대기";
+            }
+            else{
+                reviewIdx = Casting.getReview().getReviewIdx();
+                reviewStatus = "평가 완료";
+            }
             String status = Casting.getStatus();
-            return new AdminGetCastingsRes(castingIdx, userNickname, expertNickname, projectName, castingWork, castingStatus, status);
+            return new AdminGetCastingsRes(castingIdx, userNickname, expertNickname, projectName, castingWork, castingStatus, reviewIdx, reviewStatus, status);
         }).collect(Collectors.toList());
     }
 
