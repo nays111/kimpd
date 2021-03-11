@@ -8,7 +8,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PostExpertsReq {
-    // 검색 API를 위한 DTO ( GET 대신 POST)로 사용
     private String word;
     private List<Long> jobCategoryParentIdx;
     private List<Long> jobCategoryChildIdx;

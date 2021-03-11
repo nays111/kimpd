@@ -52,4 +52,10 @@ public class ValidationRegex {
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
     }
+    public static boolean isRegexDateType(String target){
+        String regex = "^\\d{4}.(0[1-9]|1[012]).(0[1-9]|[12][0-9]|3[01])$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.utils.ValidationRegex.isRegexDateType;
 
 @RestController
 @RequiredArgsConstructor
@@ -156,7 +157,8 @@ public class CastingController {
     /**
      * 받은 섭외 상세 조회 API
      */
-    @ResponseBody @GetMapping("/received-castings/{castingIdx}")
+    @ResponseBody
+    @GetMapping("/received-castings/{castingIdx}")
     @Operation(summary="받은 섭외 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getReceivedCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
         int userIdx;
@@ -172,13 +174,10 @@ public class CastingController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-    /**
-     * 섭외 요청하기  API
-     * @param postCastingReq
-     * @return
-     */
+
     @ResponseBody
     @PostMapping("/experts/{userIdx}/castings")
+    @Operation(summary = "섭외 요청하기 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postCasting(@RequestBody PostCastingReq postCastingReq,
                                             @PathVariable(required = true,value = "userIdx")int expertIdx){
         int userIdx;
@@ -200,8 +199,14 @@ public class CastingController {
             if(postCastingReq.getProjectStartDate()==null||postCastingReq.getProjectStartDate().length()==0){
                 return new BaseResponse<>(EMPTY_PROJECT_START_DATE);
             }
+            if (!isRegexDateType(postCastingReq.getProjectStartDate())) {
+                return new BaseResponse<>(INVALID_PROJECT_START_DATE);
+            }
             if(postCastingReq.getProjectEndDate()==null || postCastingReq.getProjectEndDate().length()==0){
                 return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
+            }
+            if(!isRegexDateType(postCastingReq.getCastingEndDate())){
+                return new BaseResponse<>(INVALID_PROJECT_END_DATE);
             }
             if(postCastingReq.getProjectDescription()==null || postCastingReq.getProjectDescription().length()==0){
                 return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
@@ -219,11 +224,20 @@ public class CastingController {
             if(postCastingReq.getCastingStartDate()==null || postCastingReq.getCastingStartDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_START_DATE);
             }
+            if (!isRegexDateType(postCastingReq.getCastingStartDate())) {
+                return new BaseResponse<>(INVALID_CASTING_START_DATE);
+            }
             if(postCastingReq.getCastingEndDate()==null || postCastingReq.getCastingEndDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_END_DATE);
             }
+            if(!isRegexDateType(postCastingReq.getCastingEndDate())){
+                return new BaseResponse<>(INVALID_CASTING_END_DATE);
+            }
             if(postCastingReq.getCastingPriceDate()==null||postCastingReq.getCastingPriceDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+            }
+            if(!isRegexDateType(postCastingReq.getCastingPriceDate())){
+                return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
             }
             if(postCastingReq.getCastingWork()==null || postCastingReq.getCastingWork().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_WORK);
@@ -239,7 +253,7 @@ public class CastingController {
             }
         }else{
             /**
-             * 프로젝트를 불러오는 경우
+             * 프로젝트를 불러오는 경우 => 섭외 정보만 입력하면 됨
              */
             if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE);
@@ -247,11 +261,20 @@ public class CastingController {
             if(postCastingReq.getCastingStartDate()==null || postCastingReq.getCastingStartDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_START_DATE);
             }
+            if (!isRegexDateType(postCastingReq.getCastingStartDate())) {
+                return new BaseResponse<>(INVALID_CASTING_START_DATE);
+            }
             if(postCastingReq.getCastingEndDate()==null || postCastingReq.getCastingEndDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_END_DATE);
             }
+            if(!isRegexDateType(postCastingReq.getCastingEndDate())){
+                return new BaseResponse<>(INVALID_CASTING_END_DATE);
+            }
             if(postCastingReq.getCastingPriceDate()==null||postCastingReq.getCastingPriceDate().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+            }
+            if(!isRegexDateType(postCastingReq.getCastingPriceDate())){
+                return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
             }
             if(postCastingReq.getCastingWork()==null || postCastingReq.getCastingWork().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_WORK);
@@ -269,7 +292,8 @@ public class CastingController {
     }
 
 
-    @ResponseBody @GetMapping("/castings/{castingIdx}")
+    @ResponseBody
+    @GetMapping("/castings/{castingIdx}")
     @Operation(summary="섭외 요청 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
         int userIdx;
@@ -286,12 +310,10 @@ public class CastingController {
         }
     }
 
-    /**
-     * 재섭외 요청 API
-     * @param castingIdx
-     * @return
-     */
-    @ResponseBody @PatchMapping("/castings/{castingIdx}/re-casting")
+
+    @ResponseBody
+    @PatchMapping("/castings/{castingIdx}/re-casting")
+    @Operation(summary = "재섭외 요청 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchCastingStatus(@PathVariable(required = true, value = "castingIdx")int castingIdx,
                                                    @RequestBody(required = true)PatchCastingReq patchCastingReq){
         int userIdx;
@@ -300,6 +322,28 @@ public class CastingController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(patchCastingReq.getCastingPrice()==null || patchCastingReq.getCastingPrice().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_PRICE);
+        }
+        if(patchCastingReq.getCastingStartDate()==null || patchCastingReq.getCastingStartDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_START_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingStartDate())){
+            return new BaseResponse<>(INVALID_CASTING_START_DATE);
+        }
+        if(patchCastingReq.getCastingEndDate()==null || patchCastingReq.getCastingEndDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_END_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingEndDate())){
+            return new BaseResponse<>(INVALID_CASTING_END_DATE);
+        }
+        if(patchCastingReq.getCastingPriceDate()==null || patchCastingReq.getCastingPriceDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingPriceDate())){
+            return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
+        }
+
         try{
             castingService.patchCasting(castingIdx,patchCastingReq);
             return new BaseResponse<>(SUCCESS);

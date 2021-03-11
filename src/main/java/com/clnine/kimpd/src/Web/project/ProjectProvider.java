@@ -82,8 +82,8 @@ public class ProjectProvider {
 
         List<Project> projectList = null;
         int totalCount = 0;
-        if(sort==null){//최신순
-            if(duration==null){//전체 기간
+        if(sort==0){//최신순
+            if(duration==0){//전체 기간
                 projectList = projectRepository.findByUserInfoAndStatus(userInfo,"ACTIVE",pageable);
                 totalCount = projectRepository.countAllByUserInfoAndStatus(userInfo,"ACTIVE");
             }else if(duration==1){//최근 3개월
@@ -94,7 +94,7 @@ public class ProjectProvider {
                 totalCount = projectRepository.countAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,"ACTIVE",end2,now1);
             }
         }else if(sort==1){//과거순
-            if(duration==null){//전체 기간
+            if(duration==0){//전체 기간
                 projectList = projectRepository.findByUserInfoAndStatus(userInfo,"ACTIVE",pageable1);
             }else if(duration==1){//최근 3개월
                 projectList = projectRepository.findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,"ACTIVE",end1,now1,pageable1);
@@ -109,8 +109,8 @@ public class ProjectProvider {
             int projectIdx= projectList.get(i).getProjectIdx();
             String projectName = projectList.get(i).getProjectName();
             String projectDescription = projectList.get(i).getProjectDescription();
-            String projectDate = "20"+projectList.get(i).getProjectStartDate()+"~"+"20"+projectList.get(i).getProjectEndDate();
-            projectDate = projectDate.replace("/",".");
+            String projectDate = projectList.get(i).getProjectStartDate()+"~"+projectList.get(i).getProjectEndDate();
+            //projectDate = projectDate.replace("/",".");
             String projectBudget = projectList.get(i).getProjectBudget()+"원";
             GetProjectsDTO getProjectsDTO = new GetProjectsDTO(projectIdx,projectName,projectDescription,projectDate,projectBudget);
             getProjectsList.add(getProjectsDTO);

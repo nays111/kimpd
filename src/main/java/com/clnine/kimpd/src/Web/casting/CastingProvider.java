@@ -142,9 +142,6 @@ public class CastingProvider {
             int castingIdx = casting.getCastingIdx();
             int userIdx = userInfo1.getUserIdx();
             String nickname = userInfo1.getNickname();
-            if(nickname==null){
-                nickname="닉네임 없음";
-            }
 
             String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo1);
 
@@ -162,7 +159,7 @@ public class CastingProvider {
             }else if(castingStatus1==3){
                 castingStatusString="섭외거절";
             }else if(castingStatus1==4){
-                castingStatusString="작업 완료";
+                castingStatusString="작업완료";
             }
 
             String castingStartDate = casting.getCastingStartDate();
@@ -244,7 +241,7 @@ public class CastingProvider {
 
             String castingStatusString = null;
             if(castingStatus1==1){
-                castingStatusString="미확인 승인요청";
+                castingStatusString="미확인승인요청";
             }else if(castingStatus1==2){
                 castingStatusString="섭외승인";
             }else if(castingStatus1==3){
@@ -255,7 +252,6 @@ public class CastingProvider {
             String castingStartDate = casting.getCastingStartDate();
             String castingEndDate = casting.getCastingEndDate();
             String castingTerm = castingStartDate+"~"+castingEndDate;
-            castingTerm = castingTerm.replace("/",".");
 
             String projectName = project.getProjectName();
             String castingPrice = casting.getCastingPrice();

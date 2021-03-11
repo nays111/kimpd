@@ -8,6 +8,7 @@ import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
+import com.clnine.kimpd.src.Web.project.ProjectProvider;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
@@ -29,6 +30,7 @@ public class CastingService {
     private final CastingProvider castingProvider;
     private final AlarmRepository alarmRepository;
     private final UserInfoProvider userInfoProvider;
+    private final ProjectProvider projectProvider;
 
     /**
      * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
@@ -103,35 +105,21 @@ public class CastingService {
      */
     @Transactional
     public void PostCastingByProjectLoaded(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException{
-        UserInfo userInfo;
-        try{
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
-
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         /**
          * 전문가 객체 검색
          */
-        UserInfo expertInfo;
-        try{
-            expertInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(expertIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
+        UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
+
         /**
          * projectIdx로 Project 객체 찾아오기
          */
-        Project project;
-        try{
-            project = projectRepository.findByProjectIdxAndStatus(postCastingReq.getProjectIdx(),"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_PROJECTS);
-        }
+        Project project = projectProvider.retrieveProjectByProjectIdx(postCastingReq.getProjectIdx());
+
         /**
          * 이미 이 전문가한테 이 프로젝트를 섭외 요청한 경우
          */
-        Casting existsCasting = null;
+        Casting existsCasting=null;
         try{
             existsCasting = castingProvider.retrieveCastingInfoByUserExpertProject(userInfo,expertInfo,project);
         }catch (BaseException exception){
@@ -174,12 +162,8 @@ public class CastingService {
      * CASTING-STATUS 를 변경
      */
     public void patchCasting(int castingIdx, PatchCastingReq patchCastingReq) throws BaseException {
-        Casting casting;
-        try{
-            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
-        }catch (Exception ignored){
-            throw new BaseException(FAILED_TO_GET_CASTING);
-        }
+        Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
+
         String castingPrice = patchCastingReq.getCastingPrice();
         String castingStartDate = patchCastingReq.getCastingStartDate();
         String castingEndDate = patchCastingReq.getCastingEndDate();
@@ -217,12 +201,8 @@ public class CastingService {
      * @throws BaseException
      */
     public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq) throws BaseException{
-        Casting casting;
-        try{
-            casting = castingRepository.findAllByCastingIdxAndStatus(patchCastingStatusReq.getCastingIdx(), "ACTIVE");
-        }catch (Exception ignored){
-            throw new BaseException(FAILED_TO_GET_CASTING);
-        }
+        Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
+
         casting.setCastingStatus(state);
         try{
             castingRepository.save(casting);
@@ -239,7 +219,6 @@ public class CastingService {
             }catch(Exception ignored){
                 throw new BaseException(FAILED_TO_SEND_ALARM);
             }
-
         }else if(state==3){
             String expertNickname = casting.getExpert().getNickname();
             String alarmMessage = expertNickname+"전문가님께서 섭외 요청을 거절하셨습니다.";
@@ -249,8 +228,6 @@ public class CastingService {
             }catch(Exception ignored){
                 throw new BaseException(FAILED_TO_SEND_ALARM);
             }
-
         }
-
     }
 }

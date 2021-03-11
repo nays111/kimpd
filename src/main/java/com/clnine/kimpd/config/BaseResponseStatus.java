@@ -130,7 +130,13 @@ public enum BaseResponseStatus {
     EMPTY_DURATION(false,2113,"조회할 기간을 입력해주세요."),
     EMPTY_CASTING_STATUS(false,2114,"섭외 상태를 입력해주세요."),
     EMPTY_REVIEW_STATUS(false,2115,"평가 상태를 입력해주세요."),
-
+    INVALID_CASTING_START_DATE(false,2116,"올바르지 않은 섭외 시작 날짜입니다."),
+    INVALID_CASTING_END_DATE(false,2117,"올바르지 않은 섭외 종료 날짜입니다."),
+    INVALID_CASTING_POSSIBLE_START_DATE(false,2118,"올바르지 않은 섭외 가능 시작 날짜입니다."),
+    INVALID_CASTING_POSSIBLE_END_DATE(false,2119,"올바르지 않은 섭외 가능 종료 날짜입니다."),
+    INVALID_PROJECT_START_DATE(false,2120,"올바르지 않은 프로젝트 시작 날짜입니다."),
+    INVALID_PROJECT_END_DATE(false,2121,"올바르지 않은 프로젝트 종료 날짜입니다."),
+    INVALID_CASTING_PRICE_DATE(false,2122,"올바르지 않은 섭외 금액 입금 날짜입니다."),
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
     EMPTY_BANNER_IDX(false, 2501, "광고 인덱스가 비었습니다."),
