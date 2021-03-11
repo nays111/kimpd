@@ -41,6 +41,7 @@ public enum BaseResponseStatus {
     SUCCESS_POST_FAQS(true, 1507, "FAQ 등록에 성공하였습니다."),
     SUCCESS_PATCH_FAQS(true, 1508, "FAQ 수정에 성공하였습니다."),
     SUCCESS_READ_INQUIRIES(true,1509,"1:1문의 조회에 성공하였습니다."),
+    SUCCESS_READ_REVIEWS(true,1510,"평가 조회에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
@@ -115,6 +116,7 @@ public enum BaseResponseStatus {
     EMPTY_INQUIRY_IDX(false, 2513, "1:1문의 인덱스가 비었습니다."),
     EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
     EMPTY_NAME(false, 2515, "이름을 입력해주세요."),
+    EMPTY_REVIEW_IDX(false, 2516, "평가 인덱스가 비었습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -166,6 +168,7 @@ public enum BaseResponseStatus {
     DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
     NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
+    FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
 
 
     // 4000 : Database 오류
