@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.utils.ValidationRegex.isRegexDateType;
 
 @RestController
 @RequestMapping
@@ -39,7 +40,6 @@ public class ProjectController {
         }
     }
 
-
     @ResponseBody
     @PostMapping("/projects")
     @Operation(summary="프로젝트 추가 API",description = "토큰이 필요합니다.")
@@ -59,11 +59,14 @@ public class ProjectController {
         if(postProjectReq.getProjectStartDate()==null||postProjectReq.getProjectStartDate().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_START_DATE);
         }
+        if(!isRegexDateType(postProjectReq.getProjectStartDate())){
+            return new BaseResponse<>(INVALID_PROJECT_START_DATE);
+        }
         if(postProjectReq.getProjectEndDate()==null||postProjectReq.getProjectEndDate().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
         }
-        if(postProjectReq.getProjectFileURL()!=null){
-            //todo 첨부파일 정규식 처리
+        if(!isRegexDateType(postProjectReq.getProjectEndDate())){
+            return new BaseResponse<>(INVALID_PROJECT_END_DATE);
         }
         if(postProjectReq.getProjectManager()==null||postProjectReq.getProjectManager().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
@@ -74,14 +77,12 @@ public class ProjectController {
         if(postProjectReq.getProjectBudget()==null||postProjectReq.getProjectBudget().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_BUDGET);
         }
-
         try{
             projectService.postProject(postProjectReq,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
-
     }
 
     @ResponseBody
@@ -94,6 +95,33 @@ public class ProjectController {
             userIdx = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
+        }
+        if(patchProjectReq.getProjectName()==null || patchProjectReq.getProjectName().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_NAME);
+        }
+        if(patchProjectReq.getProjectMaker()==null || patchProjectReq.getProjectMaker().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_MAKER);
+        }
+        if(patchProjectReq.getProjectStartDate()==null||patchProjectReq.getProjectStartDate().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_START_DATE);
+        }
+        if(!isRegexDateType(patchProjectReq.getProjectStartDate())){
+            return new BaseResponse<>(INVALID_PROJECT_START_DATE);
+        }
+        if(patchProjectReq.getProjectEndDate()==null||patchProjectReq.getProjectEndDate().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_END_DATE);
+        }
+        if(!isRegexDateType(patchProjectReq.getProjectEndDate())){
+            return new BaseResponse<>(INVALID_PROJECT_END_DATE);
+        }
+        if(patchProjectReq.getProjectManager()==null||patchProjectReq.getProjectManager().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
+        }
+        if(patchProjectReq.getProjectDescription()==null||patchProjectReq.getProjectDescription().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
+        }
+        if(patchProjectReq.getProjectBudget()==null||patchProjectReq.getProjectBudget().length()==0){
+            return new BaseResponse<>(EMPTY_PROJECT_BUDGET);
         }
         try{
             projectService.updateProject(patchProjectReq,projectIdx,userIdx);
@@ -133,15 +161,11 @@ public class ProjectController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(sort!=null){
-            if(sort!=1){
-                return new BaseResponse<>(WRONG_SORT_OPTION);
-            }
+        if(sort!=1 && sort!=0){
+            return new BaseResponse<>(WRONG_SORT_OPTION);
         }
-        if(duration!=null){
-            if(duration!=1 && duration!=2){
-                return new BaseResponse<>(WRONG_DURATION);
-            }
+        if(duration!=0 &&duration!=1 && duration!=2){
+            return new BaseResponse<>(WRONG_DURATION);
         }
         if(page==null){
             return new BaseResponse<>(EMPTY_PAGE);
@@ -154,7 +178,8 @@ public class ProjectController {
         }
     }
 
-    @ResponseBody @GetMapping("/project-list")
+    @ResponseBody
+    @GetMapping("/project-list")
     @Operation(summary="프로젝트 리스트 조회 API(섭외신청할 때, projectIdx,projectName만 리턴)",description = "토큰이 필요합니다.")
     public BaseResponse<List<GetProjectListRes>> getProjectList(){
         int userIdx;
@@ -171,7 +196,8 @@ public class ProjectController {
         }
     }
 
-    @ResponseBody @GetMapping("/project-list/{projectIdx}")
+    @ResponseBody
+    @GetMapping("/project-list/{projectIdx}")
     @Operation(summary="프로젝트 불러오기 API(섭외신청할 떄)",description = "토큰이 필요합니다.")
     public BaseResponse<GetProjectRes> getProjectWhenCasting(@PathVariable(required = true,value = "projectIdx")int projectIdx){
         int userIdx;

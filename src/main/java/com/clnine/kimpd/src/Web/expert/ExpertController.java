@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
+import static com.clnine.kimpd.utils.ValidationRegex.isRegexDateType;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +44,25 @@ public class ExpertController {
         if(postExpertsReq.getSort()==null){
             return new BaseResponse<>(EMPTY_SORT_OPTION);
         }
+        if(postExpertsReq.getCastingStartDate().length()>0){
+            if(!isRegexDateType(postExpertsReq.getCastingStartDate())){
+                return new BaseResponse<>(INVALID_CASTING_START_DATE);
+            }
+        }
+        if(postExpertsReq.getCastingEndDate().length()>0){
+            if(!isRegexDateType(postExpertsReq.getCastingEndDate())){
+                return new BaseResponse<>(INVALID_CASTING_END_DATE);
+            }
+        }
+        if(postExpertsReq.getSort()==null){
+            return new BaseResponse<>(EMPTY_SORT_OPTION);
+        }
+        if(postExpertsReq.getSort()!=1 && postExpertsReq.getSort()!=2){
+            return new BaseResponse<>(WRONG_SORT_OPTION);
+        }
+        if(postExpertsReq.getPage()==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try{
             GetExpertsRes getUsersResList = expertProvider.findExperts(postExpertsReq);
             return new BaseResponse<>(SUCCESS,getUsersResList);
@@ -62,7 +82,9 @@ public class ExpertController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
-        if(userIdxJWT!=userIdx){ return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX); }
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
         if(patchMyExpertReq.getIntroduce().length()>500){
             return new BaseResponse<>(TOO_LONG_INTRODUCE);
         }
@@ -72,7 +94,16 @@ public class ExpertController {
         if(patchMyExpertReq.getEtc().length()>500){
             return new BaseResponse<>(TOO_LONG_ETC);
         }
-        //todo validation 추가 필요
+        if(patchMyExpertReq.getCastingStartPossibleDate()!=null){
+            if(!isRegexDateType(patchMyExpertReq.getCastingStartPossibleDate())){
+                return new BaseResponse<>(INVALID_CASTING_POSSIBLE_START_DATE);
+            }
+        }
+        if(patchMyExpertReq.getCastingEndPossibleDate()!=null){
+            if(!isRegexDateType(patchMyExpertReq.getCastingEndPossibleDate())){
+                return new BaseResponse<>(INVALID_CASTING_POSSIBLE_END_DATE);
+            }
+        }
         try{
             expertService.patchMyExpert(patchMyExpertReq,userIdx);
             return new BaseResponse<String>(SUCCESS);

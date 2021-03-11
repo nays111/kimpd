@@ -132,7 +132,7 @@ public class ExpertProvider {
             castingStartDate="";
         }
         if(castingEndDate==null || castingEndDate.length()==0){
-            castingEndDate="999999";
+            castingEndDate="9999.99.99";
         }
         if(minimumCastingPrice==null){
             minimumCastingPrice=999999999;
@@ -228,7 +228,8 @@ public class ExpertProvider {
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
-        String startMonth = year+month+"01";
+        //todo 날짜 부분 수정 필요 (. 포함)
+        String startMonth = year+"."+month+"."+"01";
 
         String size=null;
         if(month.equals("02")){
@@ -239,7 +240,8 @@ public class ExpertProvider {
             size="30";
         }
 
-        String endMonth = year+month+size;
+        //todo 날짜 부분 수정 필요 (. 포함)
+        String endMonth = year+"."+month+"."+size;
 
         ArrayList<Integer> dayList = new ArrayList<>();
         List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(userInfo,"ACTIVE",endMonth,startMonth);
@@ -260,8 +262,8 @@ public class ExpertProvider {
                 endDate = castingList.get(i).getCastingEndDate();
             }
             //System.out.println(startDate+" "+endDate);
-            int startDay = Integer.parseInt(startDate.substring(6));
-            int endDay = Integer.parseInt(endDate.substring(6));
+            int startDay = Integer.parseInt(startDate.substring(8));
+            int endDay = Integer.parseInt(endDate.substring(8));
             //System.out.println(startDay+" "+endDay);
             for(int j=startDay;j<=endDay;j++){
                 dayList.add(j);
@@ -276,6 +278,5 @@ public class ExpertProvider {
         }
         GetMyExpertSchedulesManage getMyExpertSchedulesManage = new GetMyExpertSchedulesManage(resultList);
         return getMyExpertSchedulesManage;
-
     }
 }
