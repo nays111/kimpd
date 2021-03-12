@@ -46,10 +46,10 @@ public class CastingService {
         String projectMaker = postCastingReq.getProjectMaker();
         String projectStartDate = postCastingReq.getProjectStartDate();
         String projectEndDate = postCastingReq.getProjectEndDate();
+        String projectManager = postCastingReq.getProjectManager();
         String projectDescription = postCastingReq.getProjectDescription();
         String projectFileURL = postCastingReq.getProjectFileURL();
-        //String projectBudget = postCastingReq.getProjectBudget();
-        Project project = new Project(userInfo,projectName,projectMaker,projectStartDate,projectEndDate,projectFileURL,projectDescription);
+        Project project = new Project(userInfo,projectName,projectMaker,projectStartDate,projectEndDate,projectManager,projectFileURL,projectDescription);
         try{
             projectRepository.save(project);
         }catch(Exception ignored){

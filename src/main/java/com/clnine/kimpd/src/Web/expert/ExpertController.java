@@ -54,14 +54,8 @@ public class ExpertController {
                 return new BaseResponse<>(INVALID_CASTING_END_DATE);
             }
         }
-        if(postExpertsReq.getSort()==null){
-            return new BaseResponse<>(EMPTY_SORT_OPTION);
-        }
         if(postExpertsReq.getSort()!=1 && postExpertsReq.getSort()!=2){
             return new BaseResponse<>(WRONG_SORT_OPTION);
-        }
-        if(postExpertsReq.getPage()==null){
-            return new BaseResponse<>(EMPTY_PAGE);
         }
         try{
             GetExpertsRes getUsersResList = expertProvider.findExperts(postExpertsReq);

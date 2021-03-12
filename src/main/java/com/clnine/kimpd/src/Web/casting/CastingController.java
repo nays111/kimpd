@@ -208,16 +208,19 @@ public class CastingController {
             if(!isRegexDateType(postCastingReq.getCastingEndDate())){
                 return new BaseResponse<>(INVALID_PROJECT_END_DATE);
             }
+            if(postCastingReq.getProjectManager()==null || postCastingReq.getProjectManager().length()==0){
+                return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
+            }
             if(postCastingReq.getProjectDescription()==null || postCastingReq.getProjectDescription().length()==0){
                 return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
             }
 
-            //todo 첨부파일 처리
-            if(postCastingReq.getProjectFileURL()!=null){
-                if(postCastingReq.getProjectFileURL().length()==0){
-                    return new BaseResponse<>(EMPTY_PROJECT_FILE_URL);
-                }
-            }
+//            //todo 첨부파일 처리
+//            if(postCastingReq.getProjectFileURL()!=null){
+//                if(postCastingReq.getProjectFileURL().length()==0){
+//                    return new BaseResponse<>(EMPTY_PROJECT_FILE_URL);
+//                }
+//            }
             if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE);
             }

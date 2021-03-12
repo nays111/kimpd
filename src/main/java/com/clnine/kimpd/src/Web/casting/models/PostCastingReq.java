@@ -13,6 +13,7 @@ public class PostCastingReq {
     private String projectStartDate;
     private String projectEndDate;
     private String projectDescription;
+    private String projectManager;
     private String projectFileURL;
     //private String projectBudget;
     private String castingPrice;

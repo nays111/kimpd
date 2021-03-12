@@ -64,13 +64,18 @@ public class BasketProvider {
                 String userMainJobCategoryChildName = categoryProvider.getMainJobCategoryChild(expert);
                 String introduce = expert.getIntroduce();
                 String castingDate=null;
-                if(castingList.get(i).getCastingStartDate()!=null && castingList.get(i).getCastingEndDate()!=null){
-                    String castingStartDate = "20"+castingList.get(i).getCastingStartDate();
-                    String castingEndDate = "20"+castingList.get(i).getCastingEndDate();
-                    castingDate = castingStartDate+"~"+castingEndDate;
-                    castingDate = castingDate.replace("/",".");
-                }else{
+                String castingStartDate = null;
+                String castingEndDate = null;
+                if(castingList.get(i).getCastingStartDate()!=null && castingList.get(i).getCastingStartDate().length()!=0){
+                    castingStartDate = castingList.get(i).getCastingStartDate();
+                }
+                if(castingList.get(i).getCastingEndDate()!=null && castingList.get(i).getCastingEndDate().length()!=0){
+                    castingEndDate = castingList.get(i).getCastingEndDate();
+                }
+                if(castingStartDate==null && castingEndDate==null){
                     castingDate = "정보 없음";
+                }else{
+                    castingDate  = castingStartDate+"~"+castingEndDate;
                 }
                 String castingPrice=null;
                 if(castingList.get(i).getCastingPrice()!=null){

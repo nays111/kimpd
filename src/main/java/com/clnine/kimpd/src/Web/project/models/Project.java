@@ -69,13 +69,14 @@ public class Project extends BaseEntity {
     }
     public Project(UserInfo userInfo, String projectName,
                    String projectMaker, String projectStartDate,
-                   String projectEndDate, String projectFileURL,
-                   String projectDescription) {
+                   String projectEndDate, String projectManager,
+                   String projectFileURL, String projectDescription) {
         this.userInfo = userInfo;
         this.projectName = projectName;
         this.projectMaker = projectMaker;
         this.projectStartDate = projectStartDate;
         this.projectEndDate = projectEndDate;
+        this.projectManager = projectManager;
         this.projectFileURL = projectFileURL;
         this.projectDescription = projectDescription;
     }

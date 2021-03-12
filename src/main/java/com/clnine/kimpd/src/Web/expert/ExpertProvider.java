@@ -228,7 +228,6 @@ public class ExpertProvider {
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
-        //todo 날짜 부분 수정 필요 (. 포함)
         String startMonth = year+"."+month+"."+"01";
 
         String size=null;
@@ -239,8 +238,6 @@ public class ExpertProvider {
         }else if(month.equals("04")||month.equals("06")||month.equals("09")||month.equals("11")){
             size="30";
         }
-
-        //todo 날짜 부분 수정 필요 (. 포함)
         String endMonth = year+"."+month+"."+size;
 
         ArrayList<Integer> dayList = new ArrayList<>();
