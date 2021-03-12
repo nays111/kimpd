@@ -2,13 +2,10 @@ package com.clnine.kimpd.src.Web.message;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.src.Web.message.models.GetMessageRes;
-import com.clnine.kimpd.src.Web.message.models.GetMessagesRes;
-import com.clnine.kimpd.src.Web.message.models.PatchMessageStatusReq;
-import com.clnine.kimpd.src.Web.message.models.PostMessageReq;
+import com.clnine.kimpd.src.Web.message.models.*;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,6 +79,7 @@ public class MessageController {
      */
     @ResponseBody
     @GetMapping("/messages/{messageIdx}")
+    @Operation(summary = "쪽지 상세 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMessageRes> getMessage(@PathVariable(required = true,value = "messageIdx")int messageIdx){
         int userIdx;
         try{
@@ -97,22 +95,23 @@ public class MessageController {
         }
     }
 
-    /**
-     * 쪽지 리스트 조회 API
-     * @return
-     */
+
     @ResponseBody
     @GetMapping("/messages")
-    public BaseResponse<List<GetMessagesRes>> getMessages(@RequestParam(value="page",required = true)int page){
+    @Operation(summary = "쪽지함 리스트 조회 API",description = "토큰이 필요합니다")
+    public BaseResponse<GetMessagesRes> getMessages(@RequestParam(value="page",required = true)Integer page){
         int userIdx;
         try{
             userIdx = jwtService.getUserIdx();
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(page==null){
+            return new BaseResponse<>(EMPTY_PAGE);
+        }
         try{
-            List<GetMessagesRes> getMessagesResList = messageProvider.getMessages(userIdx,page,3);
-            return new BaseResponse<>(SUCCESS,getMessagesResList);
+            GetMessagesRes getMessagesRes = messageProvider.getMessages(userIdx,page,3);
+            return new BaseResponse<>(SUCCESS, getMessagesRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
