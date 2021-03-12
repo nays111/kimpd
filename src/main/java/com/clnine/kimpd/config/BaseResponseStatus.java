@@ -42,6 +42,7 @@ public enum BaseResponseStatus {
     SUCCESS_PATCH_FAQS(true, 1508, "FAQ 수정에 성공하였습니다."),
     SUCCESS_READ_INQUIRIES(true,1509,"1:1문의 조회에 성공하였습니다."),
     SUCCESS_READ_REVIEWS(true,1510,"평가 조회에 성공하였습니다."),
+    SUCCESS_READ_REPORTS(true,1511,"신고 조회에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
@@ -164,11 +165,12 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_INQUIRY_FILE(false,3510,"1:1문의 파일 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_INQUIRIES(false, 3511, "1:1문의 수정에 실패하였습니다."),
     DUPLICATED_ID(false, 3512, "이미 존재하는 닉네임입니다."),
-    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 닉네임입니다."),
+    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 핸드폰번호입니다."),
     DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
     NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
     FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
+    FAILED_TO_GET_REPORTS(false,3518,"신고 조회하는데 실패했습니다."),
 
 
     // 4000 : Database 오류
