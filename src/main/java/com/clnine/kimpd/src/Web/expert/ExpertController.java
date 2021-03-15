@@ -155,4 +155,38 @@ public class ExpertController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    @GetMapping("/users/{userIdx}/specific-schedules")
+    @ResponseBody
+    @Operation(summary = "전문가 일정 상세 조회 API",description = "토큰이 필요합니다. year와 month와 day(01,02)를 꼭 입력해주세요.(1~9월의 경우 01~09로 보내주세요.")
+    public BaseResponse<List<GetMyReceivedCastingsByCalendarRes>> getMyExpertSpecificSchedule(@PathVariable(required = true,value = "userIdx")int userIdx,
+                                                                        @RequestParam(required = true)String year,
+                                                                        @RequestParam(required = true)String month,
+                                                                        @RequestParam(required = true)String day){
+        int userIdxJWT;
+        try{
+            userIdxJWT = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+        if(userIdxJWT!=userIdx){
+            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+        }
+        if(year==null){
+            return new BaseResponse<>(EMPTY_YEAR);
+        }
+        if(month==null){
+            return new BaseResponse<>(EMPTY_MONTH);
+        }
+        if(day==null){
+            return new BaseResponse<>(EMPTY_DAY);
+        }
+        try{
+            List<GetMyReceivedCastingsByCalendarRes> getMyReceivedCastingsByCalendarResList = expertProvider.getMySpecificSchedules(userIdx,year,month,day);
+            return new BaseResponse<>(SUCCESS,getMyReceivedCastingsByCalendarResList);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 }

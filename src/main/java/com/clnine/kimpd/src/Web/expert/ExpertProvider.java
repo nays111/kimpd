@@ -1,9 +1,9 @@
 package com.clnine.kimpd.src.Web.expert;
 
 import com.clnine.kimpd.config.BaseException;
-import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
+import com.clnine.kimpd.src.Web.expert.models.GetMyReceivedCastingsByCalendarRes;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.category.UserGenreCategoryRepository;
 import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -275,5 +274,42 @@ public class ExpertProvider {
         }
         GetMyExpertSchedulesManage getMyExpertSchedulesManage = new GetMyExpertSchedulesManage(resultList);
         return getMyExpertSchedulesManage;
+    }
+
+    public List<GetMyReceivedCastingsByCalendarRes> getMySpecificSchedules(int expertIdx, String year, String month, String day) throws BaseException{
+        UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
+        if(expertInfo.getUserType()==1 || expertInfo.getUserType()==2 || expertInfo.getUserType()==3){
+            throw new BaseException(NOT_EXPERT);
+        }
+        String searchDay = year+"."+month+"."+day;
+
+        System.out.println(searchDay);
+        List<GetMyReceivedCastingsByCalendarRes> getMyReceivedCastingsByCalendarResList = new ArrayList<>();
+
+        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(expertInfo,"ACTIVE",searchDay,searchDay);
+
+        for(int i=0;i<castingList.size();i++){
+            int userIdx = castingList.get(i).getUserInfo().getUserIdx();
+            String userProfileImageUrl = castingList.get(i).getUserInfo().getProfileImageURL();
+            String name = castingList.get(i).getUserInfo().getName();
+            String nickname = castingList.get(i).getUserInfo().getNickname();
+            //todo issue : 섭외한 사람이 일반인이면 소개가 없는데 여기서(introduce)에서 뭐가 출력?
+            String introduce = castingList.get(i).getUserInfo().getIntroduce();
+            String castingStartDate = castingList.get(i).getCastingStartDate();
+            String castingEndDate = castingList.get(i).getCastingEndDate();
+            String castingDate = castingStartDate + "~" + castingEndDate;
+            String castingPrice = castingList.get(i).getCastingPrice();
+            String projectName = castingList.get(i).getProject().getProjectName();
+            String projectDescription = castingList.get(i).getProject().getProjectDescription();
+            String projectMaker = castingList.get(i).getProject().getProjectMaker();
+            String castingPriceDate = castingList.get(i).getCastingPriceDate();
+            String castingMessage = castingList.get(i).getCastingMessage();
+            GetMyReceivedCastingsByCalendarRes getMyReceivedCastingsByCalendarRes =
+                    new GetMyReceivedCastingsByCalendarRes(userIdx,userProfileImageUrl,name,nickname,
+                            introduce,castingDate,castingPrice,projectName,projectDescription,projectMaker,
+                            castingPriceDate,castingMessage);
+            getMyReceivedCastingsByCalendarResList.add(getMyReceivedCastingsByCalendarRes);
+        }
+        return getMyReceivedCastingsByCalendarResList;
     }
 }
