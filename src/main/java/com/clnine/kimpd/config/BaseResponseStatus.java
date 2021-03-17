@@ -43,6 +43,8 @@ public enum BaseResponseStatus {
     SUCCESS_READ_INQUIRIES(true,1509,"1:1문의 조회에 성공하였습니다."),
     SUCCESS_READ_REVIEWS(true,1510,"평가 조회에 성공하였습니다."),
     SUCCESS_READ_REPORTS(true,1511,"신고 조회에 성공하였습니다."),
+    SUCCESS_READ_CONTRACTS(true,1512,"계약서 조회에 성공하였습니다."),
+    SUCCESS_PATCH_CONTRACTS(true, 1513, "계약서 수정에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
@@ -118,6 +120,7 @@ public enum BaseResponseStatus {
     EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
     EMPTY_NAME(false, 2515, "이름을 입력해주세요."),
     EMPTY_REVIEW_IDX(false, 2516, "평가 인덱스가 비었습니다."),
+    EMPTY_CONTRACT_CONTENT(false, 2517, "계약서 내용이 비었습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -171,6 +174,7 @@ public enum BaseResponseStatus {
     NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
     FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
     FAILED_TO_GET_REPORTS(false,3518,"신고 조회하는데 실패했습니다."),
+    FAILED_TO_PATCH_CONTRACT(false,3519,"계약서 수정에 실패했습니다."),
 
 
     // 4000 : Database 오류
