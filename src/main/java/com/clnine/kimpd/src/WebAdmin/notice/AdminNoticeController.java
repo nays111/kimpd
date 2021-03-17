@@ -64,7 +64,7 @@ public class AdminNoticeController {
             }
 
             AdminGetNoticeRes adminGetNoticeRes = adminNoticeProvider.retrieveNoticeInfo(noticeIdx);
-            return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetNoticeRes);
+            return new BaseResponse<>(SUCCESS_READ_NOTICES, adminGetNoticeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -130,7 +130,7 @@ public class AdminNoticeController {
             }
 
             adminNoticeService.updateNotice(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
+            return new BaseResponse<>(SUCCESS_PATCH_NOTICES);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
