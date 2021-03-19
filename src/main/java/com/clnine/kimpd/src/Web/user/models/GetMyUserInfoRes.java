@@ -26,7 +26,7 @@ public class GetMyUserInfoRes {
      * 법인 사업자용
      */
     private final String corpBusinessName;
-    private final String corpBusinessNumber;
+    //private final String corpBusinessNumber;
 
 
 

@@ -20,5 +20,5 @@ public class PatchMyUserInfoReq {
      * 법인 사업자용
      */
     private String corpBusinessName;
-    private String corpBusinessNumber;
+    //private String corpBusinessNumber;
 }

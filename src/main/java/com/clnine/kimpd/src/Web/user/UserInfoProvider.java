@@ -43,15 +43,12 @@ public class UserInfoProvider {
         String nickname = userInfo.getNickname();
         String profileImageURL = userInfo.getProfileImageURL();
         int userType = userInfo.getUserType();
-        String stringUserType = null;
         PostLoginRes postLoginRes=null;
         if (userType == 1 || userType==2 || userType==3) {
-            stringUserType = "일반회원";
-            postLoginRes = new PostLoginRes(userIdx,jwt, nickname, profileImageURL, stringUserType);
+            postLoginRes = new PostLoginRes(userIdx,jwt, nickname, profileImageURL, userType);
         } else if (userType == 4 || userType ==5 || userType==6) {
-            stringUserType = "전문가회원";
             String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
-            postLoginRes = new PostLoginRes(userIdx,jwt,nickname,profileImageURL,stringUserType,jobCategoryChildName);
+            postLoginRes = new PostLoginRes(userIdx,jwt,nickname,profileImageURL,userType,jobCategoryChildName);
         }
         return postLoginRes;
     }
@@ -63,15 +60,12 @@ public class UserInfoProvider {
         String nickname = userInfo.getNickname();
         String profileImageURL = userInfo.getProfileImageURL();
         int userType = userInfo.getUserType();
-        String stringUserType = null;
         GetUserRes getUserRes=null;
         if (userType == 1 || userType==2 || userType==3) {
-            stringUserType = "일반회원";
-            getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, stringUserType);
+            getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, userType);
         } else if (userType == 4 || userType ==5 || userType==6) {
-            stringUserType = "전문가회원";
             String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
-            getUserRes = new GetUserRes(userIdx,nickname,profileImageURL,stringUserType,jobCategoryChildName);
+            getUserRes = new GetUserRes(userIdx,nickname,profileImageURL,userType,jobCategoryChildName);
         }
         return getUserRes;
     }
@@ -194,7 +188,7 @@ public class UserInfoProvider {
         String businessNumber = userInfo.getBusinessNumber();
         String businessImageURL = userInfo.getBusinessImageURL();
         String corpBusinessName = userInfo.getCorporationBusinessName();
-        String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
+        //String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
 
         GetMyUserInfoRes getMyUserInfoRes = null;
 
@@ -220,7 +214,7 @@ public class UserInfoProvider {
                     .phoneNum(phoneNum)
                     .email(email)
                     .corpBusinessName(corpBusinessName)
-                    .corpBusinessNumber(corpBusinessNumber)
+                    .businessNumber(businessNumber)
                     .businessImageURL(businessImageURL).build();
         }
         return getMyUserInfoRes;

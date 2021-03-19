@@ -16,6 +16,7 @@ public class GetMyReceivedCastingsByCalendarRes {
     private final String projectName;
     private final String projectDescription;
     private final String projectMaker;
+    private final String projectManager;
     private final String castingPriceDate;
     private final String castingMessage;
 }

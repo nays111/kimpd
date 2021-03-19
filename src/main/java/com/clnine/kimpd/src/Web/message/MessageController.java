@@ -20,14 +20,9 @@ public class MessageController {
     private final JwtService jwtService;
     private final MessageProvider messageProvider;
 
-    /**
-     * 쪽지 전송 API
-     * @param userIdx
-     * @param postMessageReq
-     * @return
-     */
     @ResponseBody
     @PostMapping("/messages/{userIdx}")
+    @Operation(summary="쪽지 전송  API",description = "토큰이 필요합니다 .(userIdx : 쪽지를 보낼 사람)")
     public BaseResponse<String> postMessage(@PathVariable(required = true,value = "userIdx")int userIdx,
                                             @RequestBody PostMessageReq postMessageReq){
         int senderIdx;
@@ -98,7 +93,7 @@ public class MessageController {
 
     @ResponseBody
     @GetMapping("/messages")
-    @Operation(summary = "쪽지함 리스트 조회 API",description = "토큰이 필요합니다")
+    @Operation(summary = "쪽지함 리스트 조회 API",description = "토큰이 필요합니다, page 번호를 입력해주세요")
     public BaseResponse<GetMessagesRes> getMessages(@RequestParam(value="page",required = true)Integer page){
         int userIdx;
         try{
