@@ -137,6 +137,7 @@ public enum BaseResponseStatus {
     INVALID_PROJECT_START_DATE(false,2120,"올바르지 않은 프로젝트 시작 날짜입니다."),
     INVALID_PROJECT_END_DATE(false,2121,"올바르지 않은 프로젝트 종료 날짜입니다."),
     INVALID_CASTING_PRICE_DATE(false,2122,"올바르지 않은 섭외 금액 입금 날짜입니다."),
+    EMPTY_DAY(false,2123,"날짜를 선택해주세요."),
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
     EMPTY_BANNER_IDX(false, 2501, "광고 인덱스가 비었습니다."),
@@ -153,7 +154,7 @@ public enum BaseResponseStatus {
     EMPTY_FAQ_ANSWER(false, 2512, "FAQ 답변이 비었습니다."),
     EMPTY_INQUIRY_IDX(false, 2513, "1:1문의 인덱스가 비었습니다."),
     EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
-    EMPTY_DAY(false,2515,"날짜를 선택해주세요."),
+
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),

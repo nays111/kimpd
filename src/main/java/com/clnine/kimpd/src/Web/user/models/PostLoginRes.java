@@ -12,10 +12,10 @@ public class PostLoginRes {
     private String jwt;
     private String nickname;
     private String profileImageURL;
-    private String userType;
+    private int userType;
     private String jobCategoryChildName;
     @Builder
-    public PostLoginRes(int userIdx,String jwt, String nickname, String profileImageURL, String userType, String jobCategoryChildName) {
+    public PostLoginRes(int userIdx,String jwt, String nickname, String profileImageURL, int userType, String jobCategoryChildName) {
         this.userIdx = userIdx;
         this.jwt = jwt;
         this.nickname = nickname;
@@ -24,7 +24,7 @@ public class PostLoginRes {
         this.jobCategoryChildName = jobCategoryChildName;
     }
     @Builder
-    public PostLoginRes(int userIdx,String jwt, String nickname, String profileImageURL, String userType) {
+    public PostLoginRes(int userIdx,String jwt, String nickname, String profileImageURL, int userType) {
         this.userIdx = userIdx;
         this.jwt = jwt;
         this.nickname = nickname;

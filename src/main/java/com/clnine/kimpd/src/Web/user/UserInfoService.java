@@ -53,7 +53,7 @@ public class UserInfoService {
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
-        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
+        //String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         String nickname = postUserReq.getNickname();
         Integer agreeShowDB = postUserReq.getAgreeShowDB();
         try {
@@ -63,7 +63,7 @@ public class UserInfoService {
         }
         UserInfo userInfo = new UserInfo(userType,id,password,email,name,
                 phoneNumber,city,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
-                corporationBusinessName,corporationBusinessNumber,nickname,agreeShowDB);
+                corporationBusinessName,nickname,agreeShowDB);
         try {
             userInfo = userInfoRepository.save(userInfo);
         } catch (Exception exception) {
@@ -95,12 +95,12 @@ public class UserInfoService {
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
         }
-//        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
-//        try{
-//            projectRepository.save(project);
-//        }catch (Exception exception){
-//            throw new BaseException(FAILED_TO_POST_PROJECT);
-//        }
+        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
+        try{
+            projectRepository.save(project);
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_PROJECT);
+        }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
         return new PostUserRes(userIdx, jwt);
@@ -243,7 +243,7 @@ public class UserInfoService {
         String businessNumber = patchMyUserInfoReq.getBusinessNumber();
         String businessImageURL = patchMyUserInfoReq.getBusinessImageURL();
         String corpBusinessName = patchMyUserInfoReq.getCorpBusinessName();
-        String corpBusinessNumber = patchMyUserInfoReq.getCorpBusinessNumber();
+        //String corpBusinessNumber = patchMyUserInfoReq.getCorpBusinessNumber();
 
         userInfo.setProfileImageURL(profileImageURL);
         userInfo.setPhoneNum(phoneNum);
@@ -252,7 +252,7 @@ public class UserInfoService {
         userInfo.setBusinessNumber(businessNumber);
         userInfo.setBusinessImageURL(businessImageURL);
         userInfo.setCorporationBusinessName(corpBusinessName);
-        userInfo.setCorporationBusinessNumber(corpBusinessNumber);
+        //userInfo.setCorporationBusinessNumber(corpBusinessNumber);
         try{
             userInfoRepository.save(userInfo);
         }catch (Exception ignored) {

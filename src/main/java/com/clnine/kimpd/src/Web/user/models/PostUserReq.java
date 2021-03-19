@@ -33,8 +33,8 @@ public class PostUserReq {
     private String businessImageURL; //사업자 등록증
     @Nullable
     private String corporationBusinessName; //법인 사업자명
-    @Nullable
-    private String corporationBusinessNumber;//법인 등록번호
+//    @Nullable
+//    private String corporationBusinessNumber;//법인 등록번호
     @Nullable
     private String nickname;
     @Nullable

@@ -302,12 +302,13 @@ public class ExpertProvider {
             String projectName = castingList.get(i).getProject().getProjectName();
             String projectDescription = castingList.get(i).getProject().getProjectDescription();
             String projectMaker = castingList.get(i).getProject().getProjectMaker();
+            String projectManager = castingList.get(i).getProject().getProjectManager();
             String castingPriceDate = castingList.get(i).getCastingPriceDate();
             String castingMessage = castingList.get(i).getCastingMessage();
             GetMyReceivedCastingsByCalendarRes getMyReceivedCastingsByCalendarRes =
                     new GetMyReceivedCastingsByCalendarRes(userIdx,userProfileImageUrl,name,nickname,
                             introduce,castingDate,castingPrice,projectName,projectDescription,projectMaker,
-                            castingPriceDate,castingMessage);
+                            projectManager,castingPriceDate,castingMessage);
             getMyReceivedCastingsByCalendarResList.add(getMyReceivedCastingsByCalendarRes);
         }
         return getMyReceivedCastingsByCalendarResList;

@@ -85,7 +85,7 @@ public class UserInfoController {
         if(parameters.getAgreeAdvertisement()==null){
             return new BaseResponse<>(INVALID_AGREE_ADVERTISEMENT_CHECK);
         }
-        if(parameters.getUserType()==2 || parameters.getUserType()==5){
+        if(parameters.getUserType()==2 || parameters.getUserType()==5){ //개인 사업자의 경우
             if (parameters.getPrivateBusinessName().length() == 0) {
                     return new BaseResponse<>(EMPTY_PRIVATE_BUSINESS_NAME);
             }
@@ -99,21 +99,22 @@ public class UserInfoController {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
         }
-        if(parameters.getUserType()==3 || parameters.getUserType()==6){
+        if(parameters.getUserType()==3 || parameters.getUserType()==6){ //법인 사업자의 경우
             if (parameters.getCorporationBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
-            if (parameters.getCorporationBusinessNumber().length() == 0) {
-                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            if (parameters.getBusinessNumber().length() == 0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
-            if(parameters.getCorporationBusinessNumber().length()!=10){
-                return new BaseResponse<>(INVALID_CORP_BUSINESS_NUMBER);
+            if(parameters.getBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
             }
+
             if (parameters.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
         }
-        if(parameters.getUserType()==4 || parameters.getUserType()==5 || parameters.getUserType()==6){
+        if(parameters.getUserType()==4 || parameters.getUserType()==5 || parameters.getUserType()==6){  //전문가인 경우
             if (parameters.getJobCategoryIdx().size() == 0 ) {
                 return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
             }
@@ -389,11 +390,11 @@ public class UserInfoController {
             if (patchMyUserInfoReq.getCorpBusinessName().length() == 0) {
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
-            if (patchMyUserInfoReq.getCorpBusinessNumber().length() == 0) {
-                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
+            if (patchMyUserInfoReq.getBusinessNumber().length() == 0) {
+                return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
-            if(patchMyUserInfoReq.getCorpBusinessNumber().length()!=10){
-                return new BaseResponse<>(INVALID_CORP_BUSINESS_NUMBER);
+            if(patchMyUserInfoReq.getBusinessNumber().length()!=10){
+                return new BaseResponse<>(INVALID_BUSINESS_NUMBER);
             }
             if (patchMyUserInfoReq.getBusinessImageURL().length() == 0) {
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
