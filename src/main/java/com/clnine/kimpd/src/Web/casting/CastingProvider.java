@@ -270,12 +270,13 @@ public class CastingProvider {
     /**
      * 섭외 상세내역 조회
      */
-    public GetCastingRes getCastingRes(int castingIdx) throws BaseException{
-        Casting casting;
-        try{
-            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
-        }catch(Exception ignored){
+    public GetCastingRes getCastingRes(int castingIdx,int userIdx) throws BaseException{
+        Casting casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
+        if(casting==null){
             throw new BaseException(FAILED_TO_GET_CASTING);
+        }
+        if(casting.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING);
         }
         int projectIdx = casting.getProject().getProjectIdx();
         String projectName = casting.getProject().getProjectName();

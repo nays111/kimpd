@@ -20,18 +20,13 @@ import static com.clnine.kimpd.config.BaseResponseStatus.SUCCESS;
 public class AlarmController {
     private final JwtService jwtService;
     private final AlarmProvider alarmProvider;
+
     @ResponseBody
     @GetMapping("/alarms")
     public BaseResponse<List<GetAlarmsRes>> getMyAlarmList(){
-        int userIdx;
-        try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-        List<GetAlarmsRes> getAlarmsResList;
         try{
-            getAlarmsResList = alarmProvider.getAlarmsResList(userIdx);
+            int userIdx = jwtService.getUserIdx();
+            List<GetAlarmsRes> getAlarmsResList = alarmProvider.getAlarmsResList(userIdx);
             return new BaseResponse<>(SUCCESS, getAlarmsResList);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());

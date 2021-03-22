@@ -88,7 +88,7 @@ public class InquiryProvider {
         List<InquiryFile> inquiryFiles = inquiryFileRepository.findAllByInquiry(inquiry);
         List<String> inquiryFileUrlList  = new ArrayList<>();
         for(int i=0;i<inquiryFiles.size();i++){
-            String name = inquiryFiles.get(i).getInquiryFileUrl();
+            String name = inquiryFiles.get(i).getInquiryFileName();
             inquiryFileUrlList.add(name);
         }
         String inquiryTitle = inquiry.getInquiryTitle();

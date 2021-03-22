@@ -20,7 +20,8 @@ public class FaqController {
 
     private final FaqProvider faqProvider;
 
-    @ResponseBody @GetMapping("/faqs")
+    @ResponseBody
+    @GetMapping("/faqs")
     public BaseResponse<GetFaqsRes> getNoticesRes(@RequestParam(required = true) Integer page){
         if(page==null){
             return new BaseResponse<>(EMPTY_PAGE);

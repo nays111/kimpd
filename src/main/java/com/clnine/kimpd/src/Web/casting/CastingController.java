@@ -24,13 +24,8 @@ public class CastingController {
     @ResponseBody @GetMapping("/castings-count")
     @Operation(summary="섭외 신청 횟수 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<CastingCountRes> getCastingsCount() {
-        int userIdx;
         try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try {
+            int userIdx = jwtService.getUserIdx();
             CastingCountRes castingCountRes= castingProvider.getCastingCount(userIdx);
             return new BaseResponse<>(SUCCESS, castingCountRes);
         } catch (BaseException exception) {
@@ -41,13 +36,8 @@ public class CastingController {
     @ResponseBody @GetMapping("/received-castings-count")
     @Operation(summary="받은 섭외 횟수 조회 API (전문가만 사용할 수 있습니다.)",description = "토큰이 필요합니다.")
     public BaseResponse<CastingCountRes> getReceivedCastingsCount() {
-        int userIdx;
         try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try {
+            int userIdx = jwtService.getUserIdx();
             CastingCountRes castingCountRes = castingProvider.getReceivedCastingCount(userIdx);
             return new BaseResponse<>(SUCCESS, castingCountRes);
         } catch (BaseException exception) {
@@ -62,12 +52,6 @@ public class CastingController {
     public BaseResponse<GetMyCastingsRes> getCastings(@RequestParam(value = "castingStatus", required = true) Integer castingStatus,
                                                            @RequestParam(value = "duration", required = true) Integer duration,
                                                            @RequestParam(value = "page", required = true) Integer page) {
-        int userIdx;
-        try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(castingStatus==null){
             return new BaseResponse<>(EMPTY_CASTING_STATUS);
         }
@@ -84,6 +68,7 @@ public class CastingController {
             return new BaseResponse<>(EMPTY_PAGE);
         }
         try {
+            int userIdx = jwtService.getUserIdx();
             GetMyCastingsRes getMyCastingsRes = castingProvider.getMyCastingRes(userIdx, duration, castingStatus, page, 6);
             return new BaseResponse<>(SUCCESS, getMyCastingsRes);
         } catch (BaseException exception) {
@@ -98,12 +83,6 @@ public class CastingController {
     public BaseResponse<GetMyReceivedCastingsRes> getReceivedCastings(@RequestParam(value = "castingStatus", required = true) Integer castingStatus,
                                                                            @RequestParam(value = "duration", required = true) Integer duration,
                                                                            @RequestParam(value = "page", required = true) Integer page) {
-        int userIdx;
-        try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(castingStatus==null){
             return new BaseResponse<>(EMPTY_CASTING_STATUS);
         }
@@ -120,6 +99,7 @@ public class CastingController {
             return new BaseResponse<>(EMPTY_PAGE);
         }
         try {
+            int userIdx = jwtService.getUserIdx();
             GetMyReceivedCastingsRes getMyReceivedCastingsRes  = castingProvider.getMyReceivedCastingRes(userIdx, duration, castingStatus, page, 6);
             return new BaseResponse<>(SUCCESS, getMyReceivedCastingsRes);
         } catch (BaseException exception) {
@@ -127,48 +107,31 @@ public class CastingController {
         }
     }
 
-    /**
-     * 섭외 수락, 섭외 거절, 작업 완료 API
-     * @param castingStatus
-     * @param patchCastingStatusReq
-     * @return
-     */
+
     @ResponseBody
     @PatchMapping("/received-castings/response")
+    @Operation(summary = "섭외 수락, 섭외 거절, 작업 완료 API")
     public BaseResponse<String> patchCastingStatus(@RequestParam(value = "castingStatus",required = true) int castingStatus,
                                                    @RequestBody PatchCastingStatusReq patchCastingStatusReq) {
-        int userIdx;
-        try {
-            userIdx = jwtService.getUserIdx();
-        } catch (BaseException exception) {
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(castingStatus<2 && castingStatus>4){
             return new BaseResponse<>(WRONG_CASTING_STATUS);
         }
         try {
-            castingService.patchCastingStatus(castingStatus, patchCastingStatusReq);
+            int userIdx = jwtService.getUserIdx();
+            castingService.patchCastingStatus(castingStatus, patchCastingStatusReq,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
-    /**
-     * 받은 섭외 상세 조회 API
-     */
     @ResponseBody
     @GetMapping("/received-castings/{castingIdx}")
     @Operation(summary="받은 섭외 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getReceivedCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
-            GetCastingRes getCastingRes  = castingProvider.getCastingRes(castingIdx);
+            int userIdx = jwtService.getUserIdx();
+            GetCastingRes getCastingRes  = castingProvider.getCastingRes(castingIdx,userIdx);
             return new BaseResponse<>(SUCCESS,getCastingRes);
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
@@ -214,13 +177,6 @@ public class CastingController {
             if(postCastingReq.getProjectDescription()==null || postCastingReq.getProjectDescription().length()==0){
                 return new BaseResponse<>(EMPTY_PROJECT_DESCRIPTION);
             }
-
-//            //todo 첨부파일 처리
-//            if(postCastingReq.getProjectFileURL()!=null){
-//                if(postCastingReq.getProjectFileURL().length()==0){
-//                    return new BaseResponse<>(EMPTY_PROJECT_FILE_URL);
-//                }
-//            }
             if(postCastingReq.getCastingPrice()==null || postCastingReq.getCastingPrice().length()==0){
                 return new BaseResponse<>(EMPTY_CASTING_PRICE);
             }
@@ -299,14 +255,9 @@ public class CastingController {
     @GetMapping("/castings/{castingIdx}")
     @Operation(summary="섭외 요청 상세내역 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetCastingRes> getCastingResByCastingIdx (@PathVariable(required = true,value = "castingIdx")int castingIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
-            GetCastingRes getCastingRes  = castingProvider.getCastingRes(castingIdx);
+            int userIdx = jwtService.getUserIdx();
+            GetCastingRes getCastingRes  = castingProvider.getCastingRes(castingIdx,userIdx);
             return new BaseResponse<>(SUCCESS,getCastingRes);
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());
@@ -319,12 +270,6 @@ public class CastingController {
     @Operation(summary = "재섭외 요청 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchCastingStatus(@PathVariable(required = true, value = "castingIdx")int castingIdx,
                                                    @RequestBody(required = true)PatchCastingReq patchCastingReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(patchCastingReq.getCastingPrice()==null || patchCastingReq.getCastingPrice().length()==0){
             return new BaseResponse<>(EMPTY_CASTING_PRICE);
         }
@@ -346,9 +291,9 @@ public class CastingController {
         if(!isRegexDateType(patchCastingReq.getCastingPriceDate())){
             return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
         }
-
         try{
-            castingService.patchCasting(castingIdx,patchCastingReq);
+            int userIdx = jwtService.getUserIdx();
+            castingService.patchCasting(castingIdx,patchCastingReq,userIdx);
             return new BaseResponse<>(SUCCESS);
         }catch (BaseException exception){
             return new BaseResponse<>(exception.getStatus());

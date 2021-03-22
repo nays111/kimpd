@@ -75,7 +75,7 @@ public class InquiryController {
     @ResponseBody
     @GetMapping("/inquiries/{inquiryIdx}")
     @Operation(summary = "1:1문의 내역 상세 조회 API",description = "토큰이 필요합니다.(본인의 1:1문의만 상세 조회가 가능합니다.")
-    public BaseResponse<GetInquiryRes> getInquiry(@PathVariable(required = false)int inquiryIdx){
+    public BaseResponse<GetInquiryRes> getInquiry(@PathVariable(required = true)int inquiryIdx){
         try{
             Integer userIdx = jwtService.getUserIdx();
             GetInquiryRes getInquiryRes = inquiryProvider.getInquiryRes(userIdx,inquiryIdx);
