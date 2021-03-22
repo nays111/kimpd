@@ -43,8 +43,8 @@ public class InquiryService {
         String description = postInquiryReq.getInquiryDescription();
         Inquiry inquiry = new Inquiry(title,description,inquiryCategory,userInfo);
 
-        if(postInquiryReq.getInquiryFileList()!=null){
-            List<String> inquiryFileList = postInquiryReq.getInquiryFileList();
+        if(postInquiryReq.getInquiryFileUrlList()!=null){
+            List<String> inquiryFileList = postInquiryReq.getInquiryFileUrlList();
 
             for(int i=0;i<inquiryFileList.size();i++){
                 String inquiryFileName = inquiryFileList.get(i);

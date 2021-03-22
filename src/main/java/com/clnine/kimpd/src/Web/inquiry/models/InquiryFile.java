@@ -22,12 +22,12 @@ public class InquiryFile {
     private Inquiry inquiry;
 
 
-    @Column(name="inquiryFileName")
-    private String inquiryFileName;
+    @Column(name="inquiryFileUrl")
+    private String inquiryFileUrl;
 
     @Builder
-    public InquiryFile(Inquiry inquiry, String inquiryFileName) {
+    public InquiryFile(Inquiry inquiry, String inquiryFileUrl) {
         this.inquiry = inquiry;
-        this.inquiryFileName = inquiryFileName;
+        this.inquiryFileUrl = inquiryFileUrl;
     }
 }
