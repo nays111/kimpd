@@ -38,9 +38,6 @@ public class AlarmProvider {
             Date createdAt = alarmList.get(i).getCreatedAt();
 
             String profileImageURL = alarmList.get(i).getUserInfo().getProfileImageURL();
-            if(profileImageURL==null){
-                profileImageURL="프로필 사진 없음.";
-            }
             int readStatus = alarmList.get(i).getReadStatus();
             String message = alarmList.get(i).getAlarmMessage();
 

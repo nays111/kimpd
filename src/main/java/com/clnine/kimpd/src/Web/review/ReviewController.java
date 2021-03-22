@@ -27,12 +27,6 @@ public class ReviewController {
     @Operation(summary = "평가하기 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postReview(@PathVariable(required = true,value="castingIdx")int castingIdx,
                                             @RequestBody PostReviewReq postReviewReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(postReviewReq.getDescription()==null || postReviewReq.getDescription().length()==0){
             return new BaseResponse<>(EMPTY_REVIEW_DESCRIPTION);
         }
@@ -40,6 +34,7 @@ public class ReviewController {
             return new BaseResponse<>(WRONG_REVIEW_STAR);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             reviewService.postReview(userIdx,castingIdx,postReviewReq);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
@@ -54,12 +49,6 @@ public class ReviewController {
     public BaseResponse<GetMyReviewsRes>getReviews(@RequestParam(value="reviewStatus",required = true)Integer reviewStatus,
                                                    @RequestParam(value = "duration",required = false)Integer duration,
                                                    @RequestParam(value="page",required = true)Integer page){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(reviewStatus==null){
             return new BaseResponse<>(EMPTY_REVIEW_STATUS);
         }
@@ -76,6 +65,7 @@ public class ReviewController {
             return new BaseResponse<>(EMPTY_PAGE);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             GetMyReviewsRes getMyReviewsRes = reviewProvider.getMyReviewsRes(userIdx,duration,reviewStatus,page,6);
             return new BaseResponse<>(SUCCESS, getMyReviewsRes);
         }catch (BaseException exception) {

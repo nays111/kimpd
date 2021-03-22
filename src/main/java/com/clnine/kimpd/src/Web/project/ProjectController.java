@@ -26,13 +26,8 @@ public class ProjectController {
     @GetMapping("/projects/{projectIdx}")
     @Operation(summary="프로젝트 상세 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyProjectRes> getMyProject(@PathVariable(value="projectIdx")int projectIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
+            int userIdx = jwtService.getUserIdx();
             GetMyProjectRes getMyProjectRes = projectProvider.getMyProject(projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS,getMyProjectRes);
         } catch (BaseException exception) {
@@ -44,12 +39,6 @@ public class ProjectController {
     @PostMapping("/projects")
     @Operation(summary="프로젝트 추가 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postProject(@RequestBody PostProjectReq postProjectReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(postProjectReq.getProjectName()==null || postProjectReq.getProjectName().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_NAME);
         }
@@ -78,6 +67,7 @@ public class ProjectController {
             return new BaseResponse<>(EMPTY_PROJECT_BUDGET);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             projectService.postProject(postProjectReq,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
@@ -90,12 +80,6 @@ public class ProjectController {
     @Operation(summary="프로젝트 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> updateProject(@PathVariable(required = true,value="projectIdx")int projectIdx,
                                               @RequestBody(required = true) PatchProjectReq patchProjectReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(patchProjectReq.getProjectName()==null || patchProjectReq.getProjectName().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_NAME);
         }
@@ -124,6 +108,7 @@ public class ProjectController {
             return new BaseResponse<>(EMPTY_PROJECT_BUDGET);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             projectService.updateProject(patchProjectReq,projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
@@ -135,13 +120,8 @@ public class ProjectController {
     @PatchMapping("/projects/{projectIdx}/status")
     @Operation(summary="프로젝트 삭제 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> deleteProject(@PathVariable(required = true,value="projectIdx")int projectIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
+            int userIdx = jwtService.getUserIdx();
             projectService.deleteProject(projectIdx,userIdx);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
@@ -155,12 +135,6 @@ public class ProjectController {
     public BaseResponse<GetProjectsRes> getProjects(@RequestParam Integer page,
                                                     @RequestParam(value = "duration", required = false) Integer duration,
                                                     @RequestParam(value = "sort", required = false)Integer sort){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(sort!=1 && sort!=0){
             return new BaseResponse<>(WRONG_SORT_OPTION);
         }
@@ -171,6 +145,7 @@ public class ProjectController {
             return new BaseResponse<>(EMPTY_PAGE);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             GetProjectsRes getProjectsRes = projectProvider.getProjectsResList(userIdx,sort,duration,page,9);
             return new BaseResponse<>(SUCCESS,getProjectsRes);
         }catch(BaseException exception){
@@ -182,13 +157,8 @@ public class ProjectController {
     @GetMapping("/project-list")
     @Operation(summary="프로젝트 리스트 조회 API(섭외신청할 때, projectIdx,projectName만 리턴)",description = "토큰이 필요합니다.")
     public BaseResponse<List<GetProjectListRes>> getProjectList(){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
+            int userIdx = jwtService.getUserIdx();
             List<GetProjectListRes> getProjectsResList = projectProvider.getProjectListRes(userIdx);
             return new BaseResponse<>(SUCCESS,getProjectsResList);
         }catch(BaseException exception){
@@ -200,13 +170,8 @@ public class ProjectController {
     @GetMapping("/project-list/{projectIdx}")
     @Operation(summary="프로젝트 불러오기 API(섭외신청할 떄)",description = "토큰이 필요합니다.")
     public BaseResponse<GetProjectRes> getProjectWhenCasting(@PathVariable(required = true,value = "projectIdx")int projectIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
+            int userIdx = jwtService.getUserIdx();
             GetProjectRes getProjectRes = projectProvider.getProjectRes(userIdx,projectIdx);
             return new BaseResponse<>(SUCCESS,getProjectRes);
         } catch(BaseException exception){

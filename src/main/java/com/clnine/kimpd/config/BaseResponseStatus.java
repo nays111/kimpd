@@ -138,6 +138,9 @@ public enum BaseResponseStatus {
     INVALID_PROJECT_END_DATE(false,2121,"올바르지 않은 프로젝트 종료 날짜입니다."),
     INVALID_CASTING_PRICE_DATE(false,2122,"올바르지 않은 섭외 금액 입금 날짜입니다."),
     EMPTY_DAY(false,2123,"날짜를 선택해주세요."),
+    WRONG_YEAR(false,2124,"잘못된 년도 형식입니다.(4자리로 입력해주세요.)"),
+    WRONG_MONTH(false,2125,"잘못된 월 형식입니다.(01~12 사이의 값을 입력해주세요.)"),
+    WRONG_DAY(false,2126,"잘못된 일 형식입니다.(01~31 사이의 값을 입력해주세요.)"),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),

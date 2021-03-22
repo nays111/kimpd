@@ -161,9 +161,11 @@ public class CastingService {
      * 재섭외 요청 하기
      * CASTING-STATUS 를 변경
      */
-    public void patchCasting(int castingIdx, PatchCastingReq patchCastingReq) throws BaseException {
+    public void patchCasting(int castingIdx, PatchCastingReq patchCastingReq,int userIdx) throws BaseException {
         Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
-
+        if(casting.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING);
+        }
         String castingPrice = patchCastingReq.getCastingPrice();
         String castingStartDate = patchCastingReq.getCastingStartDate();
         String castingEndDate = patchCastingReq.getCastingEndDate();
@@ -200,9 +202,11 @@ public class CastingService {
      * @param patchCastingStatusReq
      * @throws BaseException
      */
-    public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq) throws BaseException{
+    public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException{
         Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
-
+        if(casting.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING);
+        }
         casting.setCastingStatus(state);
         try{
             castingRepository.save(casting);

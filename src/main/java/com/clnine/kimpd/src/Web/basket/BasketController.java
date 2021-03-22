@@ -25,12 +25,6 @@ public class BasketController {
     @PostMapping("/baskets")
     @Operation(summary = "장바구니 담기 API",description = "여러명의 유저를 한 프로젝트 안에 담는 방식입니다")
     public BaseResponse<String> postBasket(@RequestBody PostBasketReq postBasketReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(postBasketReq.getUserIdx().size()==0 || postBasketReq.getUserIdx()==null){
             return new BaseResponse<>(EMPTY_EXPERT_TO_POST_BASKET);
         }
@@ -38,6 +32,7 @@ public class BasketController {
             return new BaseResponse<>(EMPTY_PROJECT_INDEX);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             basketService.postBasket(userIdx,postBasketReq);
             return new BaseResponse<>(SUCCESS);
         }catch (BaseException exception){
@@ -51,13 +46,8 @@ public class BasketController {
     @ResponseBody
     @GetMapping("/baskets")
     public BaseResponse<GetBasketListRes> getMyBasket(@RequestParam(required = false,value = "projectIdx")Integer projectIdx){
-        int userIdx;
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        try{
+            int userIdx = jwtService.getUserIdx();
             GetBasketListRes getBasketListRes = basketProvider.getBasketList(userIdx,projectIdx);
             return new BaseResponse<>(SUCCESS,getBasketListRes);
         }catch (BaseException exception){
@@ -71,16 +61,11 @@ public class BasketController {
     @ResponseBody
     @PostMapping("/baskets/castings")
     public BaseResponse<String> postBasketCasting(@RequestBody PostBasketCastingReq postBasketCastingReq){
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(postBasketCastingReq.getCastingIdx().size()==0 || postBasketCastingReq.getCastingIdx()==null){
             return new BaseResponse<>(EMPTY_CASTING_INDEX);
         }
         try{
+            int userIdx = jwtService.getUserIdx();
             basketService.postBasketCasting(postBasketCastingReq);
             return new BaseResponse<>(SUCCESS);
         }catch (BaseException exception){

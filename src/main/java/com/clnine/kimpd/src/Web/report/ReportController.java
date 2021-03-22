@@ -26,14 +26,9 @@ public class ReportController {
     @GetMapping("/report-categories")
     @Operation(summary = "신고유형 카테고리 조회 API")
     public BaseResponse<List<GetReportCategoryRes>> getReportCategories()throws BaseException {
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         List<GetReportCategoryRes> getReportCategoryResList;
         try{
+            int userIdx = jwtService.getUserIdx();
             getReportCategoryResList = reportProvider.getReportCategory();
             return new BaseResponse<>(SUCCESS,getReportCategoryResList);
         }catch(BaseException exception){
@@ -46,12 +41,6 @@ public class ReportController {
     @Operation(summary = "신고하기 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> postReport(@PathVariable(required = true,value="userIdx")int reportedUserIdx,
                                            @RequestBody PostReportReq postReportReq){
-        int reporterUserIdx;
-        try{
-            reporterUserIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
         if(postReportReq.getReportDescription()==null || postReportReq.getReportDescription().length()==0){
             return new BaseResponse<>(EMPTY_REPORT_DESCRIPTION);
         }
@@ -59,6 +48,7 @@ public class ReportController {
             return new BaseResponse<>(EMPTY_REPORT_CATEGORY);
         }
         try{
+            int reporterUserIdx = jwtService.getUserIdx();
             reportService.postReport(reporterUserIdx,reportedUserIdx,postReportReq);
             if(reportService.deleteUserByReport(reportedUserIdx)==true){
                 return new BaseResponse<>(SUCCESS);

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
-import static com.clnine.kimpd.utils.ValidationRegex.isRegexDateType;
+import static com.clnine.kimpd.utils.ValidationRegex.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -110,16 +110,11 @@ public class ExpertController {
     @ResponseBody
     @Operation(summary="전문가 프로필 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyExpertRes> getMyExpertRes(@PathVariable(required = true,value = "userIdx")int userIdx){
-        int userIdxJWT;
         try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
-        try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             GetMyExpertRes getMyExpertRes = expertProvider.getMyExpertRes(userIdx);
             return new BaseResponse<>(SUCCESS,getMyExpertRes);
         }catch (BaseException exception) {
@@ -133,22 +128,23 @@ public class ExpertController {
     public BaseResponse<GetMyExpertSchedulesManage> getMyExpertSchedule(@PathVariable(required = true,value = "userIdx")int userIdx,
                                                                               @RequestParam(required = true)String year,
                                                                               @RequestParam(required = true)String month){
-        int userIdxJWT;
-        try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
         if(year==null){
             return new BaseResponse<>(EMPTY_YEAR);
         }
         if(month==null){
             return new BaseResponse<>(EMPTY_MONTH);
         }
+        if(!isRegexYear(year)){
+            return new BaseResponse<>(WRONG_YEAR);
+        }
+        if(!isRegexMonth(month)){
+            return new BaseResponse<>(WRONG_MONTH);
+        }
         try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             GetMyExpertSchedulesManage getMyExpertSchedulesManage = expertProvider.getMyExpertSchedule(userIdx,year,month);
             return new BaseResponse<>(SUCCESS,getMyExpertSchedulesManage);
         }catch (BaseException exception) {
@@ -163,15 +159,6 @@ public class ExpertController {
                                                                         @RequestParam(required = true)String year,
                                                                         @RequestParam(required = true)String month,
                                                                         @RequestParam(required = true)String day){
-        int userIdxJWT;
-        try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
         if(year==null){
             return new BaseResponse<>(EMPTY_YEAR);
         }
@@ -181,7 +168,20 @@ public class ExpertController {
         if(day==null){
             return new BaseResponse<>(EMPTY_DAY);
         }
+        if(!isRegexYear(year)){
+            return new BaseResponse<>(WRONG_YEAR);
+        }
+        if(!isRegexMonth(month)){
+            return new BaseResponse<>(WRONG_MONTH);
+        }
+        if(!isRegexDay(day)){
+            return new BaseResponse<>(WRONG_DAY);
+        }
         try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx) {
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             List<GetMyReceivedCastingsByCalendarRes> getMyReceivedCastingsByCalendarResList = expertProvider.getMySpecificSchedules(userIdx,year,month,day);
             return new BaseResponse<>(SUCCESS,getMyReceivedCastingsByCalendarResList);
         }catch (BaseException exception) {
