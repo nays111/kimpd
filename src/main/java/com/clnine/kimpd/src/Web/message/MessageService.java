@@ -16,14 +16,12 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_SEND_ALARM;
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_SEND_MESSAGE;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
 public class MessageService {
 
-    private final UserInfoRepository userInfoRepository;
     private final MessageRepository messageRepository;
     private final AlarmRepository alarmRepository;
     private final UserInfoProvider userInfoProvider;
@@ -49,13 +47,17 @@ public class MessageService {
         }
     }
 
-    public void deleteMessage(PatchMessageStatusReq patchMessageStatusReq) throws BaseException{
+    @Transactional
+    public void deleteMessage(PatchMessageStatusReq patchMessageStatusReq,int userIdx) throws BaseException{
         for(int i=0;i<patchMessageStatusReq.getMessageIdx().size();i++){
             int messageIdx = patchMessageStatusReq.getMessageIdx().get(i);
 
             Message message = messageRepository.findByMessageIdxAndStatus(messageIdx,"ACTIVE");
             if(message==null){
                 throw new BaseException(BaseResponseStatus.NOT_FOUND_MESSAGE);
+            }
+            if(message.getReceiver().getUserIdx()!=userIdx){
+                throw new BaseException(NOT_USER_MESSAGE);
             }
             message.setStatus("INACTIVE");
             messageRepository.save(message);

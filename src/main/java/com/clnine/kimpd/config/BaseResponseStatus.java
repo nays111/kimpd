@@ -138,6 +138,7 @@ public enum BaseResponseStatus {
     INVALID_PROJECT_END_DATE(false,2121,"올바르지 않은 프로젝트 종료 날짜입니다."),
     INVALID_CASTING_PRICE_DATE(false,2122,"올바르지 않은 섭외 금액 입금 날짜입니다."),
     EMPTY_DAY(false,2123,"날짜를 선택해주세요."),
+
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
     EMPTY_BANNER_IDX(false, 2501, "광고 인덱스가 비었습니다."),
@@ -208,7 +209,7 @@ public enum BaseResponseStatus {
     NOT_USER_PROJECT(false,3037,"프로젝트 소유자가 아닙니다."),
     ALREADY_EXPERT(false,3038,"이미 전문가입니다."),
     SAME_PASSWORD_BEFORE_CHANGE(false,3039,"이전 비밀번호와 다른 비밀번호를 입력해주세요."),
-
+    NOT_USER_MESSAGE(false,3040,"회원의 메시지가 아닙니다."),
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),
