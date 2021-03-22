@@ -210,6 +210,8 @@ public enum BaseResponseStatus {
     ALREADY_EXPERT(false,3038,"이미 전문가입니다."),
     SAME_PASSWORD_BEFORE_CHANGE(false,3039,"이전 비밀번호와 다른 비밀번호를 입력해주세요."),
     NOT_USER_MESSAGE(false,3040,"회원의 메시지가 아닙니다."),
+    NO_INQUIRY(false,3041,"존재하지 않는 1:1문의 입니다."),
+    NOT_USER_INQUIRY(false,3042,"본인이 등록한 1:1문의가 아닙니다."),
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),

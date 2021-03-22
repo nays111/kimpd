@@ -3,11 +3,9 @@ package com.clnine.kimpd.src.Web.inquiry;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiriesRes;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryCategoryRes;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiriesDTO;
-import com.clnine.kimpd.src.Web.inquiry.models.PostInquiryReq;
+import com.clnine.kimpd.src.Web.inquiry.models.*;
 import com.clnine.kimpd.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,44 +22,23 @@ public class InquiryController {
     private final JwtService jwtService;
     private final InquiryService inquiryService;
 
-    /**
-     * 1:1문의 유형 카테고리 조회 API
-     * @return
-     * @throws BaseException
-     */
     @ResponseBody
     @GetMapping("/inquiry-categories")
-    public BaseResponse<List<GetInquiryCategoryRes>> getInquiryCategory() throws BaseException{
-        int userIdx;
+    @Operation(summary="1:1문의 유형 카테고리 조회 API",description = "토큰이 필요합니다.")
+    public BaseResponse<List<GetInquiryCategoryRes>> getInquiryCategory(){
         try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        List<GetInquiryCategoryRes> getInquiryCategoryResList;
-        try{
-            getInquiryCategoryResList = inquiryProvider.getInquiryCategoryList();
+            Integer userIdx = jwtService.getUserIdx();
+            List<GetInquiryCategoryRes> getInquiryCategoryResList = inquiryProvider.getInquiryCategoryList();
             return new BaseResponse<>(SUCCESS,getInquiryCategoryResList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
-    /**
-     * 1:1 문의 접수 API
-     * @param postInquiryReq
-     * @return
-     * @throws BaseException
-     */
     @ResponseBody
     @PostMapping("/inquiries")
-    public BaseResponse<String> postInquiry(@RequestBody PostInquiryReq postInquiryReq) throws BaseException{
-        int userIdx;
-        try{
-            userIdx = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
+    @Operation(summary="1:1 문의 접수 API",description = "토큰이 필요합니다.")
+    public BaseResponse<String> postInquiry(@RequestBody PostInquiryReq postInquiryReq){
         if(postInquiryReq.getInquiryCategoryIdx()==null){
             return new BaseResponse<>(EMPTY_INQUIRY_CATEGORY_SELECTED);
         }
@@ -71,15 +48,8 @@ public class InquiryController {
         if(postInquiryReq.getInquiryDescription()==null || postInquiryReq.getInquiryDescription().length()==0){
             return new BaseResponse<>(EMPTY_INQUIRY_DESCRIPTION);
         }
-        //todo 첨부파일 validation
-//        if(postInquiryReq.getInquiryFileList()!=null) {
-//            if (postInquiryReq.getInquiryFileList().size() == 0) {
-//                return new BaseResponse<>(EMPTY_INQUIRY_DESCRIPTION);
-//            }
-//        }
-
-
         try{
+            Integer userIdx = jwtService.getUserIdx();
             inquiryService.postInquiry(userIdx,postInquiryReq);
             return new BaseResponse<>(SUCCESS);
         }catch(BaseException exception){
@@ -87,13 +57,9 @@ public class InquiryController {
         }
     }
 
-    /**
-     * 1:1문의 내역 리스트 조회 API
-     * @param page
-     * @return
-     */
     @ResponseBody
     @GetMapping("/inquiries")
+    @Operation(summary="1:1문의 내역 리스트 조회 API")
     public BaseResponse<GetInquiriesRes> getInquiryList(@RequestParam(required = true,value = "page")Integer page){
         if(page==null){
             return new BaseResponse<>(EMPTY_PAGE);
@@ -101,6 +67,19 @@ public class InquiryController {
         try{
             GetInquiriesRes getInquiriesRes = inquiryProvider.getInquiryListRes(page,10);
             return new BaseResponse<>(SUCCESS,getInquiriesRes);
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/inquiries/{inquiryIdx}")
+    @Operation(summary = "1:1문의 내역 상세 조회 API",description = "토큰이 필요합니다.(본인의 1:1문의만 상세 조회가 가능합니다.")
+    public BaseResponse<GetInquiryRes> getInquiry(@PathVariable(required = false)int inquiryIdx){
+        try{
+            Integer userIdx = jwtService.getUserIdx();
+            GetInquiryRes getInquiryRes = inquiryProvider.getInquiryRes(userIdx,inquiryIdx);
+            return new BaseResponse<>(SUCCESS,getInquiryRes);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

@@ -17,6 +17,6 @@ public class PostInquiryReq {
     private String inquiryDescription;
 
     @Nullable
-    private List<String> inquiryFileList;
+    private List<String> inquiryFileUrlList;
 
 }
