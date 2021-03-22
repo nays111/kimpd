@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.clnine.kimpd.config.BaseResponseStatus.NOT_FOUND_MESSAGE;
+import static com.clnine.kimpd.config.BaseResponseStatus.NOT_USER_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class MessageProvider {
@@ -27,10 +30,13 @@ public class MessageProvider {
     private final CategoryProvider categoryProvider;
     private final UserInfoProvider userInfoProvider;
 
-    public GetMessageRes getMessage(int messageIdx) throws BaseException {
+    public GetMessageRes getMessage(int messageIdx,int userIdx) throws BaseException {
         Message message = messageRepository.findByMessageIdxAndStatus(messageIdx,"ACTIVE");
         if(message==null){
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_MESSAGE);
+            throw new BaseException(NOT_FOUND_MESSAGE);
+        }
+        if(message.getReceiver().getUserIdx()!=userIdx){
+            throw new BaseException(NOT_USER_MESSAGE);
         }
         message.setReadStatus(1);
         messageRepository.save(message);

@@ -326,16 +326,11 @@ public class UserInfoController {
     @ResponseBody
     @Operation(summary="마이페이지 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyUserInfoRes> getMyUserInfo(@PathVariable(required = true,value = "userIdx")int userIdx){
-        int userIdxJWT;
         try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
-        try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             GetMyUserInfoRes getMyUserInfoRes = userInfoProvider.getMyInfo(userIdx);
             return new BaseResponse<>(SUCCESS, getMyUserInfoRes);
         }catch (BaseException exception) {
@@ -413,16 +408,11 @@ public class UserInfoController {
     @Operation(summary="전문가 전환 API",description = "일반->전문가, 일반(개인사업자)->전문가(개인사업자), 일반(법인사업자)->전문가(법인사업자), 토큰이 필요합니다.")
     public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq,
                                                        @PathVariable(required = true,value = "userIdx")int userIdx){
-        int userIdxJWT;
         try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
-        try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);
         }catch (BaseException exception) {
@@ -435,15 +425,6 @@ public class UserInfoController {
     @Operation(summary="비밀번호 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyPassword(@RequestBody PatchUserPasswordReq patchUserPasswordReq,
                                                 @PathVariable(required = true,value = "userIdx")int userIdx){
-        int userIdxJWT;
-        try{
-            userIdxJWT = jwtService.getUserIdx();
-        }catch(BaseException exception){
-            return new BaseResponse<>(exception.getStatus());
-        }
-        if(userIdxJWT!=userIdx){
-            return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
-        }
         if(patchUserPasswordReq.getCurrentPassword()==null || patchUserPasswordReq.getCurrentPassword().length()==0){
             return new BaseResponse<>(EMPTY_PASSWORD);
         }
@@ -460,6 +441,10 @@ public class UserInfoController {
             return new BaseResponse<>(DO_NOT_MATCH_PASSWORD);
         }
         try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
             userInfoService.patchMyPassword(userIdx, patchUserPasswordReq);
             return new BaseResponse<String>(SUCCESS);
         }catch (BaseException exception) {
