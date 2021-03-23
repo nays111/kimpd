@@ -136,14 +136,13 @@ public class AdminUserInfoService {
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
-        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         int agreeShowDB = 0;
         if (userType == 4 || userType == 5 || userType == 6) {
             agreeShowDB = 1;
         }
         AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, name, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
-                corporationBusinessNumber, agreeShowDB, "ACTIVE");
+                agreeShowDB, "ACTIVE");
 
         // 3. 유저 정보 저장
         try {
@@ -165,7 +164,6 @@ public class AdminUserInfoService {
     public void updateUserInfo(AdminPatchUserReq adminPatchUserReq) throws BaseException {
         AdminUserInfo adminUserInfo = null;
         int userType = 0;
-        int agreeShowDB = 0;
 
         adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
         if(adminUserInfo == null){
@@ -204,17 +202,13 @@ public class AdminUserInfoService {
             userType = 3;
         } else if (adminPatchUserReq.getUserType().equals("전문가-클라이언트")) {
             userType = 4;
-            agreeShowDB = 1;
         } else if (adminPatchUserReq.getUserType().equals("전문가-개인")) {
             userType = 5;
-            agreeShowDB = 1;
         } else if (adminPatchUserReq.getUserType().equals("전문가-법인")) {
             userType = 6;
-            agreeShowDB = 1;
         }
 
         adminUserInfo.setUserType(userType);
-        adminUserInfo.setAgreeShowDB(agreeShowDB);
         adminUserInfo.setId(adminPatchUserReq.getId());
         adminUserInfo.setEmail(adminPatchUserReq.getEmail());
         adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
@@ -274,12 +268,6 @@ public class AdminUserInfoService {
             adminUserInfo.setCorporationBusinessName(null);
         else
             adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
-
-
-        if (adminPatchUserReq.getCorporationBusinessNumber() == null || adminPatchUserReq.getCorporationBusinessNumber().length() == 0)
-            adminUserInfo.setCorporationBusinessNumber(null);
-        else
-            adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
 
         adminUserInfo.setStatus(adminPatchUserReq.getStatus());
         adminUserInfoRepository.save(adminUserInfo);

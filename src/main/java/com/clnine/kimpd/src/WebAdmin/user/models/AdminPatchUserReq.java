@@ -24,6 +24,5 @@ public class AdminPatchUserReq {
     private String businessNumber;
     private String businessImageURL;
     private String corporationBusinessName;
-    private String corporationBusinessNumber;
     private String status;
 }

@@ -35,7 +35,5 @@ public class AdminGetUserRes {
     private final String businessImageURL;
     @Nullable
     private final String corporationBusinessName;
-    @Nullable
-    private final String corporationBusinessNumber;
     private final String status;
 }
