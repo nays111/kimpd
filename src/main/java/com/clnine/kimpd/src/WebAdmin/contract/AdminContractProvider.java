@@ -6,10 +6,6 @@ import com.clnine.kimpd.src.WebAdmin.contract.models.AdminContract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_NOTICES;
 
 @Service
@@ -39,24 +35,5 @@ public class AdminContractProvider {
 
         return new AdminGetContractRes(contractContent);
     }
-
-    /**
-     * 공지사항 조회
-     * @param noticeIdx
-     * @return AdminNotice
-     * @throws BaseException
-     */
-//    public AdminContract retrieveNoticeByNoticeIdx(int noticeIdx) throws BaseException {
-//        // 1. DB에서 AdminNotice 조회
-//        AdminContract adminContract;
-//        try {
-//            adminContract = adminContractRepository.findById(noticeIdx).orElse(null);
-//        } catch (Exception ignored) {
-//            throw new BaseException(FAILED_TO_GET_NOTICES);
-//        }
-//
-//        // 2. AdminNotice return
-//        return adminContract;
-//    }
 
 }

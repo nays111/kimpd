@@ -7,8 +7,6 @@ import com.clnine.kimpd.src.WebAdmin.user.AdminUserInfoProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 
@@ -69,38 +67,4 @@ public class AdminContractController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
-
-    /**
-     * 공지사항 수정 API
-     * [PATCH] /notices
-     * @RequestBody AdminPatchNoticesReq
-     * @return BaseResponse<Void>
-     */
-//    @ResponseBody
-//    @PatchMapping("/notices")
-//    @CrossOrigin(origins = "*")
-//    public BaseResponse<Void> patchNotices(@RequestBody AdminPatchNoticesReq parameters) {
-//        if (parameters.getNoticeIdx() <= 0) {
-//            return new BaseResponse<>(EMPTY_NOTICE_IDX);
-//        }
-//
-//        if (parameters.getNoticeTitle() == null || parameters.getNoticeTitle().length() <= 0) {
-//            return new BaseResponse<>(EMPTY_NOTICE_TITLE);
-//        }
-//
-//        if (parameters.getNoticeDescription() == null || parameters.getNoticeDescription().length() <= 0) {
-//            return new BaseResponse<>(EMPTY_NOTICE_DESCRIPTION);
-//        }
-//
-//        try {
-//            if(adminUserInfoProvider.checkJWT() == false){
-//                return new BaseResponse<>(INVALID_JWT);
-//            }
-//
-//            adminContractService.updateNotice(parameters);
-//            return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
-//        } catch (BaseException exception) {
-//            return new BaseResponse<>(exception.getStatus());
-//        }
-//    }
 }

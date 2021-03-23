@@ -35,6 +35,4 @@ public class AdminPostUserReq {
     private String businessImageURL;
     @Nullable
     private String corporationBusinessName;
-    @Nullable
-    private String corporationBusinessNumber;
 }

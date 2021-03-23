@@ -115,12 +115,11 @@ public class AdminUserInfoProvider {
         String businessNumber = adminUserInfo.getBusinessNumber();
         String businessImageURL = adminUserInfo.getBusinessImageURL();
         String corporationBusinessName = adminUserInfo.getCorporationBusinessName();
-        String corporationBusinessNumber = adminUserInfo.getCorporationBusinessNumber();
         String status = adminUserInfo.getStatus();
 
         return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, name, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber,
-                businessImageURL, corporationBusinessName, corporationBusinessNumber, status);
+                businessImageURL, corporationBusinessName, status);
     }
 
     /**

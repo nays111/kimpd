@@ -45,6 +45,7 @@ public enum BaseResponseStatus {
     SUCCESS_READ_REPORTS(true,1511,"신고 조회에 성공하였습니다."),
     SUCCESS_READ_CONTRACTS(true,1512,"계약서 조회에 성공하였습니다."),
     SUCCESS_PATCH_CONTRACTS(true, 1513, "계약서 수정에 성공하였습니다."),
+    SUCCESS_VIEW_CORP_NUM(true, 1514, "사업자 등록 번호 인증에 성공하였습니다."),
 
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),

@@ -129,7 +129,7 @@ public class AdminUserInfo extends BaseEntity {
     private String corporationBusinessNumber;
 
     @Column(name="agreeAdvertisement")
-    private int agreeAdvertisement=0;
+    private int agreeAdvertisement=1;
 
     @Column(name="agreeShowDB")
     private int agreeShowDB=0;
@@ -143,8 +143,7 @@ public class AdminUserInfo extends BaseEntity {
     public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String name, String city,
                          String nickname, String profileImageURL, String introduce, String career, String etc,
                          String minimumCastingPrice, String privateBusinessName, String businessNumber,
-                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
-                         int agreeShowDB, String status) {
+                         String businessImageURL, String corporationBusinessName, int agreeShowDB, String status) {
         this.userType = userType;
         this.id = id;
         this.password = password;
@@ -162,7 +161,6 @@ public class AdminUserInfo extends BaseEntity {
         this.businessNumber = businessNumber;
         this.businessImageURL = businessImageURL;
         this.corporationBusinessName = corporationBusinessName;
-        this.corporationBusinessNumber = corporationBusinessNumber;
         this.agreeShowDB = agreeShowDB;
         this.status = status;
     }

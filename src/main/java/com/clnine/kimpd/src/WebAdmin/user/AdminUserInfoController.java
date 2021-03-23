@@ -137,9 +137,6 @@ public class AdminUserInfoController {
             if (parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
             }
-            if (parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
-                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
-            }
             if (parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
@@ -245,9 +242,6 @@ public class AdminUserInfoController {
             }
             if(parameters.getBusinessNumber() == null || parameters.getBusinessNumber().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_NUMBER);
-            }
-            if(parameters.getCorporationBusinessNumber() == null || parameters.getCorporationBusinessNumber().length() == 0){
-                return new BaseResponse<>(EMPTY_CORP_BUSINESS_NUMBER);
             }
             if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
@@ -419,10 +413,13 @@ public class AdminUserInfoController {
         if(corpNum.length()>13 || corpNum.length()<10){
             return  new BaseResponse<>(WRONG_CORP_NUM);
         }
+        if(corpNum.indexOf("-") != -1){
+            return new BaseResponse<>(WRONG_CORP_NUM);
+        }
         CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
         int state = corpState.getState();
         if(state>=1){
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_VIEW_CORP_NUM);
         }else{
             return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);
         }

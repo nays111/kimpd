@@ -11,12 +11,10 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 @Service
 public class AdminContractService {
     private final AdminContractRepository adminContractRepository;
-    private final AdminContractProvider adminContractProvider;
 
     @Autowired
-    public AdminContractService(AdminContractRepository adminContractRepository, AdminContractProvider adminContractProvider) {
+    public AdminContractService(AdminContractRepository adminContractRepository) {
         this.adminContractRepository = adminContractRepository;
-        this.adminContractProvider = adminContractProvider;
     }
 
     /**
