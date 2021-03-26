@@ -72,7 +72,7 @@ public class AdminInquiryController {
 
     /**
      * 1:1문의 답글 API
-     * [PATCH] /faqs
+     * [PATCH] /inquiries
      * @RequestBody AdminPatchFaqsReq
      * @return BaseResponse<Void>
      */

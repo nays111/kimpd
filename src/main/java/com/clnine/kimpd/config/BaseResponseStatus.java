@@ -176,6 +176,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
     FAILED_TO_GET_REPORTS(false,3518,"신고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_CONTRACT(false,3519,"계약서 수정에 실패했습니다."),
+    EMPTY_REVIEW(false,3520,"평가 대기입니다."),
 
 
     // 4000 : Database 오류
