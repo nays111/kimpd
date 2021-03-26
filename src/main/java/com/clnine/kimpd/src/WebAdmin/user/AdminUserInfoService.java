@@ -131,18 +131,20 @@ public class AdminUserInfoService {
         String introduce = postUserReq.getIntroduce();
         String career = postUserReq.getCareer();
         String etc = postUserReq.getEtc();
-        String minimumCastingPrice = postUserReq.getMinimumCastingPrice();
+        int minimumCastingPrice = postUserReq.getMinimumCastingPrice();
         String privateBusinessName = postUserReq.getPrivateBusinessName();
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
+        String castingPossibleStartDate = postUserReq.getCastingPossibleStartDate();
+        String castingPossibleEndDate = postUserReq.getCastingPossibleEndDate();
         int agreeShowDB = 0;
         if (userType == 4 || userType == 5 || userType == 6) {
             agreeShowDB = 1;
         }
         AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, name, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
-                agreeShowDB, "ACTIVE");
+                castingPossibleStartDate, castingPossibleEndDate, agreeShowDB, "ACTIVE");
 
         // 3. 유저 정보 저장
         try {
@@ -244,10 +246,7 @@ public class AdminUserInfoService {
         else
             adminUserInfo.setEtc(adminPatchUserReq.getEtc());
 
-        if (adminPatchUserReq.getMinimumCastingPrice() == null || adminPatchUserReq.getMinimumCastingPrice().length() == 0)
-            adminUserInfo.setMinimumCastingPrice(null);
-        else
-            adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
+        adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
 
         if (adminPatchUserReq.getPrivateBusinessName() == null || adminPatchUserReq.getPrivateBusinessName().length() == 0)
             adminUserInfo.setPrivateBusinessName(null);
@@ -268,6 +267,18 @@ public class AdminUserInfoService {
             adminUserInfo.setCorporationBusinessName(null);
         else
             adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
+
+        if (adminPatchUserReq.getCastingPossibleStartDate() == null || adminPatchUserReq.getCastingPossibleStartDate().length() == 0) {
+            adminUserInfo.setCastingPossibleStartDate(null);
+        } else {
+            adminUserInfo.setCastingPossibleStartDate(adminPatchUserReq.getCastingPossibleStartDate());
+        }
+
+        if (adminPatchUserReq.getCastingPossibleEndDate() == null || adminPatchUserReq.getCastingPossibleEndDate().length() == 0) {
+            adminUserInfo.setCastingPossibleEndDate(null);
+        } else {
+            adminUserInfo.setCastingPossibleEndDate(adminPatchUserReq.getCastingPossibleEndDate());
+        }
 
         adminUserInfo.setStatus(adminPatchUserReq.getStatus());
         adminUserInfoRepository.save(adminUserInfo);

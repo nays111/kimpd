@@ -19,10 +19,12 @@ public class AdminPatchUserReq {
     private String introduce;
     private String career;
     private String etc;
-    private String minimumCastingPrice;
+    private int minimumCastingPrice;
     private String privateBusinessName;
     private String businessNumber;
     private String businessImageURL;
     private String corporationBusinessName;
+    private String castingPossibleStartDate;
+    private String castingPossibleEndDate;
     private String status;
 }

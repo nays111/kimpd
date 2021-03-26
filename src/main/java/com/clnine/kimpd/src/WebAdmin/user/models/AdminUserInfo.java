@@ -77,7 +77,7 @@ public class AdminUserInfo extends BaseEntity {
     /**
      * 전문가 소개
      */
-    @Column(name = "introuduce")
+    @Column(name = "introduce")
     private String introduce;
 
     /**
@@ -96,7 +96,7 @@ public class AdminUserInfo extends BaseEntity {
      * 최소 섭외 비용
      */
     @Column(name = "minimumCastingPrice")
-    private String minimumCastingPrice;
+    private int minimumCastingPrice;
 
     /**
      * 개인 사업명
@@ -122,17 +122,17 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "corporationBusinessName")
     private String corporationBusinessName;
 
-    /**
-     * 법인 사업자 번호
-     */
-    @Column(name = "corporationBusinessNumber")
-    private String corporationBusinessNumber;
-
     @Column(name="agreeAdvertisement")
     private int agreeAdvertisement=1;
 
     @Column(name="agreeShowDB")
     private int agreeShowDB=0;
+
+    @Column(name = "castingPossibleStartDate")
+    private String castingPossibleStartDate;
+
+    @Column(name = "castingPossibleEndDate")
+    private String castingPossibleEndDate;
 
     /**
      * 상태
@@ -142,8 +142,9 @@ public class AdminUserInfo extends BaseEntity {
 
     public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String name, String city,
                          String nickname, String profileImageURL, String introduce, String career, String etc,
-                         String minimumCastingPrice, String privateBusinessName, String businessNumber,
-                         String businessImageURL, String corporationBusinessName, int agreeShowDB, String status) {
+                         int minimumCastingPrice, String privateBusinessName, String businessNumber,
+                         String businessImageURL, String corporationBusinessName, String castingPossibleStartDate,
+                         String castingPossibleEndDate, int agreeShowDB, String status) {
         this.userType = userType;
         this.id = id;
         this.password = password;
@@ -162,6 +163,8 @@ public class AdminUserInfo extends BaseEntity {
         this.businessImageURL = businessImageURL;
         this.corporationBusinessName = corporationBusinessName;
         this.agreeShowDB = agreeShowDB;
+        this.castingPossibleStartDate = castingPossibleStartDate;
+        this.castingPossibleEndDate = castingPossibleEndDate;
         this.status = status;
     }
 }

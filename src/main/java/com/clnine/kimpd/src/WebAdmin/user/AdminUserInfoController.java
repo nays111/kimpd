@@ -45,7 +45,7 @@ public class AdminUserInfoController {
             List<AdminGetUsersRes> adminGetUsersResList = adminUserInfoProvider.retrieveUserInfoList(word);
             AdminGetUsersListRes userInfo = new AdminGetUsersListRes(adminGetUsersResList);
 
-            return new BaseResponse<>(SUCCESS_READ_USERS, userInfo);
+            return new BaseResponse<>(SUCCESS, userInfo);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -70,7 +70,7 @@ public class AdminUserInfoController {
                 return new BaseResponse<>(INVALID_JWT);
             }
             AdminGetUserRes adminGetUserRes = adminUserInfoProvider.retrieveUserInfo(userIdx);
-            return new BaseResponse<>(SUCCESS_READ_USER, adminGetUserRes);
+            return new BaseResponse<>(SUCCESS, adminGetUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -175,7 +175,7 @@ public class AdminUserInfoController {
             }
 
             AdminPostUserRes adminPostUserRes = adminUserInfoService.createUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, adminPostUserRes);
+            return new BaseResponse<>(SUCCESS, adminPostUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -262,14 +262,14 @@ public class AdminUserInfoController {
             }
 
             adminUserInfoService.updateUserInfo(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_USER);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
     }
 
     /**
-     * 사용자 비밀번호 수정 API
+     * 사용자 비밀번호 초기화 API
      * [PATCH] /user-password
      * @RequestBody AdminPatchUserPwReq
      * @return BaseResponse<Void>
@@ -283,9 +283,13 @@ public class AdminUserInfoController {
             return new BaseResponse<>(EMPTY_USERID);
         }
 
-        System.out.println(parameters.getEmail());
         if (parameters.getEmail() == null || parameters.getEmail().length() <= 0) {
             return new BaseResponse<>(EMPTY_EMAIL);
+        }
+        else{
+            if (!isRegexEmail(parameters.getEmail())){
+                return new BaseResponse<>(INVALID_EMAIL);
+            }
         }
 
         try {
@@ -294,7 +298,7 @@ public class AdminUserInfoController {
             }
 
             adminUserInfoService.updateUserPw(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_USER_PASSWORD);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -321,7 +325,7 @@ public class AdminUserInfoController {
         // 2. Post UserInfo
         try {
             AdminPostAdminRes adminPostAdminRes = adminUserInfoService.createAdminInfo(parameters);
-            return new BaseResponse<>(SUCCESS_POST_USER, adminPostAdminRes);
+            return new BaseResponse<>(SUCCESS, adminPostAdminRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -348,7 +352,7 @@ public class AdminUserInfoController {
         // 2. Login
         try {
             AdminPostLoginRes adminPostLoginRes = adminUserInfoProvider.login(parameters);
-            return new BaseResponse<>(SUCCESS_LOGIN, adminPostLoginRes);
+            return new BaseResponse<>(SUCCESS, adminPostLoginRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -371,11 +375,11 @@ public class AdminUserInfoController {
         }
 
         if (parameters.getPassword() == null || parameters.getPassword().length() <= 0) {
-            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
+            return new BaseResponse<>(EMPTY_PASSWORD);
         }
 
         if (parameters.getNewPassword() == null || parameters.getNewPassword().length() <= 0) {
-            return new BaseResponse<>(EMPTY_CONFIRM_PASSWORD);
+            return new BaseResponse<>(EMPTY_NEW_PASSWORD);
         }
 
         if (parameters.getConfirmPassword() == null || parameters.getConfirmPassword().length() <= 0) {
@@ -391,7 +395,7 @@ public class AdminUserInfoController {
                 return new BaseResponse<>(INVALID_JWT);
             }
 
-            return new BaseResponse<>(SUCCESS_PATCH_USER, adminUserInfoService.updateAdminInfo(parameters));
+            return new BaseResponse<>(SUCCESS, adminUserInfoService.updateAdminInfo(parameters));
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -419,7 +423,7 @@ public class AdminUserInfoController {
         CorpState corpState = barobillApiService.corpState.getCorpState(barobillCertyKey,barbobillCorpNum,corpNum);
         int state = corpState.getState();
         if(state>=1){
-            return new BaseResponse<>(SUCCESS_VIEW_CORP_NUM);
+            return new BaseResponse<>(SUCCESS);
         }else{
             return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);
         }
