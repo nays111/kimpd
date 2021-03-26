@@ -24,10 +24,10 @@ public class AdminReviewController {
      * @return BaseResponse<AdminGetReviewRes>
      */
     @ResponseBody
-    @GetMapping("/reviews/{reviewIdx}")
+    @GetMapping("/reviews/{castingIdx}")
     @CrossOrigin(origins = "*")
-    public BaseResponse<AdminGetReviewRes> getReview(@PathVariable Integer reviewIdx) {
-        if (reviewIdx == null || reviewIdx <= 0) {
+    public BaseResponse<AdminGetReviewRes> getReview(@PathVariable Integer castingIdx) {
+        if (castingIdx == null || castingIdx <= 0) {
             return new BaseResponse<>(EMPTY_REVIEW_IDX);
         }
 
@@ -36,7 +36,7 @@ public class AdminReviewController {
                 return new BaseResponse<>(INVALID_JWT);
             }
 
-            AdminGetReviewRes adminGetReviewRes = adminReviewProvider.retrieveReviewInfo(reviewIdx);
+            AdminGetReviewRes adminGetReviewRes = adminReviewProvider.retrieveReviewInfo(castingIdx);
             return new BaseResponse<>(SUCCESS_READ_REVIEWS, adminGetReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
