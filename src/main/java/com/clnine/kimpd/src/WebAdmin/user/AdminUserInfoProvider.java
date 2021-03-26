@@ -110,7 +110,7 @@ public class AdminUserInfoProvider {
         String introduce = adminUserInfo.getIntroduce();
         String career = adminUserInfo.getCareer();
         String etc = adminUserInfo.getEtc();
-        String minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
+        int minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
         String privateBusinessName = adminUserInfo.getPrivateBusinessName();
         String businessNumber = adminUserInfo.getBusinessNumber();
         String businessImageURL = adminUserInfo.getBusinessImageURL();

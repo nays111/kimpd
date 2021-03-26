@@ -25,8 +25,7 @@ public class AdminPostUserReq {
     private String career;
     @Nullable
     private String etc;
-    @Nullable
-    private String minimumCastingPrice;
+    private int minimumCastingPrice;
     @Nullable
     private String privateBusinessName;
     @Nullable
@@ -35,4 +34,8 @@ public class AdminPostUserReq {
     private String businessImageURL;
     @Nullable
     private String corporationBusinessName;
+    @Nullable
+    private String castingPossibleStartDate;
+    @Nullable
+    private String castingPossibleEndDate;
 }

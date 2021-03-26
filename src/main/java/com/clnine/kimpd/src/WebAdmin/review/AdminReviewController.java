@@ -37,7 +37,7 @@ public class AdminReviewController {
             }
 
             AdminGetReviewRes adminGetReviewRes = adminReviewProvider.retrieveReviewInfo(castingIdx);
-            return new BaseResponse<>(SUCCESS_READ_REVIEWS, adminGetReviewRes);
+            return new BaseResponse<>(SUCCESS, adminGetReviewRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

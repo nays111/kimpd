@@ -37,7 +37,7 @@ public class AdminReportController {
 
             getReportsResList = adminReportProvider.getReportList();
             AdminGetReportsListRes reportList = new AdminGetReportsListRes(getReportsResList);
-            return new BaseResponse<>(SUCCESS_READ_REPORTS, reportList);
+            return new BaseResponse<>(SUCCESS, reportList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -63,7 +63,7 @@ public class AdminReportController {
             }
 
             AdminGetReportRes adminGetReportRes = adminReportProvider.retrieveReportInfo(reportIdx);
-            return new BaseResponse<>(SUCCESS_READ_REPORTS, adminGetReportRes);
+            return new BaseResponse<>(SUCCESS, adminGetReportRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

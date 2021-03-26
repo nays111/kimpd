@@ -38,7 +38,7 @@ public class AdminInquiryController {
 
             getInquiriesResList = adminInquiryProvider.getInquiryList();
             AdminGetInquiriesListRes InquiryList = new AdminGetInquiriesListRes(getInquiriesResList);
-            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, InquiryList);
+            return new BaseResponse<>(SUCCESS, InquiryList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -64,7 +64,7 @@ public class AdminInquiryController {
             }
 
             AdminGetInquiryRes adminGetInquiryRes = adminInquiryProvider.retrieveInquiryInfo(inquiryIdx);
-            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, adminGetInquiryRes);
+            return new BaseResponse<>(SUCCESS, adminGetInquiryRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -90,7 +90,7 @@ public class AdminInquiryController {
             }
 
             adminInquiryService.updateInquiry(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_FAQS);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

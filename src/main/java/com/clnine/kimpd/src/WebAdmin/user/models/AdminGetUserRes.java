@@ -25,8 +25,7 @@ public class AdminGetUserRes {
     private final String career;
     @Nullable
     private final String etc;
-    @Nullable
-    private final String minimumCastingPrice;
+    private final int minimumCastingPrice;
     @Nullable
     private final String privateBusinessName;
     @Nullable

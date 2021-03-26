@@ -122,6 +122,7 @@ public enum BaseResponseStatus {
     EMPTY_NAME(false, 2515, "이름을 입력해주세요."),
     EMPTY_REVIEW_IDX(false, 2516, "평가 인덱스가 비었습니다."),
     EMPTY_CONTRACT_CONTENT(false, 2517, "계약서 내용이 비었습니다."),
+    EMPTY_NEW_PASSWORD(false, 2518, "새로운 비밀번호를 입력해주세요."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),

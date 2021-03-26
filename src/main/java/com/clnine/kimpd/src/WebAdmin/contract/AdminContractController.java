@@ -34,7 +34,7 @@ public class AdminContractController {
             }
 
             AdminGetContractRes adminGetContractRes = adminContractProvider.retrieveContractInfo();
-            return new BaseResponse<>(SUCCESS_READ_CONTRACTS, adminGetContractRes);
+            return new BaseResponse<>(SUCCESS, adminGetContractRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -62,7 +62,7 @@ public class AdminContractController {
             }
 
             adminContractService.updateContract(parameters);
-            return new BaseResponse<>(SUCCESS_PATCH_CONTRACTS);
+            return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
