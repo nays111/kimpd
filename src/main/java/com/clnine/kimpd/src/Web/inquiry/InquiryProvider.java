@@ -85,7 +85,7 @@ public class InquiryProvider {
         if(inquiry.getUserInfo()!=userInfo){
             throw new BaseException(NOT_USER_INQUIRY);
         }
-        List<InquiryFile> inquiryFiles = inquiryFileRepository.findAllByInquiry(inquiry);
+        List<InquiryFile> inquiryFiles = inquiryFileRepository.findAllByInquiryAndStatus(inquiry,"ACTIVE");
         List<String> inquiryFileUrlList  = new ArrayList<>();
         for(int i=0;i<inquiryFiles.size();i++){
             String name = inquiryFiles.get(i).getInquiryFileName();

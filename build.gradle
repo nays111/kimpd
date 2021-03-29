@@ -62,6 +62,23 @@ dependencies {
 
 	implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
 
+	//html to pdf
+	implementation files("src/main/java/com/clnine/kimpd/libs/html2pdf-3.0.3.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/barcodes-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/font-asian-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/forms-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/hyph-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/io-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/kernel-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/layout-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/pdfa-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/pdftest-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/sign-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/styled-xml-parser-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/svg-7.1.14.jar")
+
+
+
 }
 
 test {

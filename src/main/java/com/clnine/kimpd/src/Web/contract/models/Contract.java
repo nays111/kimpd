@@ -22,8 +22,8 @@ public class Contract extends BaseEntity {
     @JoinColumn(name="castingIdx")
     private Casting casting;
 
-    @Column(name="contractFileURL")
-    private String contractFileURL;
+    @Column(name="contractContent")
+    private String contractContent;
 
     @Column(name="status")
     private String status = "ACTIVE";
