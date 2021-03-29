@@ -241,7 +241,7 @@ public class CastingProvider {
 
             String castingStatusString = null;
             if(castingStatus1==1){
-                castingStatusString="미확인승인요청";
+                castingStatusString="미확인 승인요청";
             }else if(castingStatus1==2){
                 castingStatusString="섭외승인";
             }else if(castingStatus1==3){

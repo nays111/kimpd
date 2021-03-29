@@ -141,6 +141,8 @@ public enum BaseResponseStatus {
     WRONG_YEAR(false,2124,"잘못된 년도 형식입니다.(4자리로 입력해주세요.)"),
     WRONG_MONTH(false,2125,"잘못된 월 형식입니다.(01~12 사이의 값을 입력해주세요.)"),
     WRONG_DAY(false,2126,"잘못된 일 형식입니다.(01~31 사이의 값을 입력해주세요.)"),
+    CANNOT_CASTING_YOURSELF(false,2127,"본인에게 섭외신청을 할 수 없습니다."),
+    CANNOT_PUT_BASKET_YOURSELF(false,2128,"본인을 장바구니에 담을 수는 없습니다."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
@@ -215,6 +217,7 @@ public enum BaseResponseStatus {
     NOT_USER_MESSAGE(false,3040,"회원의 메시지가 아닙니다."),
     NO_INQUIRY(false,3041,"존재하지 않는 1:1문의 입니다."),
     NOT_USER_INQUIRY(false,3042,"본인이 등록한 1:1문의가 아닙니다."),
+    NO_CASTING_FOR_YOU(false,3063,"본인한테 온 섭외 요청이 아닙니다."),
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),

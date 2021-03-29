@@ -34,7 +34,9 @@ public class ProjectProvider {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_PROJECTS);
         }
-        if(project==null){ throw new BaseException(FAILED_TO_GET_PROJECTS); }
+        if(project==null){
+            throw new BaseException(FAILED_TO_GET_PROJECTS);
+        }
         return project;
     }
     /**
@@ -110,7 +112,7 @@ public class ProjectProvider {
             String projectName = projectList.get(i).getProjectName();
             String projectDescription = projectList.get(i).getProjectDescription();
             String projectDate = projectList.get(i).getProjectStartDate()+"~"+projectList.get(i).getProjectEndDate();
-            //projectDate = projectDate.replace("/",".");
+
             String projectBudget = projectList.get(i).getProjectBudget()+"원";
             GetProjectsDTO getProjectsDTO = new GetProjectsDTO(projectIdx,projectName,projectDescription,projectDate,projectBudget);
             getProjectsList.add(getProjectsDTO);

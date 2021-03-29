@@ -39,6 +39,9 @@ public class CastingService {
     public void PostCasting(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException {
         UserInfo userInfo=userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
+        if(expertInfo.getUserType()==1 || expertInfo.getUserType()==2 || expertInfo.getUserType()==3){
+            throw new BaseException(NOT_EXPERT);
+        }
         /**
          * 프로젝트 저장
          */
@@ -110,11 +113,17 @@ public class CastingService {
          * 전문가 객체 검색
          */
         UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
+        if(expertInfo.getUserType()==1 || expertInfo.getUserType()==2 || expertInfo.getUserType()==3){
+            throw new BaseException(NOT_EXPERT);
+        }
 
         /**
          * projectIdx로 Project 객체 찾아오기
          */
         Project project = projectProvider.retrieveProjectByProjectIdx(postCastingReq.getProjectIdx());
+        if(project.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NOT_USER_PROJECT);
+        }
 
         /**
          * 이미 이 전문가한테 이 프로젝트를 섭외 요청한 경우
@@ -204,8 +213,8 @@ public class CastingService {
      */
     public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException{
         Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
-        if(casting.getUserInfo().getUserIdx()!=userIdx){
-            throw new BaseException(NO_CASTING);
+        if(casting.getExpert().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING_FOR_YOU);
         }
         casting.setCastingStatus(state);
         try{
