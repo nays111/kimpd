@@ -8,5 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface InquiryFileRepository extends CrudRepository<InquiryFile,Integer> {
-    List<InquiryFile> findAllByInquiry(Inquiry inquiry);
+    List<InquiryFile> findAllByInquiryAndStatus(Inquiry inquiry,String status);
 }
