@@ -149,6 +149,9 @@ public class CastingController {
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
+        if(userIdx==expertIdx){
+            return new BaseResponse<>(CANNOT_CASTING_YOURSELF);
+        }
         /**
          * 프로젝트를 불러오지 않고 수기로 신규 신청하는 경우
          */

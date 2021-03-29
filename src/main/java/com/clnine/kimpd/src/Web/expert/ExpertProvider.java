@@ -240,7 +240,7 @@ public class ExpertProvider {
         String endMonth = year+"."+month+"."+size;
 
         ArrayList<Integer> dayList = new ArrayList<>();
-        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(userInfo,"ACTIVE",endMonth,startMonth);
+        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(userInfo,"ACTIVE",2,endMonth,startMonth);
 
         //List<GetMyExpertSchedulesManage> getMyExpertSchedulesManageList = new ArrayList<>();
         for(int i=0;i<castingList.size();i++){
@@ -286,7 +286,7 @@ public class ExpertProvider {
         System.out.println(searchDay);
         List<GetMyReceivedCastingsByCalendarRes> getMyReceivedCastingsByCalendarResList = new ArrayList<>();
 
-        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(expertInfo,"ACTIVE",searchDay,searchDay);
+        List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(expertInfo,"ACTIVE",2,searchDay,searchDay);
 
         for(int i=0;i<castingList.size();i++){
             int userIdx = castingList.get(i).getUserInfo().getUserIdx();

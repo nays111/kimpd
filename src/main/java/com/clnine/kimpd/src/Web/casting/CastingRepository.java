@@ -73,7 +73,7 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
     int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end);
 
     //전문가 캐스팅 정보 달력 조회
-    List<Casting> findAllByExpertAndStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(UserInfo userInfo,String status,String startDate,String endDate);
+    List<Casting> findAllByExpertAndStatusAndCastingStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(UserInfo userInfo,String status,int castingStatus,String startDate,String endDate);
 
 
     //전문가 캐스팅 정보 달력으로 상세 조회
