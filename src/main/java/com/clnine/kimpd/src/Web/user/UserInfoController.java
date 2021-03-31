@@ -413,6 +413,10 @@ public class UserInfoController {
             if(userIdxJWT!=userIdx){
                 return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
             }
+            if(patchUserTypeReq.getJobCategoryIdx().size()==0){
+
+            }
+
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);
         }catch (BaseException exception) {

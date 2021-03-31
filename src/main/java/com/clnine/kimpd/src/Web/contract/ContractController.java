@@ -7,6 +7,7 @@ import com.clnine.kimpd.src.Web.contract.models.HtmlToPdfReq;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -22,17 +23,19 @@ public class ContractController {
 
     @ResponseBody
     @PostMapping("/to-pdf/{contractIdx}")
-    public BaseResponse<GetContractRes> getContract(@PathVariable(required = true,value="contractIdx") int contractIdx,
+    public BaseResponse<String> getContract(@PathVariable(required = true,value="contractIdx") int contractIdx,
                                                     @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException {
-//        int userIdx;
-//        try{
-//            userIdx = jwtService.getUserIdx();
-//        }catch(BaseException exception){
-//            return new BaseResponse<>(exception.getStatus());
-//        }
 
-           contractProvider.makepdf(contractIdx,htmlToPdfReq.getDest());
-            return new BaseResponse<>(SUCCESS);
+           String s = contractProvider.makepdf(null,contractIdx);
+            return new BaseResponse<>(SUCCESS,s);
 
+    }
+
+
+    @PostMapping("/profile/pic")
+    public BaseResponse<String> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        //logger.info("HIT -/upload | File Name : {}", multipartFile.getOriginalFilename());
+        String s = contractProvider.upload(multipartFile);
+        return new BaseResponse<>(SUCCESS,s);
     }
 }
