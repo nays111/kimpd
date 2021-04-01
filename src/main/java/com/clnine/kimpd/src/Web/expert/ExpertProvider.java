@@ -139,7 +139,7 @@ public class ExpertProvider {
 
         List<Object[]> resultList = null;
         List<Object[]> sizeResultList = null;
-        if(sort==1){ //퍙점순 정렬
+        if(sort==1){ //평점순 정렬
             resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
             sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
         } else if(sort==2){ //섭외순 정렬
@@ -165,6 +165,7 @@ public class ExpertProvider {
     /**
      * 내 정보 조회 (전문가일 경우)
      */
+    @Transactional(readOnly = true)
     public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
@@ -222,6 +223,7 @@ public class ExpertProvider {
         return getMyExpertRes;
     }
 
+    @Transactional(readOnly = true)
     public GetMyExpertSchedulesManage getMyExpertSchedule(int userIdx,String year,String month) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
@@ -257,10 +259,10 @@ public class ExpertProvider {
             }else{
                 endDate = castingList.get(i).getCastingEndDate();
             }
-            //System.out.println(startDate+" "+endDate);
+
             int startDay = Integer.parseInt(startDate.substring(8));
             int endDay = Integer.parseInt(endDate.substring(8));
-            //System.out.println(startDay+" "+endDay);
+
             for(int j=startDay;j<=endDay;j++){
                 dayList.add(j);
             }
@@ -293,8 +295,7 @@ public class ExpertProvider {
             String userProfileImageUrl = castingList.get(i).getUserInfo().getProfileImageURL();
             String name = castingList.get(i).getUserInfo().getName();
             String nickname = castingList.get(i).getUserInfo().getNickname();
-            //todo issue : 섭외한 사람이 일반인이면 소개가 없는데 여기서(introduce)에서 뭐가 출력?
-            String introduce = castingList.get(i).getUserInfo().getIntroduce();
+
             String castingStartDate = castingList.get(i).getCastingStartDate();
             String castingEndDate = castingList.get(i).getCastingEndDate();
             String castingDate = castingStartDate + "~" + castingEndDate;
@@ -307,7 +308,7 @@ public class ExpertProvider {
             String castingMessage = castingList.get(i).getCastingMessage();
             GetMyReceivedCastingsByCalendarRes getMyReceivedCastingsByCalendarRes =
                     new GetMyReceivedCastingsByCalendarRes(userIdx,userProfileImageUrl,name,nickname,
-                            introduce,castingDate,castingPrice,projectName,projectDescription,projectMaker,
+                            castingDate,castingPrice,projectName,projectDescription,projectMaker,
                             projectManager,castingPriceDate,castingMessage);
             getMyReceivedCastingsByCalendarResList.add(getMyReceivedCastingsByCalendarRes);
         }

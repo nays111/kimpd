@@ -10,7 +10,7 @@ public class GetMyReceivedCastingsByCalendarRes {
     private final String userProfileImageUrl;
     private final String name;
     private final String nickname;
-    private final String introduce;
+
     private final String castingDate;
     private final String castingPrice;
     private final String projectName;
