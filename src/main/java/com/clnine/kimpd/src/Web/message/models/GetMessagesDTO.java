@@ -8,6 +8,7 @@ import lombok.Getter;
 public class GetMessagesDTO {
     private final int messageIdx;
     private final String senderNickName;
+    private final String senderProfileImageUrl;
     private final String senderJobName;
     private final String sendTime;
     private final String description;

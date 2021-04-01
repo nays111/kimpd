@@ -211,6 +211,7 @@ public class CastingService {
      * @param patchCastingStatusReq
      * @throws BaseException
      */
+    @Transactional
     public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException{
         Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
         if(casting.getExpert().getUserIdx()!=userIdx){

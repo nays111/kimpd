@@ -72,12 +72,25 @@ public class ContractProvider {
         Contract contract = contractRepository.findByContractIdx(contractIdx);
 
 
+//        String castingUserName = casting.getUserInfo().getName();
+//        String expertName = casting.getExpert().getName();
+//        String projectName = casting.getProject().getProjectName();
+
+
 
 
 
 
         //계약서 html (string)
         String BODY = contract.getContractContent();
+        BODY=BODY.replace("표준계약서","팀");
+//        BODY.replace("펴준계약서","팀");
+        //BODY.replaceAll("표준계약서","팀");
+
+
+
+
+        System.out.println(BODY);
         //한국어를 표시하기 위해 폰트 적용
         String FONT = "src/main/resources/static/MalgunGothic.TTF";
         //ConverterProperties : htmlconverter의 property를 지정하는 메소드인듯
@@ -88,8 +101,9 @@ public class ContractProvider {
         properties.setFontProvider(fontProvider);
 
 
+        //todo 서버 경로로 수정해야함
         String filename = "contract.pdf";
-        String storePathString = "C:/Users/nays1/OneDrive/Desktop/";
+        String storePathString = "src/main/resources/static/";
         String realName = storePathString;
         realName+=filename;
 
@@ -123,27 +137,20 @@ public class ContractProvider {
 
     public String uploadFile(File file, String fileName) throws IOException {
 
-
         String tokenName = fileName;
         BlobId blobId = BlobId.of("kimpd-2ad1d.appspot.com", "ContractFile/"+fileName);
-
 
         Map<String,String> map = new HashMap<>();
         map.put("firebaseStorageDownloadTokens", tokenName);
 
-
-
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/pdf").setMetadata(map).build();
         System.out.println("b:"+blobInfo.getBucket());
-
-
 
         Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        System.out.println("s:"+storage);
+        //System.out.println("s:"+storage);
         //storage.list(blobInfo.getBucket(),Storage.BlobListOption.prefix("ContractFile/"));
-
 
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));
         System.out.println("f:"+file.toPath());

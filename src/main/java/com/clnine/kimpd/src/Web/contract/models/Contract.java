@@ -18,9 +18,6 @@ public class Contract extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int contractIdx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="castingIdx")
-    private Casting casting;
 
     @Column(name="contractContent")
     private String contractContent;
