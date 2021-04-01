@@ -64,13 +64,14 @@ public class MessageProvider {
             Message message = messageList.get(i);
             int messageIdx = message.getMessageIdx();
             String senderNickname = sender.getNickname(); //쪽지 보낸 사람 닉네임
+            String senderProfileImageUrl = sender.getProfileImageURL();
             String senderJobName = categoryProvider.getMainJobCategoryChild(sender);//쪽지 보낸 사람 직종 이름
             Date sendTimeDateForm = message.getCreatedAt();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
             String description = message.getDescription();
             int readStatus = message.getReadStatus();
-            GetMessagesDTO getMessagesDTO = new GetMessagesDTO(messageIdx,senderNickname,senderJobName,sendTime,description,readStatus);
+            GetMessagesDTO getMessagesDTO = new GetMessagesDTO(messageIdx,senderNickname,senderProfileImageUrl,senderJobName,sendTime,description,readStatus);
             getMessagesDTOList.add(getMessagesDTO);
         }
         GetMessagesRes getMessagesRes = new GetMessagesRes(totalCount,getMessagesDTOList);
