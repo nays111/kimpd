@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AdminGetContractRes {
-    private final String ContractContent;
+    private final String contractContent;
 
 }

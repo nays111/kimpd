@@ -19,7 +19,7 @@ public class AdminReviewController {
 
     /**
      * 평가 상세 조회 API
-     * [GET] /reviews/:reviewIdx
+     * [GET] /reviews/:castingIdx
      * @PathVariable reviewIdx
      * @return BaseResponse<AdminGetReviewRes>
      */
