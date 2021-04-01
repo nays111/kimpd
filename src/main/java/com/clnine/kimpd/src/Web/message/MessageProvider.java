@@ -40,13 +40,14 @@ public class MessageProvider {
         }
         message.setReadStatus(1);
         messageRepository.save(message);
+        int senderIdx = message.getSender().getUserIdx();
         String senderNickname = message.getSender().getNickname();
         String description = message.getDescription();
         Date sendTimeDateForm = message.getCreatedAt();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
         String sendTime = simpleDateFormat.format(sendTimeDateForm);
 
-        GetMessageRes getMessageRes = new GetMessageRes(messageIdx, senderNickname, sendTime, description);
+        GetMessageRes getMessageRes = new GetMessageRes(messageIdx, senderIdx,senderNickname, sendTime, description);
         return getMessageRes;
     }
 
@@ -63,6 +64,7 @@ public class MessageProvider {
             UserInfo sender = messageList.get(i).getSender();
             Message message = messageList.get(i);
             int messageIdx = message.getMessageIdx();
+            int senderIdx = sender.getUserIdx();
             String senderNickname = sender.getNickname(); //쪽지 보낸 사람 닉네임
             String senderProfileImageUrl = sender.getProfileImageURL();
             String senderJobName = categoryProvider.getMainJobCategoryChild(sender);//쪽지 보낸 사람 직종 이름
@@ -71,7 +73,7 @@ public class MessageProvider {
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
             String description = message.getDescription();
             int readStatus = message.getReadStatus();
-            GetMessagesDTO getMessagesDTO = new GetMessagesDTO(messageIdx,senderNickname,senderProfileImageUrl,senderJobName,sendTime,description,readStatus);
+            GetMessagesDTO getMessagesDTO = new GetMessagesDTO(messageIdx,senderIdx,senderNickname,senderProfileImageUrl,senderJobName,sendTime,description,readStatus);
             getMessagesDTOList.add(getMessagesDTO);
         }
         GetMessagesRes getMessagesRes = new GetMessagesRes(totalCount,getMessagesDTOList);

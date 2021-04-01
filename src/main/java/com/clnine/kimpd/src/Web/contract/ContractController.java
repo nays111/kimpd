@@ -34,8 +34,10 @@ public class ContractController {
 
     @PostMapping("/profile/pic")
     public BaseResponse<String> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-        //logger.info("HIT -/upload | File Name : {}", multipartFile.getOriginalFilename());
+
         String s = contractProvider.upload(multipartFile);
         return new BaseResponse<>(SUCCESS,s);
     }
+
+
 }
