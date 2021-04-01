@@ -38,7 +38,7 @@ public class AdminNoticeProvider {
             throw new BaseException(FAILED_TO_GET_NOTICES);
         }
 
-        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
         return noticesList.stream().map(Notice ->{
             int noticeIdx = Notice.getNoticeIdx();
             String noticeTitle = Notice.getNoticeTitle();

@@ -33,7 +33,7 @@ public class AdminCastingProvider {
         try{
             castingList = adminCastingRepository.findAll();
         }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_FAQS);
+            throw new BaseException(FAILED_TO_GET_CASTINGS);
         }
 
         return castingList.stream().map(Casting ->{
@@ -81,7 +81,7 @@ public class AdminCastingProvider {
         AdminCasting adminCasting = retrieveCastingByCastingIdx(castingIdx);
 
         if(adminCasting == null){
-            throw new BaseException(FAILED_TO_GET_INQUIRIES);
+            throw new BaseException(FAILED_TO_GET_CASTINGS);
         }
 
         String castingStatus = null;
@@ -119,7 +119,7 @@ public class AdminCastingProvider {
         try {
             adminCasting = adminCastingRepository.findById(castingIdx).orElse(null);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_GET_INQUIRIES);
+            throw new BaseException(FAILED_TO_GET_CASTINGS);
         }
 
         // 2. AdminCasting return

@@ -234,9 +234,11 @@ public class AdminUserInfoController {
             if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
+            if(parameters.getCorporationBusinessName().length() != 0){
+                return new BaseResponse<>(NOT_VALID_CORP_BUSINESS_NAME);
+            }
         }
-
-        if(parameters.getUserType().equals("제작사-법인") || parameters.getUserType().equals("전문가-법인")){
+        else if(parameters.getUserType().equals("제작사-법인") || parameters.getUserType().equals("전문가-법인")){
             if(parameters.getCorporationBusinessName() == null || parameters.getCorporationBusinessName().length() == 0){
                 return new BaseResponse<>(EMPTY_CORP_BUSINESS_NAME);
             }
@@ -245,6 +247,9 @@ public class AdminUserInfoController {
             }
             if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
+            }
+            if(parameters.getPrivateBusinessName().length() != 0){
+                return new BaseResponse<>(NOT_VALID_PIV_BUSINESS_NAME);
             }
         }
 

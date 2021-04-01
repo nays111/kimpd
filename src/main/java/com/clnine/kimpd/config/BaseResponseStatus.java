@@ -123,6 +123,12 @@ public enum BaseResponseStatus {
     EMPTY_REVIEW_IDX(false, 2516, "평가 인덱스가 비었습니다."),
     EMPTY_CONTRACT_CONTENT(false, 2517, "계약서 내용이 비었습니다."),
     EMPTY_NEW_PASSWORD(false, 2518, "새로운 비밀번호를 입력해주세요."),
+    EMPTY_CASTING_IDX(false, 2519, "섭외 인덱스가 비었습니다."),
+    EMPTY_REPORT_IDX(false, 2520, "신고 인덱스가 비었습니다."),
+    NOT_VALID_CORP_BUSINESS_NAME(false, 2521, "법인 회사명을 입력할 수 없습니다."),
+    NOT_VALID_PIV_BUSINESS_NAME(false, 2522, "개인 회사명을 입력할 수 없습니다."),
+    NOT_VALID_BUSINESS_NUM(false, 2523, "사업자 등록번호를 입력할 수 없습니다."),
+    NOT_VALID_BUSINESS_IMG(false, 2524, "사업자 등록증을 업로드 할 수 없습니다."),
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -177,7 +183,8 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
     FAILED_TO_GET_REPORTS(false,3518,"신고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_CONTRACT(false,3519,"계약서 수정에 실패했습니다."),
-    EMPTY_REVIEW(false,3520,"평가 대기입니다."),
+    EMPTY_REVIEW(false,3520,"평가 대기중입니다."),
+    FAILED_TO_GET_CASTINGS(false,3521,"섭외 조회하는데 실패했습니다."),
 
 
     // 4000 : Database 오류
