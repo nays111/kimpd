@@ -6,6 +6,7 @@ import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.contract.models.Contract;
 import com.clnine.kimpd.src.Web.contract.models.GetContractRes;
+import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.storage.*;
@@ -16,8 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_CASTING;
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_CONTRACT;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.html2pdf.resolver.font.DefaultFontProvider;
@@ -39,56 +38,39 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
+
 @Service
 @RequiredArgsConstructor
 public class ContractProvider {
     private final CastingRepository castingRepository;
     private final ContractRepository contractRepository;
-//    public GetContractRes getContractRes(int castingIdx) throws BaseException{
-//        Contract contract;
-//        Casting casting;
-//        try{
-//            casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
-//        }catch (Exception ignored) {
-//            throw new BaseException(FAILED_TO_GET_CASTING);
-//        }
-//        try{
-//            contract = contractRepository.findByCastingAndStatus(casting,"ACTIVE");
-//        }catch (Exception ignored) {
-//            throw new BaseException(FAILED_TO_GET_CONTRACT);
-//        }
-//        GetContractRes getContractRes = new GetContractRes(contract.getContractIdx(), contract.getContractFileURL());
-//        return getContractRes;
-//
-//    }
+    public GetContractRes getContract(int userIdx,int castingIdx) throws BaseException{
+        Casting casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
+        if(casting==null){
+            throw new BaseException(FAILED_TO_GET_CASTING);
+        }
+        if(casting.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING);
+        }
+        GetContractRes getContractRes = new GetContractRes(casting.getContractFileUrl());
+        return getContractRes;
+    }
 
-
-
-
-    //BODY : html string , dest : pdf를 만들 경로(D:\\sample.pdf)
     public String makepdf(Casting casting,int contractIdx) throws IOException {
 
-        //가장 최근 계약서를 가져옴
+        //todo 가장 최근 계약서를 가져옴
         Contract contract = contractRepository.findByContractIdx(contractIdx);
-
 
 //        String castingUserName = casting.getUserInfo().getName();
 //        String expertName = casting.getExpert().getName();
 //        String projectName = casting.getProject().getProjectName();
 
 
-
-
-
-
+        //todo html 변수 바꾸기
         //계약서 html (string)
         String BODY = contract.getContractContent();
         BODY=BODY.replace("표준계약서","팀");
-//        BODY.replace("펴준계약서","팀");
-        //BODY.replaceAll("표준계약서","팀");
-
-
-
 
         System.out.println(BODY);
         //한국어를 표시하기 위해 폰트 적용
@@ -100,14 +82,10 @@ public class ContractProvider {
         fontProvider.addFont(fontProgram);
         properties.setFontProvider(fontProvider);
 
-
-        //todo 서버 경로로 수정해야함
         String filename = "contract.pdf";
         String storePathString = "src/main/resources/static/";
         String realName = storePathString;
         realName+=filename;
-
-
 
         //pdf 페이지 크기를 조정
         List<IElement> elements = HtmlConverter.convertToElements(BODY, properties);
@@ -115,12 +93,9 @@ public class ContractProvider {
         Document document = new Document(pdf);
         //setMargins 매개변수순서 : 상, 우, 하, 좌
         document.setMargins(50, 50, 50, 50);
-        //System.out.println(pdf.)
         for (IElement element : elements) {
             document.add((IBlockElement) element);
         }
-
-        //upload((MultipartFile) document);
         document.close();
 
         Path path = Paths.get(realName);
@@ -196,4 +171,7 @@ public class ContractProvider {
         //e.printStackTrace();
         return TEMP_URL;
     }
+
+
+
 }
