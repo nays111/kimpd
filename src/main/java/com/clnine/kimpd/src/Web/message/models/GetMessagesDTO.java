@@ -7,6 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetMessagesDTO {
     private final int messageIdx;
+
+    private final int senderIdx;
     private final String senderNickName;
     private final String senderProfileImageUrl;
     private final String senderJobName;
