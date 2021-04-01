@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
 import com.clnine.kimpd.src.Web.contract.models.GetContractRes;
 import com.clnine.kimpd.src.Web.contract.models.HtmlToPdfReq;
+import com.clnine.kimpd.src.Web.message.models.GetMessagesRes;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class ContractController {
 
     @ResponseBody
     @PostMapping("/to-pdf/{contractIdx}")
-    public BaseResponse<String> getContract(@PathVariable(required = true,value="contractIdx") int contractIdx,
+    public BaseResponse<String> getContracts(@PathVariable(required = true,value="contractIdx") int contractIdx,
                                                     @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException {
 
            String s = contractProvider.makepdf(null,contractIdx);
@@ -37,6 +38,17 @@ public class ContractController {
 
         String s = contractProvider.upload(multipartFile);
         return new BaseResponse<>(SUCCESS,s);
+    }
+
+    @GetMapping("/castings/{castingIdx}/contracts")
+    public BaseResponse<GetContractRes> getContract(@PathVariable(required = true,value = "castingIdx")int castingIdx){
+        try{
+            Integer userIdx = jwtService.getUserIdx();
+            GetContractRes getContractRes = contractProvider.getContract(userIdx,castingIdx);
+            return new BaseResponse<>(SUCCESS, getContractRes);
+        } catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
     }
 
 
