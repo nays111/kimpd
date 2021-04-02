@@ -28,15 +28,15 @@ public class AdminCastingController {
     @GetMapping("/castings")
     @CrossOrigin(origins = "*")
     public BaseResponse<AdminGetCastingsListRes> getCastings() throws BaseException {
-        List<AdminGetCastingsRes> getInquiriesResList;
+        List<AdminGetCastingsRes> getCastingList;
 
         try{
             if(adminUserInfoProvider.checkJWT() == false){
                 return new BaseResponse<>(INVALID_JWT);
             }
 
-            getInquiriesResList = adminCastingProvider.getCastingList();
-            AdminGetCastingsListRes castingList = new AdminGetCastingsListRes(getInquiriesResList);
+            getCastingList = adminCastingProvider.getCastingList();
+            AdminGetCastingsListRes castingList = new AdminGetCastingsListRes(getCastingList);
             return new BaseResponse<>(SUCCESS, castingList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
