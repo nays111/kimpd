@@ -12,6 +12,7 @@ public class GetMyReceivedCastingDTO {
     String projectName;
     int castingIdx;
     String castingStatus;
+    String reviewStatus;
     String castingTerm;
     String castingDate;
     String castingPrice;
