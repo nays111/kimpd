@@ -26,22 +26,20 @@ public class ReviewService {
 
     @Transactional
     public void postReview(int userIdx,int castingIdx, PostReviewReq postReviewReq) throws BaseException{
-        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        UserInfo evaluateUserInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        UserInfo evaluatedUserInfo = userInfoProvider.retrieveUserInfoByUserIdx(postReviewReq.getEvaluatedUserIdx());
         Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
-        if(casting.getUserInfo()!=userInfo){
-            throw new BaseException(NO_CASTING);
-        }
-        if(casting.getReview()!=null){
+
+        //이미 리뷰를 담긴 상태면 막아야함
+        Review existReview = reviewRepository.findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(evaluatedUserInfo,evaluateUserInfo,casting,"ACTIVE");
+        if(existReview!=null){//만약 리뷰가 존재하면
             throw new BaseException(ALREADY_POST_REVIEW);
         }
-
-        UserInfo expertInfo = casting.getExpert();
         float star = postReviewReq.getStar();
         String description = postReviewReq.getDescription();
-        Review review = new Review(star,description,userInfo,expertInfo);
-        casting.setReview(review);
+
+        Review review = new Review(star,description,evaluateUserInfo,evaluatedUserInfo,casting);
         try{
-            castingRepository.save(casting);
             reviewRepository.save(review);
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_POST_REVIEW);

@@ -4,6 +4,8 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.Web.casting.models.*;
 import com.clnine.kimpd.src.Web.category.CategoryProvider;
 import com.clnine.kimpd.src.Web.project.models.Project;
+import com.clnine.kimpd.src.Web.review.ReviewRepository;
+import com.clnine.kimpd.src.Web.review.models.Review;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,7 @@ public class CastingProvider {
     private final CastingRepository castingRepository;
     private final UserInfoProvider userInfoProvider;
     private final CategoryProvider categoryProvider;
+    private final ReviewRepository reviewRepository;
 
     public Casting retrieveCastingInfoByUserExpertProject(UserInfo user, UserInfo expert, Project project) throws BaseException{
         List<Casting> existsCastingList;
@@ -260,8 +263,19 @@ public class CastingProvider {
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
             String castingDate = sDate.format(createdAt);//4
 
-            GetMyReceivedCastingDTO getMyReceivedCastingDTO = new GetMyReceivedCastingDTO(userIdx,nickname,profileImageURL,projectName,castingIdx,castingStatusString,castingTerm,castingDate,castingPrice);
-
+            //전문가가 일반인에게 평가를 한 경우
+            //전문가 : expertIdx(userInfo), 일반인 : userInfo1
+            //casting
+            String reviewStatus = null;
+            if(castingStatus1==4){
+                Review review = reviewRepository.findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(userInfo1,userInfo,casting,"ACTIVE");
+                if(review==null){
+                    reviewStatus = "평가대기";
+                }else{
+                    reviewStatus = "평가완료";
+                }
+            }
+            GetMyReceivedCastingDTO getMyReceivedCastingDTO = new GetMyReceivedCastingDTO(userIdx,nickname,profileImageURL,projectName,castingIdx,castingStatusString,reviewStatus,castingTerm,castingDate,castingPrice);
             getMyReceivedCastingDTOList.add(getMyReceivedCastingDTO);
         }
         GetMyReceivedCastingsRes getMyReceivedCastingsRes = new GetMyReceivedCastingsRes(totalCount,getMyReceivedCastingDTOList);

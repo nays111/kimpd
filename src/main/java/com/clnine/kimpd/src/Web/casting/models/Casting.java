@@ -28,9 +28,9 @@ public class Casting extends BaseEntity {
     @JoinColumn(name="userIdx",referencedColumnName = "userIdx")
     private UserInfo userInfo;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reviewIdx")
-    private Review review;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name="reviewIdx")
+//    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="projectIdx")
