@@ -2,6 +2,8 @@ package com.clnine.kimpd.src.WebAdmin.casting;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.WebAdmin.casting.models.*;
+import com.clnine.kimpd.src.WebAdmin.review.AdminReviewRepository;
+import com.clnine.kimpd.src.WebAdmin.review.models.AdminReview;
 import com.clnine.kimpd.src.WebAdmin.user.models.AdminUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,11 @@ public class AdminCastingProvider {
 
     @Autowired
     private final AdminCastingRepository adminCastingRepository;
+    private final AdminReviewRepository adminReviewRepository;
 
-    AdminCastingProvider(AdminCastingRepository adminCastingRepository){
+    AdminCastingProvider(AdminCastingRepository adminCastingRepository, AdminReviewRepository adminReviewRepository){
         this.adminCastingRepository = adminCastingRepository;
+        this.adminReviewRepository = adminReviewRepository;
 
     }
 
@@ -30,8 +34,10 @@ public class AdminCastingProvider {
      */
     public List<AdminGetCastingsRes> getCastingList() throws BaseException{
         List<AdminCasting> castingList;
+
         try{
             castingList = adminCastingRepository.findAll();
+
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_CASTINGS);
         }
@@ -55,18 +61,22 @@ public class AdminCastingProvider {
             else if(Casting.getCastingStatus() == 4){
                 castingStatus = "작업완료";
             }
+
+            AdminReview adminReview = null;
             String reviewStatus = null;
             int reviewIdx = 0;
-            if(Casting.getReview() == null){
+            adminReview = adminReviewRepository.findAdminReviewByAdminCastingAndStatus(Casting, "ACTIVE");
+            if(adminReview == null){
                 reviewIdx = 0;
                 reviewStatus = "평가 대기";
             }
             else{
-                reviewIdx = Casting.getReview().getReviewIdx();
+                reviewIdx = adminReview.getReviewIdx();
                 reviewStatus = "평가 완료";
             }
+
             String status = Casting.getStatus();
-            return new AdminGetCastingsRes(castingIdx, userNickname, expertNickname, projectName, castingWork, castingStatus, reviewIdx, reviewStatus, status);
+          return new AdminGetCastingsRes(castingIdx, userNickname, expertNickname, projectName, castingWork, castingStatus, reviewIdx, reviewStatus, status);
         }).collect(Collectors.toList());
     }
 

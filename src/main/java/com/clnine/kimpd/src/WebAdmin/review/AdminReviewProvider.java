@@ -30,28 +30,26 @@ public class AdminReviewProvider {
 
     /**
      * 평가 상세 조회
-     * @param castingIdx
+     * @param reviewIdx
      * @return AdminGetReviewRes
      * @throws BaseException
      */
-    public AdminGetReviewRes retrieveReviewInfo(int castingIdx) throws BaseException {
+    public AdminGetReviewRes retrieveReviewInfo(int reviewIdx) throws BaseException {
         // 1. DB에서 reviewIdx AdminReview 조회
-        AdminCasting adminCasting = adminCastingProvider.retrieveCastingByCastingIdx(castingIdx);
-        if(adminCasting == null){
+        AdminReview adminReview = retrieveReviewByReviewIdx(reviewIdx);
+        if(adminReview == null){
             throw new BaseException(FAILED_TO_GET_REVIEWS);
         }
-        if(adminCasting.getReview() == null){
-            throw new BaseException(EMPTY_REVIEW);
-        }
+
         // 2. AdminGetReviewRes 변환하여 return
-        String projectName = adminCasting.getAdminProject().getProjectName();
-        String evaluateUserNickname = adminCasting.getReview().getEvaluateUserInfo().getNickname();
-        String evaluatedUserNickname = adminCasting.getReview().getEvaluatedUserInfo().getNickname();
-        String startDate = adminCasting.getCastingStartDate();
-        String endDate = adminCasting.getCastingEndDate();
-        Float star = adminCasting.getReview().getStar();
-        String description = adminCasting.getReview().getDescription();
-        String status = adminCasting.getReview().getStatus();
+        String projectName = adminReview.getAdminCasting().getAdminProject().getProjectName();
+        String evaluateUserNickname = adminReview.getEvaluateUserInfo().getNickname();
+        String evaluatedUserNickname = adminReview.getEvaluatedUserInfo().getNickname();
+        String startDate = adminReview.getAdminCasting().getCastingStartDate();
+        String endDate = adminReview.getAdminCasting().getCastingEndDate();
+        Float star = adminReview.getStar();
+        String description = adminReview.getDescription();
+        String status = adminReview.getStatus();
 
         return new AdminGetReviewRes(projectName, evaluateUserNickname, evaluatedUserNickname, startDate, endDate, star, description, status);
     }

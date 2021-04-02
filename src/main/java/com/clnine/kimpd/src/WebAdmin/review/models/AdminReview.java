@@ -43,8 +43,8 @@ public class AdminReview extends BaseEntity {
     private AdminUserInfo evaluatedUserInfo;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="castingIdx")
-    private AdminCasting casting;
+    @JoinColumn(name="castingIdx", referencedColumnName = "castingIdx")
+    private AdminCasting adminCasting;
 
     private String status="ACTIVE";
 

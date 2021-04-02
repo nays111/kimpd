@@ -29,11 +29,6 @@ public class AdminCasting extends BaseEntity {
     @JoinColumn(name="projectIdx")
     private AdminProject adminProject;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="reviewIdx")
-    private AdminReview review;
-
-
     @Column(name="castingPrice")
     private String castingPrice;
 
