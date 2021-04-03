@@ -183,7 +183,7 @@ public class CastingProvider {
     }
 
     /**
-     * 받은 섭외 요청 리스트 조회 API (보낸 것과 다름)
+     * 받은 섭외 요청 리스트 조회 API (보낸 것과 다름) ->전문가만 사용
      */
     public GetMyReceivedCastingsRes getMyReceivedCastingRes(int expertIdx, Integer duration, Integer castingStatus, int page, int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
@@ -268,6 +268,7 @@ public class CastingProvider {
             //casting
             String reviewStatus = null;
             if(castingStatus1==4){
+                //전문가(usrInfo)가 일반인(userInfo1)에게 평가를 한경우 -> 전문가 : evaluateUserInfo, 일반인 : evaluatedUserInfo
                 Review review = reviewRepository.findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(userInfo1,userInfo,casting,"ACTIVE");
                 if(review==null){
                     reviewStatus = "평가대기";
