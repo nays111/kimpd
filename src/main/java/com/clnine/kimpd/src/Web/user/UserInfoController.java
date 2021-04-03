@@ -148,6 +148,7 @@ public class UserInfoController {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
+
     @ResponseBody @GetMapping("/duplicated-nickname")
     @Operation(summary = "닉네임 중복 체크 API")
     public BaseResponse<String> checkNicknameDuplicate(@RequestParam(value = "nickname") String nickname) {
@@ -163,6 +164,7 @@ public class UserInfoController {
             return new BaseResponse<>(DUPLICATED_USER);
         }
     }
+
     @ResponseBody @GetMapping("/duplicated-info")
     @Operation(summary="이메일, 휴대폰 중복 체크 API")
     public BaseResponse<String> checkEmailAndPhoneNumDuplicate(@RequestParam(value="phoneNum")String phoneNum,
@@ -208,6 +210,7 @@ public class UserInfoController {
     @PostMapping("/phone-auth")
     @Operation(summary="휴대폰 인증번호 검사 API",description = "인증번호는 3분 이내의 가장 최신 것만 유효합니다.")
     public BaseResponse<Void> phoneAuthCheck(@RequestBody PostCertificationCodeReq postCertificationCodeReq) throws BaseException {
+
         if (postCertificationCodeReq.getPhoneNum() == null || postCertificationCodeReq.getPhoneNum().length() == 0) {
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }
@@ -251,10 +254,9 @@ public class UserInfoController {
     @ResponseBody
     @Operation(summary="JWT 검사 API",description = "유저에 대한 요약 정보를 반환합니다.")
     public BaseResponse<GetUserRes> jwt() {
-        GetUserRes getUserRes;
         try {
             int userIdx = jwtService.getUserIdx();
-            getUserRes = userInfoProvider.getUserRes(userIdx);
+            GetUserRes getUserRes = userInfoProvider.getUserRes(userIdx);
             return new BaseResponse<>(SUCCESS,getUserRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
@@ -266,6 +268,7 @@ public class UserInfoController {
     @Operation(summary="아이디 찾기 API",description = "입력한 휴대폰 번호로 이전에 가입했던 ID를 보냅니다. (휴대폰 번호는 -를 빼고 입력해주세요.)")
     public BaseResponse<String> lostId(@RequestParam(value="phoneNum")String phoneNumber,
                                        @RequestParam(value="name")String name){
+
         if(phoneNumber==null || phoneNumber.length()==0){
             return new BaseResponse<>(EMPTY_PHONE_NUMBER);
         }else if(!isRegexPhoneNumber(phoneNumber)){
@@ -408,6 +411,7 @@ public class UserInfoController {
     @Operation(summary="전문가 전환 API",description = "일반->전문가, 일반(개인사업자)->전문가(개인사업자), 일반(법인사업자)->전문가(법인사업자), 토큰이 필요합니다.")
     public BaseResponse<String> changeUserTypeToExpert(@RequestBody PatchUserTypeReq patchUserTypeReq,
                                                        @PathVariable(required = true,value = "userIdx")int userIdx){
+
         try{
             int userIdxJWT = jwtService.getUserIdx();
             if(userIdxJWT!=userIdx){
@@ -431,6 +435,7 @@ public class UserInfoController {
     @Operation(summary="비밀번호 수정 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchMyPassword(@RequestBody PatchUserPasswordReq patchUserPasswordReq,
                                                 @PathVariable(required = true,value = "userIdx")int userIdx){
+
         if(patchUserPasswordReq.getCurrentPassword()==null || patchUserPasswordReq.getCurrentPassword().length()==0){
             return new BaseResponse<>(EMPTY_PASSWORD);
         }

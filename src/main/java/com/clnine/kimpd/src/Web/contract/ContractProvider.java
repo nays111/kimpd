@@ -47,14 +47,18 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 public class ContractProvider {
     private final CastingRepository castingRepository;
     private final ContractRepository contractRepository;
+
     public GetContractRes getContract(int userIdx,int castingIdx) throws BaseException{
+
         Casting casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
+
         if(casting==null){
             throw new BaseException(FAILED_TO_GET_CASTING);
         }
         if(casting.getUserInfo().getUserIdx()!=userIdx){
             throw new BaseException(NO_CASTING);
         }
+
         GetContractRes getContractRes = new GetContractRes(casting.getContractFileUrl());
         return getContractRes;
     }
@@ -197,6 +201,7 @@ public class ContractProvider {
     private String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
+
     private String generateFileName(MultipartFile multiPart) {
         return new Date().getTime() + "-" + Objects.requireNonNull(multiPart.getOriginalFilename()).replace(" ", "_");
     }
@@ -204,23 +209,14 @@ public class ContractProvider {
 
     public String upload(MultipartFile multipartFile) throws IOException {
 
-//        try {
+        String fileName = multipartFile.getOriginalFilename();//to get original file name
+        fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));//to generated random string values for file name.
+        File file = this.convertToFile(multipartFile, fileName);// to convert multipartFile to File
 
-        String fileName = multipartFile.getOriginalFilename();// to get original file name
-        System.out.println(fileName);
-        fileName = UUID.randomUUID().toString().concat(this.getExtension(fileName));  // to generated random string values for file name.
-        System.out.println(fileName);
-
-        File file = this.convertToFile(multipartFile, fileName);                      // to convert multipartFile to File
-
-
-
-        String TEMP_URL = this.uploadFile(file, fileName);                                   // to get uploaded file link
+        String TEMP_URL = this.uploadFile(file, fileName);// to get uploaded file link
         //TEMP_URL="ContractFile/"+TEMP_URL;
-        file.delete();                                                                // to delete the copy of uploaded file stored in the project folder
-        //return TEMP_URL;                     // Your customized response
-        //} catch (Exception e) {
-        //e.printStackTrace();
+        file.delete();// to delete the copy of uploaded file stored in the project folder
+
         return TEMP_URL;
     }
 

@@ -27,7 +27,7 @@ public class AlarmProvider {
         UserInfo userinfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         List<Alarm> alarmList;
         try{
-            alarmList = alarmRepository.findAllByUserInfoAndStatus(userinfo,"ACTIVE");
+            alarmList = alarmRepository.findAllByUserInfoAndStatusOrderByAlarmIdxDesc(userinfo,"ACTIVE");
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_MY_ALARMS);
         }
@@ -46,6 +46,13 @@ public class AlarmProvider {
 
             String alarmDay = day.format(createdAt);
             String alarmTime = time.format(createdAt);
+            alarmDay=alarmDay.replace("Mon","월");
+            alarmDay=alarmDay.replace("Tue","화");
+            alarmDay=alarmDay.replace("Wed","수");
+            alarmDay=alarmDay.replace("Thu","목");
+            alarmDay=alarmDay.replace("Fri","금");
+            alarmDay=alarmDay.replace("Sat","토");
+            alarmDay=alarmDay.replace("Sun","일");
 
             GetAlarmsRes getAlarmsRes = new GetAlarmsRes(alarmIdx,alarmDay,profileImageURL,readStatus,message,alarmTime);
             getAlarmsResList.add(getAlarmsRes);
