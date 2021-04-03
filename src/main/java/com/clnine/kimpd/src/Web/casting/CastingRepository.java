@@ -4,6 +4,7 @@ import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -57,7 +58,39 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
     Casting findByCastingIdxAndUserInfoAndStatus(int castingIdx,UserInfo userInfo,String status);
 
 
+    //리뷰 안남긴 상태
+    @Query("select C from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is null order by C.castingIdx desc")
+    List<Casting> findCastingNotWriteReview(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
 
+    //리뷰 안남긴 상태 개수
+    @Query("select count(C.castingIdx) from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is null order by C.castingIdx desc")
+    int countCastingNotWriteReview(UserInfo userInfo,int castingStatus,String status);
+
+    //리뷰 남긴 상태
+    @Query("select C from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is not null order by C.castingIdx desc")
+    List<Casting> findCastingWriteReview(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
+
+    //리뷰 남긴 상태 개수
+    @Query("select count(C.castingIdx) from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is not null order by C.castingIdx desc")
+    int countCastingWriteReview(UserInfo userInfo,int castingStatus,String status);
+
+
+    //리뷰 안남긴 상태 (n개월 이내)
+    @Query("select C from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is null and C.createdAt between :now and :end order by C.castingIdx desc")
+    List<Casting> findCastingNotWriteReviewInThreeMonth(UserInfo userInfo,int castingStatus,String status,Date now,Date end,Pageable pageable);
+
+    // 리뷰 안남긴 상태 개수 (n개월 이내)
+    @Query("select count(C.castingIdx) from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is null and C.createdAt between :now and :end order by C.castingIdx desc")
+    int countCastingNotWriteReviewInThreeMonth(UserInfo userInfo,int castingStatus,String status,Date now,Date end);
+
+
+    // 리뷰 남긴 상태 (n개월 이내)
+    @Query("select C from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is not null and C.createdAt between :now and :end order by C.castingIdx desc")
+    List<Casting> findCastingWriteReviewInThreeMonth(UserInfo userInfo,int castingStatus,String status,Date now,Date end,Pageable pageable);
+
+    // 리뷰 남긴 상태 개수 (n개월 이내)
+    @Query("select count(C.castingIdx) from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is not null and C.createdAt between :now and :end order by C.castingIdx desc")
+    int countCastingWriteReviewInThreeMonth(UserInfo userInfo,int castingStatus,String status,Date now,Date end);
 
     //List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
     //int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status);

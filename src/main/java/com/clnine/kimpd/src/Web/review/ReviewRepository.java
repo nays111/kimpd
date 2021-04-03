@@ -16,4 +16,9 @@ public interface ReviewRepository extends CrudRepository<Review,Integer> {
     //Review findByCastingAndStatus(Casting casting, String status);
 
     Review findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(UserInfo evaluatedUserInfo, UserInfo evaluateUserInfo, Casting casting,String status);
+
+    Review findByEvaluateUserInfoAndCastingAndStatus(UserInfo evaluateUserInfo, Casting casting,String status);
+
+
+
 }
