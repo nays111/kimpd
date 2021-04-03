@@ -246,13 +246,14 @@ public class ExpertProvider {
 
         //List<GetMyExpertSchedulesManage> getMyExpertSchedulesManageList = new ArrayList<>();
         for(int i=0;i<castingList.size();i++){
-            //System.out.println(castingList.get(i).getCastingStartDate()+" "+castingList.get(i).getCastingEndDate());
+
             String startDate;
             if(castingList.get(i).getCastingStartDate().compareTo(startMonth)<0){
                 startDate = startMonth;
             }else{
                 startDate = castingList.get(i).getCastingStartDate();
             }
+
             String endDate;
             if(castingList.get(i).getCastingEndDate().compareTo(endMonth)>0){
                 endDate = endMonth;
