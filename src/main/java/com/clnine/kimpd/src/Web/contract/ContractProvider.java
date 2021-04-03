@@ -36,6 +36,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -57,32 +59,71 @@ public class ContractProvider {
         return getContractRes;
     }
 
+    public String NumberToKor(String amt) {
+
+        String amt_msg = "";
+        String[] arrayNum = {"", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"};
+        String[] arrayUnit = {"", "십", "백", "천", "만", "십만", "백만", "천만", "억", "십억", "백업", "천억", "조", "십조", "백조", "천조", "경", "십경", "백경", "천경", "해", "십해", "백해", "천해"};
+
+        if (amt.length() > 0) {
+            int len = amt.length();
+
+            String[] arrayStr = new String[len];
+            String hanStr = "";
+            String tmpUnit = "";
+            for (int i = 0; i < len; i++) {
+                arrayStr[i] = amt.substring(i, i + 1);
+            }
+            int code = len;
+            for (int i = 0; i < len; i++) {
+                code--;
+                tmpUnit = "";
+                if (arrayNum[Integer.parseInt(arrayStr[i])] != "") {
+                    tmpUnit = arrayUnit[code];
+                    if (code > 4) {
+                        if ((Math.floor(code / 4) == Math.floor((code - 1) / 4)
+                                && arrayNum[Integer.parseInt(arrayStr[i + 1])] != "") ||
+                                (Math.floor(code / 4) == Math.floor((code - 2) / 4)
+                                        && arrayNum[Integer.parseInt(arrayStr[i + 2])] != "")) {
+                            tmpUnit = arrayUnit[code].substring(0, 1);
+                        }
+                    }
+                }
+                hanStr += arrayNum[Integer.parseInt(arrayStr[i])] + tmpUnit;
+            }
+            amt_msg = hanStr;
+        } else {
+            amt_msg = amt;
+        }
+
+        return amt_msg;
+    }
+
     public String makepdf(Casting casting,int contractIdx) throws IOException {
 
         //todo 가장 최근 계약서를 가져옴
         Contract contract = contractRepository.findByContractIdx(contractIdx);
 
-//        String castingUserName = casting.getUserInfo().getName();
-//        String expertName = casting.getExpert().getName();
-//        String projectName = casting.getProject().getProjectName();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy 년 MM 월 dd 일");
+        String dateToStr = dateFormat.format(casting.getUpdatedAt());
 
+        String castingPrice = NumberToKor(casting.getCastingPrice());
 
         //todo html 변수 바꾸기
         //계약서 html (string)
         String BODY = contract.getContractContent();
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
-//        BODY=BODY.replace("표준계약서","팀");
+        BODY=BODY.replace("${userName}",casting.getUserInfo().getName());
+        BODY=BODY.replace("${expertName}",casting.getExpert().getName());
+        BODY=BODY.replace("${projectName}",casting.getProject().getProjectName());
+        BODY=BODY.replace("${projectDescription}",casting.getProject().getProjectDescription());
+        BODY=BODY.replace("${castingStartDate}",casting.getCastingStartDate());
+        BODY=BODY.replace("${castingEndDate}",casting.getCastingEndDate());
+        BODY=BODY.replace("${castingPriceDate}",casting.getCastingPriceDate());
+        BODY=BODY.replace("${castingPrice}",castingPrice);
+        BODY=BODY.replace("${updatedAt}",dateToStr);
+
+
+
 
 
         //한국어를 표시하기 위해 폰트 적용

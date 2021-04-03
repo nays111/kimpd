@@ -47,7 +47,7 @@ public class ReviewController {
     @GetMapping("/castings/reviews")
     @Operation(summary = "평가 내역 리스트 조회 API",description = "토큰이 필요합니다.")
     public BaseResponse<GetMyReviewsRes>getReviews(@RequestParam(value="reviewStatus",required = true)Integer reviewStatus,
-                                                   @RequestParam(value = "duration",required = false)Integer duration,
+                                                   @RequestParam(value = "duration",required = true)Integer duration,
                                                    @RequestParam(value="page",required = true)Integer page){
         if(reviewStatus==null){
             return new BaseResponse<>(EMPTY_REVIEW_STATUS);

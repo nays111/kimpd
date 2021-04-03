@@ -8,6 +8,7 @@ import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
+import com.clnine.kimpd.src.Web.contract.ContractProvider;
 import com.clnine.kimpd.src.Web.project.ProjectProvider;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
@@ -25,12 +26,12 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class CastingService {
     private final ProjectRepository projectRepository;
-    private final UserInfoRepository userInfoRepository;
     private final CastingRepository castingRepository;
     private final CastingProvider castingProvider;
     private final AlarmRepository alarmRepository;
     private final UserInfoProvider userInfoProvider;
     private final ProjectProvider projectProvider;
+    private final ContractProvider contractProvider;
 
     /**
      * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
@@ -101,10 +102,6 @@ public class CastingService {
 
     /**
      * 프로젝트 불러오기 한 이후 섭외 신청을 하는 경우
-     * @param postCastingReq
-     * @param userIdx
-     * @param expertIdx
-     * @throws BaseException
      */
     @Transactional
     public void PostCastingByProjectLoaded(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException{
@@ -207,9 +204,6 @@ public class CastingService {
 
     /**
      * 섭외수락 or 섭외거절 or 작업완료
-     * @param state
-     * @param patchCastingStatusReq
-     * @throws BaseException
      */
     @Transactional
     public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException{
@@ -228,6 +222,18 @@ public class CastingService {
             String expertNickname = casting.getExpert().getNickname();
             String alarmMessage = expertNickname+"전문가님께서 섭외 요청을 승인하셨습니다.";
             Alarm alarm = new Alarm(casting.getUserInfo(), alarmMessage);
+
+            /**
+             * todo 계약서 생성 & 저장 부분 마무리하기
+             */
+//            String contractUrl = contractProvider.makepdf(casting);
+//            casting.setContractFileUrl(contractUrl);
+//            try{
+//                castingRepository.save(casting);
+//            }catch(Exception ignored){
+//                throw new BaseException(FAILED_TO_SEND_ALARM);
+//            }
+
             try{
                 alarmRepository.save(alarm);
             }catch(Exception ignored){
