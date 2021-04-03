@@ -414,9 +414,11 @@ public class UserInfoController {
                 return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
             }
             if(patchUserTypeReq.getJobCategoryIdx().size()==0){
-
+                return new BaseResponse<>(NO_SELECT_JOB_PARENT_CATEGORY);
             }
-
+            if(patchUserTypeReq.getGenreCategoryIdx().size()==0){
+                return new BaseResponse<>(NO_SELECT_GENRE_CATEGORY);
+            }
             userInfoService.changeUserTypeToExpert(userIdx,patchUserTypeReq);
             return new BaseResponse<String>(SUCCESS);
         }catch (BaseException exception) {
