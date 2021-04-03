@@ -92,22 +92,6 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
     @Query("select count(C.castingIdx) from Casting C left outer join Review R on C.castingIdx = R.casting.castingIdx where C.userInfo= :userInfo and C.castingStatus=:castingStatus and C.status=:status and R.reviewIdx is not null and C.createdAt between :now and :end order by C.castingIdx desc")
     int countCastingWriteReviewInThreeMonth(UserInfo userInfo,int castingStatus,String status,Date now,Date end);
 
-    //List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
-    //int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status);
-
-
-    //List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status,Pageable pageable);
-    //int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullOrderByCastingIdxDesc(UserInfo userInfo,int castingStatus,String status);
-
-    //List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
-    //int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end);
-
-    //List<Casting> findAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end, Pageable pageable);
-    //int countAllByUserInfoAndCastingStatusAndStatusAndReviewIsNotNullAndCreatedAtBetweenOrderByCastingIdxDesc(UserInfo userInfo, int castingStatus, String status, Date now, Date end);
-
-
-
-
 
 
     //전문가 캐스팅 정보 달력 조회

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface ContractRepository extends CrudRepository<Contract,Integer> {
     Contract findByCastingAndStatus(Casting casting,String status);
     Contract findByContractIdx(int contractIdx);
+
+
 }

@@ -2,6 +2,9 @@ package com.clnine.kimpd.src.Web.contract;
 
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponse;
+import com.clnine.kimpd.src.Web.casting.CastingProvider;
+import com.clnine.kimpd.src.Web.casting.CastingRepository;
+import com.clnine.kimpd.src.Web.casting.models.Casting;
 import com.clnine.kimpd.src.Web.contract.models.GetContractRes;
 import com.clnine.kimpd.src.Web.contract.models.HtmlToPdfReq;
 import com.clnine.kimpd.src.Web.message.models.GetMessagesRes;
@@ -22,23 +25,27 @@ public class ContractController {
     private final ContractProvider contractProvider;
 
 
+    private final CastingProvider castingProvider;
+
+
     @ResponseBody
-    @PostMapping("/to-pdf/{contractIdx}")
-    public BaseResponse<String> getContracts(@PathVariable(required = true,value="contractIdx") int contractIdx,
-                                                    @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException {
+    @PostMapping("/to-pdf/{castingIdx}")
+    public BaseResponse<String> getContracts(@PathVariable(required = true,value="castingIdx") int castingIdx,
+                                                    @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException,BaseException {
 
-           String s = contractProvider.makepdf(null,contractIdx);
-            return new BaseResponse<>(SUCCESS,s);
-
-    }
-
-
-    @PostMapping("/profile/pic")
-    public BaseResponse<String> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-
-        String s = contractProvider.upload(multipartFile);
+        Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
+        String s = contractProvider.makepdf(casting,7);
         return new BaseResponse<>(SUCCESS,s);
+
     }
+
+
+//    @PostMapping("/profile/pic")
+//    public BaseResponse<String> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+//
+//        String s = contractProvider.upload(multipartFile);
+//        return new BaseResponse<>(SUCCESS,s);
+//    }
 
     @GetMapping("/castings/{castingIdx}/contracts")
     public BaseResponse<GetContractRes> getContract(@PathVariable(required = true,value = "castingIdx")int castingIdx){
