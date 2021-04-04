@@ -234,7 +234,7 @@ public class AdminUserInfoController {
             if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if(parameters.getCorporationBusinessName().length() != 0){
+            if(parameters.getCorporationBusinessName() != null){
                 return new BaseResponse<>(NOT_VALID_CORP_BUSINESS_NAME);
             }
         }
@@ -248,7 +248,7 @@ public class AdminUserInfoController {
             if(parameters.getBusinessImageURL() == null || parameters.getBusinessImageURL().length() == 0){
                 return new BaseResponse<>(EMPTY_BUSINESS_IMAGE);
             }
-            if(parameters.getPrivateBusinessName().length() != 0){
+            if(parameters.getPrivateBusinessName() != null){
                 return new BaseResponse<>(NOT_VALID_PIV_BUSINESS_NAME);
             }
         }

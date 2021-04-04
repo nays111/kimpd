@@ -185,6 +185,7 @@ public enum BaseResponseStatus {
     FAILED_TO_PATCH_CONTRACT(false,3519,"계약서 수정에 실패했습니다."),
     EMPTY_REVIEW(false,3520,"평가 대기중입니다."),
     FAILED_TO_GET_CASTINGS(false,3521,"섭외 조회하는데 실패했습니다."),
+    FAILED_REGISTER_USER_BY_BAN(false, 3522, "이용 정지된 회원입니다."),
 
 
     // 4000 : Database 오류

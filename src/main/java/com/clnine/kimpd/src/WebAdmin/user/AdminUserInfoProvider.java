@@ -178,23 +178,14 @@ public class AdminUserInfoProvider {
      * @throws BaseException
      */
     public AdminUserInfo retrieveUserInfoByEmail(String email) throws BaseException {
-        List<AdminUserInfo> existsUserInfoList;
+        AdminUserInfo existsUserInfo;
         try {
-            existsUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
+            existsUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(email, "ACTIVE");
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
-        // 2. 존재하는 UserInfo가 있는지 확인
-        AdminUserInfo userInfo;
-        if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
-            userInfo = existsUserInfoList.get(0);
-        } else {
-            throw new BaseException(NOT_FOUND_USER);
-        }
-
-        // 3. UserInfo를 return
-        return userInfo;
+        return existsUserInfo;
     }
 
     public WebAdmin retrieveUserInfoByWebAdminId(String id) throws BaseException {
