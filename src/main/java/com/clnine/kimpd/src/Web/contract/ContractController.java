@@ -34,7 +34,7 @@ public class ContractController {
                                                     @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException,BaseException {
 
         Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
-        String s = contractProvider.makepdf(casting,7);
+        String s = contractProvider.makepdf(casting,11);
         return new BaseResponse<>(SUCCESS,s);
 
     }
