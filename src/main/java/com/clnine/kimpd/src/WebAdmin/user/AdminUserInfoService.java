@@ -97,9 +97,11 @@ public class AdminUserInfoService {
      */
     public AdminPostUserRes createUserInfo(AdminPostUserReq postUserReq) throws BaseException {
         AdminUserInfo existUserInfo = null;
+        AdminUserInfo existPhoneNumUserInfo = null;
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
             existUserInfo = adminUserInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
+            existPhoneNumUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(postUserReq.getPhoneNum(), "ACTIVE");
         } catch (BaseException exception) {
             // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
             if (exception.getStatus() != NOT_FOUND_USER) {
@@ -109,6 +111,21 @@ public class AdminUserInfoService {
         // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
         if (existUserInfo != null) {
             throw new BaseException(DUPLICATED_USER);
+        }
+        if(existPhoneNumUserInfo != null){
+            throw new BaseException(DUPLICATED_USER);
+        }
+
+        AdminUserInfo banPhoneUserInfo = null;
+        banPhoneUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(postUserReq.getPhoneNum(), "DISABLED");
+        if(banPhoneUserInfo != null){
+            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
+        }
+
+        AdminUserInfo banEmailUserInfo = null;
+        banEmailUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(postUserReq.getEmail(), "DISABLED");
+        if(banEmailUserInfo != null){
+            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
         }
 
         // 2. 유저 정보 생성
@@ -176,6 +193,18 @@ public class AdminUserInfoService {
             if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
                 throw new BaseException(DUPLICATED_USER);
             }
+        }
+
+        AdminUserInfo banPhoneUserInfo = null;
+        banPhoneUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(adminPatchUserReq.getPhoneNum(), "DISABLED");
+        if(banPhoneUserInfo != null){
+            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
+        }
+
+        AdminUserInfo banEmailUserInfo = null;
+        banEmailUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(adminPatchUserReq.getEmail(), "DISABLED");
+        if(banEmailUserInfo != null){
+            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
         }
 
         if (!adminPatchUserReq.getPhoneNum().equals(adminUserInfo.getPhoneNum())) {
