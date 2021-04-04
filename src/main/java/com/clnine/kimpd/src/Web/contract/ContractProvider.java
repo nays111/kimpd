@@ -102,37 +102,97 @@ public class ContractProvider {
 
         return amt_msg;
     }
+    public String transformDateFrom(String dateForm){
+        dateForm = dateForm.replaceFirst("[.]","년 ");
+        dateForm = dateForm.replaceFirst("[.]","월 ");
+        dateForm = dateForm+"일";
+        return dateForm;
+    }
 
     public String makepdf(Casting casting,int contractIdx) throws IOException {
 
         //todo 가장 최근 계약서를 가져옴
         Contract contract = contractRepository.findByContractIdx(contractIdx);
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy 년 MM 월 dd 일");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
         String dateToStr = dateFormat.format(casting.getUpdatedAt());
 
         String castingPrice = NumberToKor(casting.getCastingPrice());
 
-        //todo html 변수 바꾸기
-        //계약서 html (string)
+
+
         String BODY = contract.getContractContent();
         BODY=BODY.replace("${userName}",casting.getUserInfo().getName());
         BODY=BODY.replace("${expertName}",casting.getExpert().getName());
         BODY=BODY.replace("${projectName}",casting.getProject().getProjectName());
         BODY=BODY.replace("${projectDescription}",casting.getProject().getProjectDescription());
-        BODY=BODY.replace("${castingStartDate}",casting.getCastingStartDate());
-        BODY=BODY.replace("${castingEndDate}",casting.getCastingEndDate());
-        BODY=BODY.replace("${castingPriceDate}",casting.getCastingPriceDate());
+        BODY=BODY.replace("${castingStartDate}",transformDateFrom(casting.getCastingStartDate()));
+        BODY=BODY.replace("${castingEndDate}",transformDateFrom(casting.getCastingEndDate()));
+        BODY=BODY.replace("${castingPriceDate}",transformDateFrom(casting.getCastingPriceDate()));
         BODY=BODY.replace("${castingPrice}",castingPrice);
         BODY=BODY.replace("${updatedAt}",dateToStr);
 
+        if(casting.getUserInfo().getUserType()==1 || casting.getUserInfo().getUserType()==4){
+            BODY = BODY.replace("${priceType}","(세금 포함)");
+        }else{
+            BODY = BODY.replace("${priceType}","(VAT 포함)");
+        }
 
 
+        //위탁자 (전문가)
+        BODY = BODY.replace("${address1}",casting.getExpert().getAddress());
+        if(casting.getExpert().getUserType()==4){
+            BODY = BODY.replace("${name1}",casting.getExpert().getName());
+            BODY = BODY.replace("${inputNameTitleByUserType1}","성명");
+            BODY = BODY.replace("${userType1}","<개인 전문가회원>");
+        }else if(casting.getExpert().getUserType()==5){
+            BODY = BODY.replace("${name1}",casting.getExpert().getPrivateBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType1}","상호");
+            BODY = BODY.replace("${userType1}","<개인/법인사업자 전문가회원>");
+        }else if(casting.getExpert().getUserType()==6){
+            BODY = BODY.replace("${name1}",casting.getExpert().getCorporationBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType1}","상호");
+            BODY = BODY.replace("${userType1}","<개인/법인사업자 전문가회원>");
+        }
 
+
+        //수탁자 (일반인 + 전문가)
+        BODY = BODY.replace("${address2}",casting.getUserInfo().getAddress());
+        if(casting.getUserInfo().getUserType()==5){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getPrivateBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
+            BODY = BODY.replace("${userType2}","<제작사회원>");
+        }else if(casting.getUserInfo().getUserType()==6){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getCorporationBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
+            BODY = BODY.replace("${userType2}","<제작사회원>");
+        }else if(casting.getUserInfo().getUserType()==4){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","성명");
+            BODY = BODY.replace("${userType2}","<일반회원>");
+        }else if(casting.getUserInfo().getUserType()==3){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getCorporationBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
+            BODY = BODY.replace("${userType2}","<제작사회원>");
+        }else if(casting.getUserInfo().getUserType()==2){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getPrivateBusinessName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
+            BODY = BODY.replace("${userType2}","<제작사회원>");
+        }else if(casting.getUserInfo().getUserType()==1){
+            BODY = BODY.replace("${name2}",casting.getUserInfo().getName());
+            BODY = BODY.replace("${inputNameTitleByUserType2}","성명");
+            BODY = BODY.replace("${userType2}","<일반회원>");
+        }
 
         //한국어를 표시하기 위해 폰트 적용
-        //todo 폰트 파일 경로 서버로 수정 필요
-        String FONT = "src/main/resources/static/MalgunGothic.TTF";
+
+        //Local 주소
+        //String FONT = "src/main/resources/static/MalgunGothic.TTF";
+
+        //서버 주소
+        String FONT = "/var/www/html/kimpd/files/MalgunGothic.TTF";
+
+
         //ConverterProperties : htmlconverter의 property를 지정하는 메소드인듯
         ConverterProperties properties = new ConverterProperties();
         FontProvider fontProvider = new DefaultFontProvider(false, false, false);
@@ -141,7 +201,13 @@ public class ContractProvider {
         properties.setFontProvider(fontProvider);
 
         String filename = "contract.pdf";
-        String storePathString = "src/main/resources/static/";
+
+
+        //Local 주소
+        //String storePathString = "src/main/resources/static/";
+
+        //Server 주소
+        String storePathString = "/var/www/html/kimpd/files/";
         String realName = storePathString;
         realName+=filename;
 
@@ -179,8 +245,11 @@ public class ContractProvider {
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/pdf").setMetadata(map).build();
         System.out.println("b:"+blobInfo.getBucket());
 
-        //todo 서버 경로로 수정
-        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+        //Local 주소
+         //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+
+        //Server 주소소
+       Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));
