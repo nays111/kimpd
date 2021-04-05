@@ -58,6 +58,10 @@ public class ExpertService {
         for(int i=0;i<userGenreCategoryList.size();i++){
             userGenreCategoryRepository.delete(userGenreCategoryList.get(i));
         }
+        List<Portfolio> portfolioList = portfolioRepository.findAllByUserInfo(userInfo);
+        for(int i=0;i<portfolioList.size();i++){
+            portfolioRepository.delete(portfolioList.get(i));
+        }
         //새로운걸 저장
         for(int i=0;i<jobCategoryParentIdxList.size();i++){
             JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryParentIdxList.get(i));

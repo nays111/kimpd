@@ -13,6 +13,7 @@ import com.google.cloud.storage.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
+import com.itextpdf.kernel.geom.PageSize;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -204,7 +205,7 @@ public class ContractProvider {
 
 
         //Local 주소
-        //String storePathString = "src/main/resources/static/";
+       // String storePathString = "src/main/resources/static/";
 
         //Server 주소
         String storePathString = "/var/www/html/kimpd/files/";
@@ -213,10 +214,17 @@ public class ContractProvider {
 
         //pdf 페이지 크기를 조정
         List<IElement> elements = HtmlConverter.convertToElements(BODY, properties);
+//        PdfWriter pdfWriter = new PdfWriter(realName);
+//        pdfWriter.
+
         PdfDocument pdf = new PdfDocument(new PdfWriter(realName));
+        pdf.setDefaultPageSize(PageSize.A3);
+
         Document document = new Document(pdf);
         //setMargins 매개변수순서 : 상, 우, 하, 좌
         document.setMargins(50, 50, 50, 50);
+
+
         for (IElement element : elements) {
             document.add((IBlockElement) element);
         }
