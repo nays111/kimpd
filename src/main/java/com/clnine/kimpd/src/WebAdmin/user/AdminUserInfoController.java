@@ -329,6 +329,10 @@ public class AdminUserInfoController {
 
         // 2. Post UserInfo
         try {
+            if(adminUserInfoProvider.checkJWT() == false){
+                return new BaseResponse<>(INVALID_JWT);
+            }
+
             AdminPostAdminRes adminPostAdminRes = adminUserInfoService.createAdminInfo(parameters);
             return new BaseResponse<>(SUCCESS, adminPostAdminRes);
         } catch (BaseException exception) {
