@@ -13,7 +13,13 @@ import com.google.cloud.storage.*;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.StorageClient;
+import com.itextpdf.html2pdf.css.apply.ICssApplierFactory;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.layout.borders.SolidBorder;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.Leading;
+import com.itextpdf.layout.property.Property;
+import com.itextpdf.layout.property.TextAlignment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -26,8 +32,6 @@ import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.IBlockElement;
-import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.font.FontProvider;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +44,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
@@ -145,15 +150,15 @@ public class ContractProvider {
         if(casting.getExpert().getUserType()==4){
             BODY = BODY.replace("${name1}",casting.getExpert().getName());
             BODY = BODY.replace("${inputNameTitleByUserType1}","성명");
-            BODY = BODY.replace("${userType1}","<개인 전문가회원>");
+            BODY = BODY.replace("${userType1}","개인 전문가회원");
         }else if(casting.getExpert().getUserType()==5){
             BODY = BODY.replace("${name1}",casting.getExpert().getPrivateBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType1}","상호");
-            BODY = BODY.replace("${userType1}","<개인/법인사업자 전문가회원>");
+            BODY = BODY.replace("${userType1}","개인/법인사업자 전문가회원");
         }else if(casting.getExpert().getUserType()==6){
             BODY = BODY.replace("${name1}",casting.getExpert().getCorporationBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType1}","상호");
-            BODY = BODY.replace("${userType1}","<개인/법인사업자 전문가회원>");
+            BODY = BODY.replace("${userType1}","개인/법인사업자 전문가회원");
         }
 
 
@@ -162,36 +167,37 @@ public class ContractProvider {
         if(casting.getUserInfo().getUserType()==5){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getPrivateBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
-            BODY = BODY.replace("${userType2}","<제작사회원>");
+            BODY = BODY.replace("${userType2}","제작사회원");
         }else if(casting.getUserInfo().getUserType()==6){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getCorporationBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
-            BODY = BODY.replace("${userType2}","<제작사회원>");
+            BODY = BODY.replace("${userType2}","제작사회원");
         }else if(casting.getUserInfo().getUserType()==4){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","성명");
-            BODY = BODY.replace("${userType2}","<일반회원>");
+            BODY = BODY.replace("${userType2}","일반회원");
         }else if(casting.getUserInfo().getUserType()==3){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getCorporationBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
-            BODY = BODY.replace("${userType2}","<제작사회원>");
+            BODY = BODY.replace("${userType2}","제작사회원");
         }else if(casting.getUserInfo().getUserType()==2){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getPrivateBusinessName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","상호");
-            BODY = BODY.replace("${userType2}","<제작사회원>");
+            BODY = BODY.replace("${userType2}","제작사회원");
         }else if(casting.getUserInfo().getUserType()==1){
             BODY = BODY.replace("${name2}",casting.getUserInfo().getName());
             BODY = BODY.replace("${inputNameTitleByUserType2}","성명");
-            BODY = BODY.replace("${userType2}","<일반회원>");
+            BODY = BODY.replace("${userType2}","일반회원");
         }
 
         //한국어를 표시하기 위해 폰트 적용
 
         //Local 주소
-        //String FONT = "src/main/resources/static/MalgunGothic.TTF";
+        String FONT = "src/main/resources/static/MalgunGothic.TTF";
+
 
         //서버 주소
-        String FONT = "/var/www/html/kimpd/files/MalgunGothic.TTF";
+        //String FONT = "/var/www/html/kimpd/files/MalgunGothic.TTF";
 
 
         //ConverterProperties : htmlconverter의 property를 지정하는 메소드인듯
@@ -201,14 +207,16 @@ public class ContractProvider {
         fontProvider.addFont(fontProgram);
         properties.setFontProvider(fontProvider);
 
+
+
         String filename = "contract.pdf";
 
 
         //Local 주소
-       // String storePathString = "src/main/resources/static/";
+        String storePathString = "src/main/resources/static/";
 
         //Server 주소
-        String storePathString = "/var/www/html/kimpd/files/";
+        //String storePathString = "/var/www/html/kimpd/files/";
         String realName = storePathString;
         realName+=filename;
 
@@ -218,16 +226,58 @@ public class ContractProvider {
 //        pdfWriter.
 
         PdfDocument pdf = new PdfDocument(new PdfWriter(realName));
-        pdf.setDefaultPageSize(PageSize.A3);
+        pdf.setDefaultPageSize(PageSize.A4);
+
 
         Document document = new Document(pdf);
+
         //setMargins 매개변수순서 : 상, 우, 하, 좌
         document.setMargins(50, 50, 50, 50);
-
-
+        //document.setBold();
+        document.setFontSize(12);
+        //document.setProperty(Property.BORDER,new SolidBorder(2));
+        //document.setBorder(new SolidBorder(2));
+        //document.setProperty(Property.LEADING,new Leading(Leading.FIXED,4));
+        //document.setBorderTop(new SolidBorder(1));
+        //document.setBorderRight(new SolidBorder(1));
+        //document.setBorderLeft(new SolidBorder(1));
+        //document.setBorderBottom(new SolidBorder(1));
+//        Paragraph paragraph = new Paragraph("");
+//        paragraph.setMultipliedLeading(1.0f);
+        int i=0;
         for (IElement element : elements) {
-            document.add((IBlockElement) element);
+            BlockElement blockElement = (BlockElement) element;
+
+            blockElement.setMargins(1,0,1,0);
+            if(i==0){
+                blockElement.setBold();
+                blockElement.setFontSize(15);
+                blockElement.setTextAlignment(TextAlignment.CENTER);
+                blockElement.setBorder(new SolidBorder(1));
+            }
+            if(i==4 || i==7 || i==12 || i==16 || i==23 || i==26 ||i==30 || i==34 || i==37 || i==40 || i==48 || i==54){
+                blockElement.setBold();
+            }
+            if(i==45){
+                blockElement.setBold();
+                blockElement.setTextAlignment(TextAlignment.CENTER);
+            }
+            document.add(blockElement);
+            //document.add(paragraph);
+
+            //blockElement.setBorderTop(new SolidBorder(1));
+            i++;
+
+
+            //document.add(new Paragraph(15,(IBlockElement) element , FONT));
+
         }
+        document.setBorderTop(new SolidBorder(1));
+        document.setBorderRight(new SolidBorder(1));
+        document.setBorderLeft(new SolidBorder(1));
+        document.setBorderBottom(new SolidBorder(1));
+        document.setBorder(new SolidBorder(1F));
+
         document.close();
 
         Path path = Paths.get(realName);
@@ -254,10 +304,10 @@ public class ContractProvider {
         System.out.println("b:"+blobInfo.getBucket());
 
         //Local 주소
-         //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+         Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         //Server 주소소
-       Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+       //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));
