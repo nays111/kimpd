@@ -225,9 +225,7 @@ public class CastingService {
             String alarmMessage = expertNickname+"전문가님께서 섭외 요청을 승인하셨습니다.";
             Alarm alarm = new Alarm(casting.getUserInfo(), alarmMessage);
 
-            /**
-             * todo 계약서 생성 & 저장 부분 마무리하기
-             */
+
             String contractUrl = contractProvider.makepdf(casting,12);
             casting.setContractFileUrl(contractUrl);
             try{

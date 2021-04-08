@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -112,7 +113,7 @@ public class CastingController {
     @PatchMapping("/received-castings/response")
     @Operation(summary = "섭외 수락, 섭외 거절, 작업 완료 API")
     public BaseResponse<String> patchCastingStatus(@RequestParam(value = "castingStatus",required = true) int castingStatus,
-                                                   @RequestBody PatchCastingStatusReq patchCastingStatusReq) {
+                                                   @RequestBody PatchCastingStatusReq patchCastingStatusReq) throws IOException {
         if(castingStatus<2 && castingStatus>4){
             return new BaseResponse<>(WRONG_CASTING_STATUS);
         }
