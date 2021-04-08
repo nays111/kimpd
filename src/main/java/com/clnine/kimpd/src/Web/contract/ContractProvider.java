@@ -115,7 +115,7 @@ public class ContractProvider {
         return dateForm;
     }
 
-    public String makepdf(Casting casting,int contractIdx) throws IOException {
+    public String makepdf(Casting casting,int contractIdx) throws IOException,BaseException {
 
         //todo 가장 최근 계약서를 가져옴
         Contract contract = contractRepository.findByContractIdx(contractIdx);
@@ -193,11 +193,11 @@ public class ContractProvider {
         //한국어를 표시하기 위해 폰트 적용
 
         //Local 주소
-        String FONT = "src/main/resources/static/MalgunGothic.TTF";
+        //String FONT = "src/main/resources/static/MalgunGothic.TTF";
 
 
         //서버 주소
-        //String FONT = "/var/www/html/kimpd/files/MalgunGothic.TTF";
+        String FONT = "/var/www/html/kimpd/files/MalgunGothic.TTF";
 
 
         //ConverterProperties : htmlconverter의 property를 지정하는 메소드인듯
@@ -213,10 +213,10 @@ public class ContractProvider {
 
 
         //Local 주소
-        String storePathString = "src/main/resources/static/";
+        //String storePathString = "src/main/resources/static/";
 
         //Server 주소
-        //String storePathString = "/var/www/html/kimpd/files/";
+        String storePathString = "/var/www/html/kimpd/files/";
         String realName = storePathString;
         realName+=filename;
 
@@ -304,10 +304,10 @@ public class ContractProvider {
         System.out.println("b:"+blobInfo.getBucket());
 
         //Local 주소
-         Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+         //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         //Server 주소소
-       //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+       Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));

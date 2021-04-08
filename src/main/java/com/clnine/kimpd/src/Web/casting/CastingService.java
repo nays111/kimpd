@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.io.IOException;
+
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
@@ -206,7 +208,7 @@ public class CastingService {
      * 섭외수락 or 섭외거절 or 작업완료
      */
     @Transactional
-    public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException{
+    public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException, IOException {
         Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
         if(casting.getExpert().getUserIdx()!=userIdx){
             throw new BaseException(NO_CASTING_FOR_YOU);
@@ -226,13 +228,13 @@ public class CastingService {
             /**
              * todo 계약서 생성 & 저장 부분 마무리하기
              */
-//            String contractUrl = contractProvider.makepdf(casting);
-//            casting.setContractFileUrl(contractUrl);
-//            try{
-//                castingRepository.save(casting);
-//            }catch(Exception ignored){
-//                throw new BaseException(FAILED_TO_SEND_ALARM);
-//            }
+            String contractUrl = contractProvider.makepdf(casting,12);
+            casting.setContractFileUrl(contractUrl);
+            try{
+                castingRepository.save(casting);
+            }catch(Exception ignored){
+                throw new BaseException(FAILED_TO_SEND_ALARM);
+            }
 
             try{
                 alarmRepository.save(alarm);
