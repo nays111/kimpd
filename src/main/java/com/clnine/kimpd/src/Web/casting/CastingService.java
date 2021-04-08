@@ -207,7 +207,7 @@ public class CastingService {
     /**
      * 섭외수락 or 섭외거절 or 작업완료
      */
-    @Transactional
+
     public void patchCastingStatus(int state, PatchCastingStatusReq patchCastingStatusReq,int userIdx) throws BaseException, IOException {
         Casting casting = castingProvider.retrieveCastingByCastingIdx(patchCastingStatusReq.getCastingIdx());
         if(casting.getExpert().getUserIdx()!=userIdx){

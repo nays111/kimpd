@@ -290,7 +290,7 @@ public class CastingProvider {
         if(casting==null){
             throw new BaseException(FAILED_TO_GET_CASTING);
         }
-        if(casting.getUserInfo().getUserIdx()!=userIdx){
+        if(casting.getUserInfo().getUserIdx()!=userIdx && casting.getExpert().getUserIdx()!=userIdx){
             throw new BaseException(NO_CASTING);
         }
         int projectIdx = casting.getProject().getProjectIdx();
