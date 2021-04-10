@@ -114,6 +114,9 @@ public class CastingController {
     @Operation(summary = "섭외 수락, 섭외 거절, 작업 완료 API")
     public BaseResponse<String> patchCastingStatus(@RequestParam(value = "castingStatus",required = true) int castingStatus,
                                                    @RequestBody PatchCastingStatusReq patchCastingStatusReq) throws IOException {
+        /**
+         *  2(섭외수락),3(섭외거절),4(작업완료)만 가능
+         */
         if(castingStatus<2 && castingStatus>4){
             return new BaseResponse<>(WRONG_CASTING_STATUS);
         }
@@ -274,6 +277,7 @@ public class CastingController {
     @Operation(summary = "재섭외 요청 API",description = "토큰이 필요합니다.")
     public BaseResponse<String> patchCastingStatus(@PathVariable(required = true, value = "castingIdx")int castingIdx,
                                                    @RequestBody(required = true)PatchCastingReq patchCastingReq){
+
         if(patchCastingReq.getCastingPrice()==null || patchCastingReq.getCastingPrice().length()==0){
             return new BaseResponse<>(EMPTY_CASTING_PRICE);
         }

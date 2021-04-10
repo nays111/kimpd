@@ -31,6 +31,9 @@ public class CastingProvider {
     private final CategoryProvider categoryProvider;
     private final ReviewRepository reviewRepository;
 
+    /**
+     * 섭외 보낸 사람, 섭외 받은 전문가, 프로젝트 정보로 casting 찾기
+     */
     public Casting retrieveCastingInfoByUserExpertProject(UserInfo user, UserInfo expert, Project project) throws BaseException{
         List<Casting> existsCastingList;
         try{
@@ -47,6 +50,9 @@ public class CastingProvider {
         return casting;
     }
 
+    /**
+     * 섭외 인덱스로 casting 찾기
+     */
     public Casting retrieveCastingByCastingIdx(int castingIdx) throws BaseException{
         Casting casting;
         try{
@@ -58,9 +64,18 @@ public class CastingProvider {
         return casting;
     }
 
+    /**
+     * 클라이언트 회원이 섭외 보낸 횟수 조회
+     */
     public CastingCountRes getCastingCount(int userIdx)throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
 
+        /**
+         * castingGoing (섭외중) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 아직 섭외에 대한 응답을 안한 상태
+         * castingAccepted (섭외 승인) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 섭외를 승인한 상태
+         * castingRejected (섭외 거절) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 섭외를 거절한 상태
+         * projectFinished (작업완료) : 클라이언트가 전문가에게 섭외 신창을 보냄 / 전문가가 작업 완료한 상태
+         */
         int castingGoing = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,1,"ACTIVE");
         int castingAccepted = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,2,"ACTIVE");
         int castingRejected = castingRepository.countAllByUserInfoAndCastingStatusAndStatus(userInfo,3,"ACTIVE");
@@ -71,12 +86,24 @@ public class CastingProvider {
     }
 
 
+    /**
+     * 전문가가 섭외 받은 횟수 조회
+     */
     public CastingCountRes getReceivedCastingCount(int userIdx)throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
 
+        /**
+         * 전문가가 아닌 경우
+         */
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
+        /**
+         * castingGoing (섭외중) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 아직 섭외에 대한 응답을 안한 상태
+         * castingAccepted (섭외 승인) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 섭외를 승인한 상태
+         * castingRejected (섭외 거절) : 클라이언트가 전문가에게 섭외 신청을 보냄 / 전문가가 섭외를 거절한 상태
+         * projectFinished (작업완료) : 클라이언트가 전문가에게 섭외 신창을 보냄 / 전문가가 작업 완료한 상태
+         */
         int castingGoing = castingRepository.countAllByExpertAndCastingStatusAndStatus(userInfo,1,"ACTIVE");
         int castingAccepted = castingRepository.countAllByExpertAndCastingStatusAndStatus(userInfo,2,"ACTIVE");
         int castingRejected = castingRepository.countAllByExpertAndCastingStatusAndStatus(userInfo,3,"ACTIVE");
@@ -86,16 +113,28 @@ public class CastingProvider {
         return castingCountRes;
     }
 
+
     /**
      * 내가 섭외 요청 보낸 리스트 조회 API
      */
     public GetMyCastingsRes getMyCastingRes(int casterIdx, Integer duration, Integer castingStatus, int page, int size) throws BaseException{
+
+        /**
+         * castedIdx : 섭외 요청을 보낸 사람
+         */
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(casterIdx);
 
         List<Casting> castingList = null;
         int totalCount = 0;
 
+        /**
+         * 최신순 검색을 위한 paging (castingIdx 기준으로 내림차순 검색)
+         */
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
+
+        /**
+         * 3달전, 6달전 필터링 검색을 위해 시간 형식 통일
+         */
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -152,8 +191,11 @@ public class CastingProvider {
 
             String introduce = userInfo1.getIntroduce();
 
-            int castingStatus1 = casting.getCastingStatus();
 
+            /**
+             * 섭외 상태에 따른 반환 형식 지정
+             */
+            int castingStatus1 = casting.getCastingStatus();
             String castingStatusString = null;
             if(castingStatus1==1){
                 castingStatusString="섭외중";
@@ -183,13 +225,21 @@ public class CastingProvider {
     }
 
     /**
-     * 받은 섭외 요청 리스트 조회 API (보낸 것과 다름) ->전문가만 사용
+     * 받은 섭외 요청 리스트 조회 (보낸 것과 다름) ->전문가만 사용
      */
     public GetMyReceivedCastingsRes getMyReceivedCastingRes(int expertIdx, Integer duration, Integer castingStatus, int page, int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
         List<Casting> castingList = null;
         int totalCount = 0;
+
+        /**
+         * 최신순 검색을 위한 paging (castingIdx 기준으로 내림차순 검색)
+         */
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"castingIdx"));
+
+        /**
+         * 3달전, 6달전 필터링 검색을 위해 시간 형식 통일
+         */
         SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
         Calendar cal = Calendar.getInstance();
         Calendar cal2 = Calendar.getInstance();
@@ -240,6 +290,10 @@ public class CastingProvider {
             String nickname = userInfo1.getNickname();
             String profileImageURL = userInfo1.getProfileImageURL();
 
+
+            /**
+             * 섭외 상태에 따른 반환 형식 지정
+             */
             int castingStatus1 = casting.getCastingStatus();
 
             String castingStatusString = null;
@@ -263,12 +317,18 @@ public class CastingProvider {
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
             String castingDate = sDate.format(createdAt);//4
 
-            //전문가가 일반인에게 평가를 한 경우
-            //전문가 : expertIdx(userInfo), 일반인 : userInfo1
-            //casting
+
+            /**
+             * reviweStatus : 평가를 했는지 / 안했는지를 구분하기 위함
+             * 전문가가 일반인에게 평가를 한 경우
+             * 전문가 : expertIdx(userInfo), 일반인 : userInfo1
+             * castingStatus = 4 일때, (작업완료 상태인 경우에만) reviewStatus에 값 삽입 (아닐때는 null)
+             */
             String reviewStatus = null;
             if(castingStatus1==4){
-                //전문가(usrInfo)가 일반인(userInfo1)에게 평가를 한경우 -> 전문가 : evaluateUserInfo, 일반인 : evaluatedUserInfo
+                /**
+                 * 전문가(usrInfo)가 일반인(userInfo1)에게 평가를 한경우 -> 전문가 : evaluateUserInfo, 일반인 : evaluatedUserInfo
+                 */
                 Review review = reviewRepository.findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(userInfo1,userInfo,casting,"ACTIVE");
                 if(review==null){
                     reviewStatus = "평가대기";
@@ -282,17 +342,25 @@ public class CastingProvider {
         GetMyReceivedCastingsRes getMyReceivedCastingsRes = new GetMyReceivedCastingsRes(totalCount,getMyReceivedCastingDTOList);
         return getMyReceivedCastingsRes;
     }
+
+
     /**
      * 섭외 상세내역 조회
      */
     public GetCastingRes getCastingRes(int castingIdx,int userIdx) throws BaseException{
-        Casting casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
-        if(casting==null){
-            throw new BaseException(FAILED_TO_GET_CASTING);
-        }
+
+        Casting casting  = retrieveCastingByCastingIdx(castingIdx);
+
+        /**
+         * 조회하려는 섭외 내용이 본인과 연관없는 경우 조회 불가
+         */
         if(casting.getUserInfo().getUserIdx()!=userIdx && casting.getExpert().getUserIdx()!=userIdx){
             throw new BaseException(NO_CASTING);
         }
+
+        /**
+         * 프로젝트 정보
+         */
         int projectIdx = casting.getProject().getProjectIdx();
         String projectName = casting.getProject().getProjectName();
         String projectMaker = casting.getProject().getProjectMaker();
@@ -301,9 +369,10 @@ public class CastingProvider {
         String projectManager = casting.getProject().getProjectManager();
         String projectDescription = casting.getProject().getProjectDescription();
         String projectFileURL = casting.getProject().getProjectFileURL();
-        if(projectFileURL==null){
-            projectFileURL="업로드한 프로젝트 파일이 없습니다.";
-        }
+
+        /**
+         * 섭외 정보 불러오기
+         */
         String castingPrice = casting.getCastingPrice();
         String castingStartDate = casting.getCastingStartDate();
         String castingEndDate = casting.getCastingEndDate();
