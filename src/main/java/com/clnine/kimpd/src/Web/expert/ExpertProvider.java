@@ -47,6 +47,9 @@ public class ExpertProvider {
     @Transactional(readOnly = true)
     public GetExpertRes getExpertRes(int userIdx) throws BaseException {
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        /**
+         * 유저 정보 가져오기
+         */
         String userProfileImage = userInfo.getProfileImageURL();
         String nickname = userInfo.getNickname();
         String city = userInfo.getCity();
@@ -103,36 +106,59 @@ public class ExpertProvider {
         int sort = postExpertsReq.getSort();
         int pageSearch = (page-1)*5;
 
+        /**
+         * 직종 1차 카테고리를 전체 조회할 경우 (존재하는 직종 1차 모두 넣어두기)
+         */
         if(jobCategoryParentIdx.size()==0 || jobCategoryParentIdx.isEmpty() || jobCategoryParentIdx==null){
             jobCategoryParentIdx.add(1L);jobCategoryParentIdx.add(2L);
             jobCategoryParentIdx.add(3L);jobCategoryParentIdx.add(4L);
             jobCategoryParentIdx.add(5L);
         }
+        /**
+         * 직종 2차 카테고리를 전체 조회할 경우 (존재하는 직종 2차 모두 넣어두기)
+         */
         if(jobCategoryChildIdx.size()==0 || jobCategoryChildIdx.isEmpty()){
             for(Long i=1L;i<=31L;i++){
                 jobCategoryChildIdx.add(i);
             }
         }
+        /**
+         * 장르 카테고리를 전체 조회할 경우 (존재하는 장르 카테고리 모두 넣어두기)
+         */
         if(genreCategoryIdx.size()==0 || genreCategoryIdx.isEmpty()){
             for(Long i=1L;i<=11L;i++){
                 genreCategoryIdx.add(i);
             }
         }
+        /**
+         * 전체 도시를 대상으로 조회할 경우 (존재하는 도시들 모두 넣어두기)
+         */
         if(city.size()==0 || city.isEmpty() ){
             city.add("서울");city.add("경기");city.add("인천");city.add("부산");city.add("대구");
             city.add("대전");city.add("광주");city.add("울산");city.add("세종");city.add("강원");
             city.add("경남");city.add("경북");city.add("전남");city.add("전북");city.add("충남");
             city.add("충북");city.add("제주");city.add("전국");
         }
+        /**
+         * 전국은 항상 포함되므로 전국 추가
+         */
         if(city!=null || city.size()!=0){
             city.add("전국");
         }
+
+        /**
+         * 섭외 기간을 전체 대상으로 조회할 경우 (""~ "9999.99.99" 까지 조회)
+         */
         if(castingStartDate==null || castingStartDate.length()==0){
             castingStartDate="";
         }
         if(castingEndDate==null || castingEndDate.length()==0){
             castingEndDate="9999.99.99";
         }
+
+        /**
+         * 섭외 비용을 전체 대상으로 조회할 경우 (섭외 비용을 가장 크게 설정)
+         */
         if(minimumCastingPrice==null){
             minimumCastingPrice=999999999;
         }
@@ -148,6 +174,10 @@ public class ExpertProvider {
         }
 
         int size = sizeResultList.size(); //검색 결과 건수
+
+        /**
+         * native query mapping 작업
+         */
         List<GetUsersRes> getUsersResList = resultList.stream().map(getUsersRes-> new GetUsersRes(
                 Integer.parseInt(String.valueOf(getUsersRes[0])), //userIdx
                 (String) getUsersRes[1], //profileImageURL
@@ -168,6 +198,9 @@ public class ExpertProvider {
     @Transactional(readOnly = true)
     public GetMyExpertRes getMyExpertRes(int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        /**
+         * 전문가가 아닌 경우
+         */
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
@@ -223,15 +256,27 @@ public class ExpertProvider {
         return getMyExpertRes;
     }
 
+    /**
+     * 달력으로 전문가 스케줄 확인하기 (년도와 월에 따라서 섭외가 진행 중인 상황 표시)
+     */
     @Transactional(readOnly = true)
     public GetMyExpertSchedulesManage getMyExpertSchedule(int userIdx,String year,String month) throws BaseException{
+
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
+        /**
+         * 전문가가 아닌 경우
+         */
         if(userInfo.getUserType()==1 || userInfo.getUserType()==2 || userInfo.getUserType()==3){
             throw new BaseException(NOT_EXPERT);
         }
         String startMonth = year+"."+month+"."+"01";
 
         String size=null;
+
+        /**
+         * 1~12 월에 따라 검색 범위가 달라지므로, 검새 범위 조정
+         */
         if(month.equals("02")){
             size="28";
         }else if(month.equals("01")||month.equals("03")||month.equals("05")||month.equals("07")||month.equals("08")||month.equals("10")||month.equals("12")){
@@ -279,6 +324,9 @@ public class ExpertProvider {
         return getMyExpertSchedulesManage;
     }
 
+    /**
+     * 전문가 스케줄 상세 조회하기 (해당되는 날짜를 입력했을 떄, 그 날짜에 어떤 섭외가 진행되고 있는지)
+     */
     public List<GetMyReceivedCastingsByCalendarRes> getMySpecificSchedules(int expertIdx, String year, String month, String day) throws BaseException{
         UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
         if(expertInfo.getUserType()==1 || expertInfo.getUserType()==2 || expertInfo.getUserType()==3){
@@ -292,27 +340,40 @@ public class ExpertProvider {
         List<Casting> castingList = castingRepository.findAllByExpertAndStatusAndCastingStatusAndCastingStartDateLessThanEqualAndCastingEndDateGreaterThanEqual(expertInfo,"ACTIVE",2,searchDay,searchDay);
 
         for(int i=0;i<castingList.size();i++){
+            /**
+             * 유저 정보 가져오기
+             */
             int userIdx = castingList.get(i).getUserInfo().getUserIdx();
             String userProfileImageUrl = castingList.get(i).getUserInfo().getProfileImageURL();
             String name = castingList.get(i).getUserInfo().getName();
             String nickname = castingList.get(i).getUserInfo().getNickname();
 
+            /**
+             * 섭외 정보 가져오기
+             */
             String castingStartDate = castingList.get(i).getCastingStartDate();
             String castingEndDate = castingList.get(i).getCastingEndDate();
             String castingDate = castingStartDate + "~" + castingEndDate;
             String castingPrice = castingList.get(i).getCastingPrice();
             String projectName = castingList.get(i).getProject().getProjectName();
+            String castingPriceDate = castingList.get(i).getCastingPriceDate();
+            String castingMessage = castingList.get(i).getCastingMessage();
+
+            /**
+             * 프로제그 정보 가져오기
+             */
             String projectDescription = castingList.get(i).getProject().getProjectDescription();
             String projectMaker = castingList.get(i).getProject().getProjectMaker();
             String projectManager = castingList.get(i).getProject().getProjectManager();
-            String castingPriceDate = castingList.get(i).getCastingPriceDate();
-            String castingMessage = castingList.get(i).getCastingMessage();
+
             GetMyReceivedCastingsByCalendarRes getMyReceivedCastingsByCalendarRes =
                     new GetMyReceivedCastingsByCalendarRes(userIdx,userProfileImageUrl,name,nickname,
                             castingDate,castingPrice,projectName,projectDescription,projectMaker,
                             projectManager,castingPriceDate,castingMessage);
+
             getMyReceivedCastingsByCalendarResList.add(getMyReceivedCastingsByCalendarRes);
         }
+
         return getMyReceivedCastingsByCalendarResList;
     }
 }

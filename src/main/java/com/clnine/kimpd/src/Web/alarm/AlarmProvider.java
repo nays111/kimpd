@@ -23,6 +23,9 @@ public class AlarmProvider {
     private final AlarmRepository alarmRepository;
     private final UserInfoProvider userInfoProvider;
 
+    /**
+     * 내 알림 리스트 조회
+     */
     public List<GetAlarmsRes> getAlarmsResList(int userIdx) throws BaseException {
         UserInfo userinfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         List<Alarm> alarmList;

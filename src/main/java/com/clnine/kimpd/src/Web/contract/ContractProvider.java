@@ -54,6 +54,9 @@ public class ContractProvider {
     private final CastingRepository castingRepository;
     private final ContractRepository contractRepository;
 
+    /**
+     * 계약서 조회
+     */
     public GetContractRes getContract(int userIdx,int castingIdx) throws BaseException{
 
         Casting casting = castingRepository.findAllByCastingIdxAndStatus(castingIdx,"ACTIVE");
@@ -69,6 +72,9 @@ public class ContractProvider {
         return getContractRes;
     }
 
+    /**
+     * 숫자를 한글로 변환하는 함수
+     */
     public String NumberToKor(String amt) {
 
         String amt_msg = "";
@@ -108,6 +114,10 @@ public class ContractProvider {
 
         return amt_msg;
     }
+
+    /**
+     * 날짜 형식 치환 함수
+     */
     public String transformDateFrom(String dateForm){
         dateForm = dateForm.replaceFirst("[.]","년 ");
         dateForm = dateForm.replaceFirst("[.]","월 ");
@@ -115,18 +125,30 @@ public class ContractProvider {
         return dateForm;
     }
 
+    /**
+     * html 형식의 계약서를 pdf로 전환
+     */
     public String makepdf(Casting casting,int contractIdx) throws IOException,BaseException {
 
-        //todo 가장 최근 계약서를 가져옴
+        /**
+         * 계약서 가져오기
+         */
         Contract contract = contractRepository.findByContractIdx(contractIdx);
 
+        /**
+         * 날짜 형식 치환
+         */
         DateFormat dateFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
         String dateToStr = dateFormat.format(casting.getUpdatedAt());
 
+        /**
+         * castingPrice를 한글 형식으로 반환
+         */
         String castingPrice = NumberToKor(casting.getCastingPrice());
 
-
-
+        /**
+         * html 변수 치환
+         */
         String BODY = contract.getContractContent();
         BODY=BODY.replace("${userName}",casting.getUserInfo().getName());
         BODY=BODY.replace("${expertName}",casting.getExpert().getName());
@@ -191,7 +213,6 @@ public class ContractProvider {
         }
 
         //한국어를 표시하기 위해 폰트 적용
-
         //Local 주소
         //String FONT = "src/main/resources/static/MalgunGothic.TTF";
 
@@ -207,10 +228,7 @@ public class ContractProvider {
         fontProvider.addFont(fontProgram);
         properties.setFontProvider(fontProvider);
 
-
-
         String filename = "contract.pdf";
-
 
         //Local 주소
         //String storePathString = "src/main/resources/static/";
@@ -222,9 +240,10 @@ public class ContractProvider {
 
         //pdf 페이지 크기를 조정
         List<IElement> elements = HtmlConverter.convertToElements(BODY, properties);
-//        PdfWriter pdfWriter = new PdfWriter(realName);
-//        pdfWriter.
 
+        /**
+         * 위에서 설정한 경로에 pdfdocument 생성
+         */
         PdfDocument pdf = new PdfDocument(new PdfWriter(realName));
         pdf.setDefaultPageSize(PageSize.A4);
 
@@ -233,45 +252,44 @@ public class ContractProvider {
 
         //setMargins 매개변수순서 : 상, 우, 하, 좌
         document.setMargins(50, 50, 50, 50);
-        //document.setBold();
         document.setFontSize(12);
-        //document.setProperty(Property.BORDER,new SolidBorder(2));
-        //document.setBorder(new SolidBorder(2));
-        //document.setProperty(Property.LEADING,new Leading(Leading.FIXED,4));
-        //document.setBorderTop(new SolidBorder(1));
-        //document.setBorderRight(new SolidBorder(1));
-        //document.setBorderLeft(new SolidBorder(1));
-        //document.setBorderBottom(new SolidBorder(1));
-//        Paragraph paragraph = new Paragraph("");
-//        paragraph.setMultipliedLeading(1.0f);
+
         int i=0;
         for (IElement element : elements) {
             BlockElement blockElement = (BlockElement) element;
 
+            /**
+             * 행간 조정
+             */
             blockElement.setMargins(1,0,1,0);
+
+            /**
+             * "계약서" bold체 적용, 가운데로 조정, 테두리 적용
+             */
             if(i==0){
                 blockElement.setBold();
                 blockElement.setFontSize(15);
                 blockElement.setTextAlignment(TextAlignment.CENTER);
                 blockElement.setBorder(new SolidBorder(1));
             }
+            /**
+             * "조항(1조~~~)" bold체 적용
+             */
             if(i==4 || i==7 || i==12 || i==16 || i==23 || i==26 ||i==30 || i==34 || i==37 || i==40 || i==48 || i==54){
                 blockElement.setBold();
             }
+            /**
+             * 문저 작성 날짜 bold체 적용, 가운데로 조정
+             */
             if(i==45){
                 blockElement.setBold();
                 blockElement.setTextAlignment(TextAlignment.CENTER);
             }
             document.add(blockElement);
-            //document.add(paragraph);
-
-            //blockElement.setBorderTop(new SolidBorder(1));
             i++;
-
-
-            //document.add(new Paragraph(15,(IBlockElement) element , FONT));
-
         }
+
+
         document.setBorderTop(new SolidBorder(1));
         document.setBorderRight(new SolidBorder(1));
         document.setBorderLeft(new SolidBorder(1));
@@ -280,6 +298,9 @@ public class ContractProvider {
 
         document.close();
 
+        /**
+         * multipartfile로 변환
+         */
         Path path = Paths.get(realName);
         String contentType = "application/pdf";
         byte[] content = null;
@@ -288,6 +309,10 @@ public class ContractProvider {
         } catch (final IOException e) {
         }
         MultipartFile result = new MockMultipartFile(filename,filename, contentType, content);
+
+        /**
+         * 파이어베이스에 multipartfile 업로드
+         */
         String str = upload(result);
         return str;
     }
@@ -295,27 +320,44 @@ public class ContractProvider {
     public String uploadFile(File file, String fileName) throws IOException {
 
         String tokenName = fileName;
+        /**
+         * firebase storage bucket 추가, 저장 경로 지정
+         */
         BlobId blobId = BlobId.of("kimpd-2ad1d.appspot.com", "ContractFile/"+fileName);
 
+        /**
+         * downloadtoken 생성
+         */
         Map<String,String> map = new HashMap<>();
         map.put("firebaseStorageDownloadTokens", tokenName);
 
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("application/pdf").setMetadata(map).build();
-        System.out.println("b:"+blobInfo.getBucket());
 
+        /**
+         * firebase admin sdk 사용을 위한 인증 credentials (json파일) 저장 경로
+         */
         //Local 주소
-         //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+        // Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         //Server 주소소
        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
-        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        storage.create(blobInfo, Files.readAllBytes(file.toPath()));
+        /**
+         * firebase storage 가져오기
+         */
+       Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+       storage.create(blobInfo, Files.readAllBytes(file.toPath()));
 
 
+        /**
+         * 계약서 생성 경로 반환 (경로를 casting/contractFileUrl에 저장)
+         */
         return String.format("https://firebasestorage.googleapis.com/v0/b/kimpd-2ad1d.appspot.com/o/ContractFile%%2F%s?alt=media&token=%s", URLEncoder.encode(fileName, StandardCharsets.UTF_8),URLEncoder.encode(fileName, StandardCharsets.UTF_8));
     }
 
+    /**
+     * multipartfile을 file로 변환
+     */
     private File convertToFile(MultipartFile multipartFile, String fileName) throws IOException {
         File tempFile = new File(fileName);
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -334,6 +376,9 @@ public class ContractProvider {
     }
 
 
+    /**
+     * multipartfile을 uuid를 부여하고 업로드 (부여받은 uuid로 만든 url 반환)
+     */
     public String upload(MultipartFile multipartFile) throws IOException {
 
         String fileName = multipartFile.getOriginalFilename();//to get original file name
