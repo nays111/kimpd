@@ -271,6 +271,41 @@ public class CastingController {
         }
     }
 
+    @ResponseBody
+    @PostMapping("/castings/{castingIdx}/conditions")
+    @Operation(summary = "섭외 조건 입력 API",description = "토큰이 필요합니다.")
+    public BaseResponse<String> patchCastingCondition(@PathVariable(required = true, value = "castingIdx")int castingIdx,
+                                                      @RequestBody(required = true)PatchCastingReq patchCastingReq){
+        if(patchCastingReq.getCastingPrice()==null || patchCastingReq.getCastingPrice().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_PRICE);
+        }
+        if(patchCastingReq.getCastingStartDate()==null || patchCastingReq.getCastingStartDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_START_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingStartDate())){
+            return new BaseResponse<>(INVALID_CASTING_START_DATE);
+        }
+        if(patchCastingReq.getCastingEndDate()==null || patchCastingReq.getCastingEndDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_END_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingEndDate())){
+            return new BaseResponse<>(INVALID_CASTING_END_DATE);
+        }
+        if(patchCastingReq.getCastingPriceDate()==null || patchCastingReq.getCastingPriceDate().length()==0){
+            return new BaseResponse<>(EMPTY_CASTING_PRICE_DATE);
+        }
+        if(!isRegexDateType(patchCastingReq.getCastingPriceDate())){
+            return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
+        }
+        try{
+            int userIdx = jwtService.getUserIdx();
+            castingService.postCastingCondition(castingIdx,patchCastingReq,userIdx);
+            return new BaseResponse<>(SUCCESS);
+        }catch (BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 
     @ResponseBody
     @PatchMapping("/castings/{castingIdx}/re-casting")

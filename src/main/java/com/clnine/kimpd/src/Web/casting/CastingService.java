@@ -203,6 +203,34 @@ public class CastingService {
         }
     }
 
+    /**
+     * 장바구니에 담긴 것 섭외 조건 입력하기
+     */
+    public void postCastingCondition(int castingIdx,PatchCastingReq patchCastingReq,int userIdx) throws BaseException{
+
+        Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
+        /**
+         * 본인이 장바구니에 담은게 아닐 경우
+         */
+        if(casting.getUserInfo().getUserIdx()!=userIdx){
+            throw new BaseException(NO_CASTING_FOR_YOU);
+        }
+        /**
+         * 입력한 섭외조건 정보
+         */
+        casting.setCastingPrice(patchCastingReq.getCastingPrice());
+        casting.setCastingStartDate(patchCastingReq.getCastingStartDate());
+        casting.setCastingEndDate(patchCastingReq.getCastingEndDate());
+        casting.setCastingPriceDate(patchCastingReq.getCastingPriceDate());
+        casting.setCastingWork(patchCastingReq.getCastingWork());
+        casting.setCastingMessage(patchCastingReq.getCastingMessage());
+        try{
+            castingRepository.save(casting);
+        }catch(Exception ignored){
+            throw new BaseException(FAILED_TO_RECASTING);
+        }
+    }
+
 
     /**
      * 재섭외 요청 하기
