@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -20,6 +21,13 @@ public class Banner extends BaseEntity {
 
     @Column(name="bannerLink")
     private String bannerLink;
+
+    @Column(name="startDate")
+    private Date startDate;
+
+    @Column(name="endDate")
+    private Date endDate;
+
 
     private String status="ACTIVE";
 

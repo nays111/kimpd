@@ -1,7 +1,6 @@
 package com.clnine.kimpd.src.WebAdmin.casting.models;
 
 import com.clnine.kimpd.config.BaseEntity;
-import com.clnine.kimpd.src.WebAdmin.review.models.AdminReview;
 import com.clnine.kimpd.src.WebAdmin.user.models.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

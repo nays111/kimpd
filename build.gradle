@@ -48,17 +48,45 @@ dependencies {
 	//mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
-	implementation files("src/main/java/com/clnine/kimpd/libs/barobill-api-cxf.jar")
-	compile group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
-	compile group: 'javax.xml.ws', name: 'jaxws-api', version: '2.3.1'
-	compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.3.1'
-
+	//for aligo api
 	implementation 'org.apache.httpcomponents:httpclient:4.5'
 	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.0'
 	implementation 'org.springframework.cloud:spring-cloud-cloudfoundry-connector:2.0.6.RELEASE'
 	compile group: 'com.google.code.gson', name: 'gson', version: '2.8.2'
 	compile 'com.mashape.unirest:unirest-java:1.4.9'
 	compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
+
+	//for barobill api
+	implementation files("src/main/java/com/clnine/kimpd/libs/barobill-api-cxf.jar")
+	compile group: 'javax.xml.soap', name: 'javax.xml.soap-api', version: '1.4.0'
+	compile group: 'javax.xml.ws', name: 'jaxws-api', version: '2.3.1'
+	compile group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '2.3.1'
+
+	//for swagger
+	implementation 'org.springdoc:springdoc-openapi-ui:1.5.4'
+
+	//for html to pdf
+	implementation files("src/main/java/com/clnine/kimpd/libs/html2pdf-3.0.3.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/barcodes-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/font-asian-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/forms-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/hyph-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/io-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/kernel-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/layout-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/pdfa-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/pdftest-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/sign-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/styled-xml-parser-7.1.14.jar")
+	implementation files("src/main/java/com/clnine/kimpd/libs/svg-7.1.14.jar")
+
+	//for firebase storage
+	implementation 'com.google.firebase:firebase-admin:7.1.1'
+
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+	testCompile group: 'org.springframework', name: 'spring-mock', version: '2.0.8'
+	implementation files("src/main/java/com/clnine/kimpd/libs/spring-test-5.3.5.jar")
+
 
 
 }

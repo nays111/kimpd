@@ -39,3 +39,15 @@ spring:
     username: kimpdlabs
     password: tobi0810!
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    operations-sorter: alpha
+    tags-sorter: alpha
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+  api-docs:
+    path: /api-docs
+  paths-to-match:
+    - /**

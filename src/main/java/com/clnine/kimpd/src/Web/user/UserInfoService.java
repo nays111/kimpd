@@ -4,6 +4,8 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.category.models.*;
+import com.clnine.kimpd.src.Web.project.ProjectRepository;
+import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.models.*;
 import com.clnine.kimpd.utils.AES128;
 import com.clnine.kimpd.utils.JwtService;
@@ -12,8 +14,10 @@ import com.clnine.kimpd.utils.SmsService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 import static com.clnine.kimpd.utils.SmsService.sendMessage;
@@ -26,83 +30,51 @@ public class UserInfoService {
     private final UserInfoProvider userInfoProvider;
     private final JwtService jwtService;
     private final MailService mailService;
-    private final SmsService smsService;
     private final CertificateRepository certificateRepository;
     private final GenreCategoryRepository genreCategoryRepository;
     private final UserGenreCategoryRepository userGenreCategoryRepository;
     private final JobCategoryChildRepository jobCategoryChildRepository;
     private final JobCategoryParentRepository jobCategoryParentRepository;
     private final UserJobCategoryRepository userJobCategoryRepository;
+    private final ProjectRepository projectRepository;
 
-    /**
-     * 회원가입
-     * @param postUserReq
-     * @return PostUserRes
-     * @throws BaseException
-     */
+    @Transactional
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
-        UserInfo existsUserInfo = null;
-        try {
-            // 1-1. 이미 존재하는 회원이 있는지 조회
-            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
-        } catch (BaseException exception) {
-            // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
-            if (exception.getStatus() != NOT_FOUND_USER) {
-                throw exception;
-            }
-        }
-        // 1-3. 이미 존재하는 회원이 있다면 return DUPLICATED_USER
-        if (existsUserInfo != null) {
-            throw new BaseException(DUPLICATED_USER);
-        }
-
-        // 2. 유저 정보 생성
         int userType = postUserReq.getUserType();
         String id = postUserReq.getId();
         String email = postUserReq.getEmail();
         String phoneNumber = postUserReq.getPhoneNum();
         String password;
+        String city = postUserReq.getCity();
+        String name = postUserReq.getName();
         String address = postUserReq.getAddress();
-        int agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
+        Integer agreeAdvertisement = postUserReq.getAgreeAdvertisement();;
         String privateBusinessName = postUserReq.getPrivateBusinessName();
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
-        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
+        //String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         String nickname = postUserReq.getNickname();
-
-
-
+        Integer agreeShowDB = postUserReq.getAgreeShowDB();
         try {
             password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(postUserReq.getPassword());
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-
-
-        /**
-         * 1,2,3,4, 이런식으로 카테고리 인덱스를 입력받음
-         * genreCategory에서 해당되는 genreCategory 객체 생성
-         * userGenreCategory에 userInfo와 genreCategory 를 담는다.
-         */
-        UserInfo userInfo = new UserInfo(userType,id,password,email,
-                phoneNumber,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
-                corporationBusinessName,corporationBusinessNumber,nickname);
-
-        // 3. 유저 정보 저장
+        UserInfo userInfo = new UserInfo(userType,id,password,email,name,
+                phoneNumber,city,address,agreeAdvertisement,privateBusinessName,businessNumber,businessImageURL,
+                corporationBusinessName,nickname,agreeShowDB);
         try {
             userInfo = userInfoRepository.save(userInfo);
         } catch (Exception exception) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-        // 어차피 리스트 길이는 같아야함
-        ArrayList<Integer> jobParentCategoryIdxList = postUserReq.getJobParentCategoryIdx();
-        ArrayList<Integer> jobChildCategoryIdxList = postUserReq.getJobChildCategoryIdx();
+        ArrayList<ArrayList<Integer>>jobCategoryIdxList = postUserReq.getJobCategoryIdx();
         try{
-            if(jobChildCategoryIdxList!=null && jobParentCategoryIdxList!=null){
-                for(int i=0;i<jobParentCategoryIdxList.size();i++){
-                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobParentCategoryIdxList.get(i));
-                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobChildCategoryIdxList.get(i));
+            if(jobCategoryIdxList!=null){
+                for(int i=0;i<jobCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryIdxList.get(i).get(0));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobCategoryIdxList.get(i).get(1));
                     UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
                     userJobCategoryRepository.save(userJobCategory);
                 }
@@ -123,49 +95,19 @@ public class UserInfoService {
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
         }
-
-        // 4. JWT 생성
+        Project project = new Project(userInfo,"기본프로젝트","기본프로젝트");
+        try{
+            projectRepository.save(project);
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_PROJECT);
+        }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
-
-        // 5. UserInfoLoginRes로 변환하여 return
         int userIdx = userInfo.getUserIdx();
         return new PostUserRes(userIdx, jwt);
     }
 
-    /**
-     * 회원 정보 수정 (POST uri 가 겹쳤을때의 예시 용도)
-     * @param patchUserReq
-     * @return PatchUserRes
-     * @throws BaseException
-     */
-    public PatchUserRes updateUserInfo(@NonNull Integer userId, PatchUserReq patchUserReq) throws BaseException {
-        try {
-            String email = patchUserReq.getEmail().concat("_edited");
-            String nickname = patchUserReq.getNickname().concat("_edited");
-            String phoneNumber = patchUserReq.getPhoneNumber().concat("_edited");
-            return new PatchUserRes(email, nickname, phoneNumber);
-        } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_PATCH_USER);
-        }
-    }
-
-    /**
-     * 회원 탈퇴
-     * @param userIdx
-     * @throws BaseException
-     */
     public void deleteUserInfo(int userIdx) throws BaseException {
-        // 1. 존재하는 UserInfo가 있는지 확인 후 저장
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
-
-        // 2-1. 해당 UserInfo를 완전히 삭제
-//        try {
-//            userInfoRepository.delete(userInfo);
-//        } catch (Exception exception) {
-//            throw new BaseException(DATABASE_ERROR_USER_INFO);
-//        }
-
-        // 2-2. 해당 UserInfo의 status를 INACTIVE로 설정
         userInfo.setStatus("INACTIVE");
         try {
             userInfoRepository.save(userInfo);
@@ -174,44 +116,23 @@ public class UserInfoService {
         }
     }
 
-    /**
-     * 이메일로 새로운 랜덤 비밀번호 전송후 유저 비밀번호 업데이트
-     * @param email
-     * @return
-     * @throws BaseException
-     */
-
-    public GetNewPasswordRes patchUserPassword(String email) throws BaseException{
-        UserInfo existsUserInfo = null;
-        try{
-            //존재한다면
-            existsUserInfo = userInfoProvider.retrieveUserInfoByEmail(email);
-        }catch(BaseException exception){
-            throw new BaseException(NOT_FOUND_USER);
-        }
-        //새비밀번호 전송
-        String newPassword = mailService.sendPwFindMail(email);
-        String password=newPassword;
+    @Transactional
+    public void patchUserPassword(String email) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByEmail(email);
+        String password;
         try {
-            newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+            String newPassword = mailService.sendPwFindMail(email);
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
         } catch (Exception ignored) {
-            throw new BaseException(FAILED_TO_POST_USER);
+            throw new BaseException(FAILED_TO_SEND_EMAIL);
         }
-        existsUserInfo.setPassword(newPassword);
-
-        userInfoRepository.save(existsUserInfo);
-        return new GetNewPasswordRes(password);
+        userInfo.setPassword(password);
+        userInfoRepository.save(userInfo);
     }
 
-    /**
-     * 휴대폰 인증번호를 데이터베이스에 저장
-     * @param rand
-     * @param phoneNum
-     * @throws BaseException
-     */
-    public void PostSecureCode(int rand,String phoneNum) throws BaseException{
+    @Transactional
+    public void postSecureCode(int rand,String phoneNum) throws BaseException{
         String message="김피디입니다.화면의 인증번호란에 ["+rand+"]를 입력해주세요.";
-
         try{
             sendMessage(message,phoneNum);
         }catch(Exception ignored){
@@ -224,6 +145,118 @@ public class UserInfoService {
             throw new BaseException(FAILED_TO_POST_SECURE_CODE);
         }
     }
+    @Transactional
+    public void changeUserTypeToExpert(int userIdx, PatchUserTypeReq patchUserTypeReq)throws BaseException{
+
+        UserInfo userInfo= userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
+        if(userInfo.getUserType()==4 || userInfo.getUserType()==5 || userInfo.getUserType()==6){
+            throw new BaseException(ALREADY_EXPERT);
+        }
+
+        ArrayList<ArrayList<Integer>>jobCategoryIdxList = patchUserTypeReq.getJobCategoryIdx();
+
+        try{
+            if(jobCategoryIdxList!=null){
+                for(int i=0;i<jobCategoryIdxList.size();i++){
+                    JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findAllByJobCategoryParentIdx(jobCategoryIdxList.get(i).get(0));
+                    JobCategoryChild jobCategoryChild = jobCategoryChildRepository.findAllByJobCategoryChildIdx(jobCategoryIdxList.get(i).get(1));
+                    UserJobCategory userJobCategory = new UserJobCategory(userInfo,jobCategoryParent,jobCategoryChild);
+                    userJobCategoryRepository.save(userJobCategory);
+                }
+            }
+        }catch(Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_JOB_CATEGORY);
+        }
+
+        List<Integer> genreCategoryIdxList = patchUserTypeReq.getGenreCategoryIdx();
+        try{
+            if(genreCategoryIdxList!=null){
+                for(int i=0;i<genreCategoryIdxList.size();i++){
+                    GenreCategory genreCategory = genreCategoryRepository.findAllByGenreCategoryIdx(genreCategoryIdxList.get(i));
+                    UserGenreCategory userGenreCategory = new UserGenreCategory(userInfo,genreCategory);
+                    userGenreCategoryRepository.save(userGenreCategory);
+                }
+            }
+        }catch (Exception exception){
+            throw new BaseException(FAILED_TO_POST_USER_GENRE_CATEGORY);
+        }
+
+        userInfo.setAgreeShowDB(patchUserTypeReq.getAgreeShowDB());
+
+        if(userInfo.getUserType()==1){
+            userInfo.setUserType(4);
+        }else if(userInfo.getUserType()==2){
+            userInfo.setUserType(5);
+        }else if(userInfo.getUserType()==3){
+            userInfo.setUserType(6);
+        }
+        try{
+            userInfoRepository.save(userInfo);
+        }catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_CHANGE_TO_EXPERT);
+        }
+    }
+
+    @Transactional
+    public void patchMyPassword(int userIdx, PatchUserPasswordReq patchUserPasswordReq) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
+        String password;
+        try {
+            password = new AES128(Secret.USER_INFO_PASSWORD_KEY).decrypt(userInfo.getPassword());
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_LOGIN);
+        }
+
+        if (!patchUserPasswordReq.getCurrentPassword().equals(password)) {
+            throw new BaseException(WRONG_CURRENT_PASSWORD);
+        }
+        String newPassword = patchUserPasswordReq.getNewPassword();
+
+        if(password.equals(newPassword)){
+            throw new BaseException(SAME_PASSWORD_BEFORE_CHANGE);
+        }
+        try {
+            newPassword = new AES128(Secret.USER_INFO_PASSWORD_KEY).encrypt(newPassword);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_POST_USER);
+        }
+
+        userInfo.setPassword(newPassword);
+        try{
+            userInfoRepository.save(userInfo);
+        }catch (Exception ignored) {
+            throw new BaseException(FAILED_SAVE_NEW_PASSWORD);
+        }
+    }
 
 
+    @Transactional
+    public void patchMyUserInfo(int userIdx,PatchMyUserInfoReq patchMyUserInfoReq) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+
+        String profileImageURL = patchMyUserInfoReq.getProfileImageURL();
+        String phoneNum = patchMyUserInfoReq.getPhoneNum();
+        String email = patchMyUserInfoReq.getEmail();
+        String privateBusinessName = patchMyUserInfoReq.getPrivateBusinessName();
+        String businessNumber = patchMyUserInfoReq.getBusinessNumber();
+        String businessImageURL = patchMyUserInfoReq.getBusinessImageURL();
+        String corpBusinessName = patchMyUserInfoReq.getCorpBusinessName();
+        //String corpBusinessNumber = patchMyUserInfoReq.getCorpBusinessNumber();
+
+        userInfo.setProfileImageURL(profileImageURL);
+        userInfo.setPhoneNum(phoneNum);
+        userInfo.setEmail(email);
+        userInfo.setPrivateBusinessName(privateBusinessName);
+        userInfo.setBusinessNumber(businessNumber);
+        userInfo.setBusinessImageURL(businessImageURL);
+        userInfo.setCorporationBusinessName(corpBusinessName);
+        //userInfo.setCorporationBusinessNumber(corpBusinessNumber);
+        try{
+            userInfoRepository.save(userInfo);
+        }catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_PATCH_USER);
+        }
+    }
 }

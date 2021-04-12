@@ -50,13 +50,6 @@ public class AdminUserInfo extends BaseEntity {
     private String phoneNum;
 
     /**
-     * 전화번호
-     */
-    @Column(name = "name", nullable = false)
-    private String name;
-
-
-    /**
      * 도시
      */
     @Column(name = "city")
@@ -77,7 +70,7 @@ public class AdminUserInfo extends BaseEntity {
     /**
      * 전문가 소개
      */
-    @Column(name = "introduce")
+    @Column(name = "introuduce")
     private String introduce;
 
     /**
@@ -96,7 +89,7 @@ public class AdminUserInfo extends BaseEntity {
      * 최소 섭외 비용
      */
     @Column(name = "minimumCastingPrice")
-    private int minimumCastingPrice;
+    private String minimumCastingPrice;
 
     /**
      * 개인 사업명
@@ -122,17 +115,17 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "corporationBusinessName")
     private String corporationBusinessName;
 
+    /**
+     * 법인 사업자 번호
+     */
+    @Column(name = "corporationBusinessNumber")
+    private String corporationBusinessNumber;
+
     @Column(name="agreeAdvertisement")
-    private int agreeAdvertisement=1;
+    private int agreeAdvertisement=0;
 
     @Column(name="agreeShowDB")
     private int agreeShowDB=0;
-
-    @Column(name = "castingPossibleStartDate")
-    private String castingPossibleStartDate;
-
-    @Column(name = "castingPossibleEndDate")
-    private String castingPossibleEndDate;
 
     /**
      * 상태
@@ -140,17 +133,16 @@ public class AdminUserInfo extends BaseEntity {
     @Column(name = "status", nullable = false, length = 10)
     private String status = "ACTIVE";
 
-    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String name, String city,
+    public AdminUserInfo(int userType, String id, String password, String email, String phoneNum, String city,
                          String nickname, String profileImageURL, String introduce, String career, String etc,
-                         int minimumCastingPrice, String privateBusinessName, String businessNumber,
-                         String businessImageURL, String corporationBusinessName, String castingPossibleStartDate,
-                         String castingPossibleEndDate, int agreeShowDB, String status) {
+                         String minimumCastingPrice, String privateBusinessName, String businessNumber,
+                         String businessImageURL, String corporationBusinessName, String corporationBusinessNumber,
+                         int agreeShowDB, String status) {
         this.userType = userType;
         this.id = id;
         this.password = password;
         this.email = email;
         this.phoneNum = phoneNum;
-        this.name = name;
         this.city = city;
         this.nickname = nickname;
         this.profileImageURL = profileImageURL;
@@ -162,9 +154,8 @@ public class AdminUserInfo extends BaseEntity {
         this.businessNumber = businessNumber;
         this.businessImageURL = businessImageURL;
         this.corporationBusinessName = corporationBusinessName;
+        this.corporationBusinessNumber = corporationBusinessNumber;
         this.agreeShowDB = agreeShowDB;
-        this.castingPossibleStartDate = castingPossibleStartDate;
-        this.castingPossibleEndDate = castingPossibleEndDate;
         this.status = status;
     }
 }

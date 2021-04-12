@@ -12,7 +12,6 @@ public class AdminPostUserReq {
     private String id;
     private String email;
     private String phoneNum;
-    private String name;
     @Nullable
     private String city;
     @Nullable
@@ -25,7 +24,8 @@ public class AdminPostUserReq {
     private String career;
     @Nullable
     private String etc;
-    private int minimumCastingPrice;
+    @Nullable
+    private String minimumCastingPrice;
     @Nullable
     private String privateBusinessName;
     @Nullable
@@ -35,7 +35,5 @@ public class AdminPostUserReq {
     @Nullable
     private String corporationBusinessName;
     @Nullable
-    private String castingPossibleStartDate;
-    @Nullable
-    private String castingPossibleEndDate;
+    private String corporationBusinessNumber;
 }

@@ -38,7 +38,7 @@ public class AdminInquiryController {
 
             getInquiriesResList = adminInquiryProvider.getInquiryList();
             AdminGetInquiriesListRes InquiryList = new AdminGetInquiriesListRes(getInquiriesResList);
-            return new BaseResponse<>(SUCCESS, InquiryList);
+            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, InquiryList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -64,7 +64,7 @@ public class AdminInquiryController {
             }
 
             AdminGetInquiryRes adminGetInquiryRes = adminInquiryProvider.retrieveInquiryInfo(inquiryIdx);
-            return new BaseResponse<>(SUCCESS, adminGetInquiryRes);
+            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, adminGetInquiryRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -72,7 +72,7 @@ public class AdminInquiryController {
 
     /**
      * 1:1문의 답글 API
-     * [PATCH] /inquiries
+     * [PATCH] /faqs
      * @RequestBody AdminPatchFaqsReq
      * @return BaseResponse<Void>
      */
@@ -90,7 +90,7 @@ public class AdminInquiryController {
             }
 
             adminInquiryService.updateInquiry(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_PATCH_FAQS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

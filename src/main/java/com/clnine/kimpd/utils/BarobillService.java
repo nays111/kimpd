@@ -56,6 +56,7 @@ public class BarobillService {
         String certKey = "";            //인증키
         String corpNum = "";            //연계사업자 사업자번호 ('-' 제외, 10자리)
 
+
         ArrayOfString checkCorpNumList = new ArrayOfString();        //확인할 사업자번호 ('-' 제외, 10자리)
         checkCorpNumList.getString().add("");
         checkCorpNumList.getString().add("");

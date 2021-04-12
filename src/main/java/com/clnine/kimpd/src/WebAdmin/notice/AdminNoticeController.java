@@ -38,7 +38,7 @@ public class AdminNoticeController {
 
             getNoticesResList = adminNoticeProvider.getNoticeList();
             AdminGetNoticesListRes noticeList = new AdminGetNoticesListRes(getNoticesResList);
-            return new BaseResponse<>(SUCCESS, noticeList);
+            return new BaseResponse<>(SUCCESS_READ_NOTICES, noticeList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -64,7 +64,7 @@ public class AdminNoticeController {
             }
 
             AdminGetNoticeRes adminGetNoticeRes = adminNoticeProvider.retrieveNoticeInfo(noticeIdx);
-            return new BaseResponse<>(SUCCESS, adminGetNoticeRes);
+            return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetNoticeRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -96,7 +96,7 @@ public class AdminNoticeController {
             }
 
             adminNoticeService.createNotices(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_POST_NOTICES);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -130,7 +130,7 @@ public class AdminNoticeController {
             }
 
             adminNoticeService.updateNotice(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

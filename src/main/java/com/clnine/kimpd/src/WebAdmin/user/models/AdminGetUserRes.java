@@ -12,7 +12,6 @@ public class AdminGetUserRes {
     private final String id;
     private final String email;
     private final String phoneNum;
-    private final String name;
     @Nullable
     private final String city;
     @Nullable
@@ -25,7 +24,8 @@ public class AdminGetUserRes {
     private final String career;
     @Nullable
     private final String etc;
-    private final int minimumCastingPrice;
+    @Nullable
+    private final String minimumCastingPrice;
     @Nullable
     private final String privateBusinessName;
     @Nullable
@@ -34,5 +34,7 @@ public class AdminGetUserRes {
     private final String businessImageURL;
     @Nullable
     private final String corporationBusinessName;
+    @Nullable
+    private final String corporationBusinessNumber;
     private final String status;
 }

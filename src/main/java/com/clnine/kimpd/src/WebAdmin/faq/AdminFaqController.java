@@ -42,7 +42,7 @@ public class AdminFaqController {
 
             getFaqsResList = adminFaqProvider.getFaqList();
             AdminGetFaqsListRes faqList = new AdminGetFaqsListRes(getFaqsResList);
-            return new BaseResponse<>(SUCCESS, faqList);
+            return new BaseResponse<>(SUCCESS_READ_FAQS, faqList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -68,7 +68,7 @@ public class AdminFaqController {
             }
 
             AdminGetFaqsRes adminGetFaqsRes = adminFaqProvider.retrieveFaqInfo(faqIdx);
-            return new BaseResponse<>(SUCCESS, adminGetFaqsRes);
+            return new BaseResponse<>(SUCCESS_READ_FAQS, adminGetFaqsRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -100,7 +100,7 @@ public class AdminFaqController {
             }
 
             adminFaqService.createFaqs(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_POST_FAQS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -134,7 +134,7 @@ public class AdminFaqController {
             }
 
             adminFaqService.updateFaq(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_PATCH_FAQS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

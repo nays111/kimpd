@@ -10,8 +10,7 @@ import java.util.List;
 @Repository // => JPA => Hibernate => ORM => Database 객체지향으로 접근하게 해주는 도구이다
 public interface AdminUserInfoRepository extends CrudRepository<AdminUserInfo, Integer> {
     List<AdminUserInfo> findAll();
-    AdminUserInfo findAdminUserInfoByPhoneNumAndStatus(String phoneNum, String status);
-    AdminUserInfo findAdminUserInfoByEmailAndStatus(String email, String status);
+    List<AdminUserInfo> findByEmailAndStatus(String email, String status);
     boolean existsByIdAndStatus(String id, String status);
     boolean existsByEmailAndStatus(String email, String status);
     boolean existsByPhoneNumAndStatus(String phoneNum, String status);

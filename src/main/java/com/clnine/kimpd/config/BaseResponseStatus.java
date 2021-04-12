@@ -1,5 +1,7 @@
 package com.clnine.kimpd.config;
+
 import lombok.Getter;
+
 /**
  * 에러 코드 관리
  */
@@ -15,6 +17,7 @@ public enum BaseResponseStatus {
     SUCCESS_DELETE_USER(true, 1015, "회원 탈퇴에 성공하였습니다."),
     SUCCESS_PATCH_USER(true, 1016, "회원정보 수정에 성공하였습니다."),
     SUCCESS_READ_SEARCH_USERS(true, 1017, "회원 검색 조회에 성공하였습니다."),
+    SUCCESS_USER_BE_INACTIVE(true,1018,"상대방이 신고 5회 이상 당해 탈퇴처리되었습니다."),
     //Kimpd response code
     SUCCESS_SEND_TEMP_PASSWORD(true,1018,"메일로 임시 비밀번호를 발급하였습니다."),
     SUCCESS_CHECK_ID(true,1019,"사용할 수 있는 ID입니다"),
@@ -41,12 +44,6 @@ public enum BaseResponseStatus {
     SUCCESS_POST_FAQS(true, 1507, "FAQ 등록에 성공하였습니다."),
     SUCCESS_PATCH_FAQS(true, 1508, "FAQ 수정에 성공하였습니다."),
     SUCCESS_READ_INQUIRIES(true,1509,"1:1문의 조회에 성공하였습니다."),
-    SUCCESS_READ_REVIEWS(true,1510,"평가 조회에 성공하였습니다."),
-    SUCCESS_READ_REPORTS(true,1511,"신고 조회에 성공하였습니다."),
-    SUCCESS_READ_CONTRACTS(true,1512,"계약서 조회에 성공하였습니다."),
-    SUCCESS_PATCH_CONTRACTS(true, 1513, "계약서 수정에 성공하였습니다."),
-    SUCCESS_VIEW_CORP_NUM(true, 1514, "사업자 등록 번호 인증에 성공하였습니다."),
-
     // 2000 : Request 오류
     REQUEST_ERROR(false, 2000, "입력값을 확인해주세요."),
     EMPTY_USERID(false, 2001, "유저 아이디 값을 확인해주세요."),
@@ -90,7 +87,7 @@ public enum BaseResponseStatus {
     INVALID_USER_TYPE(false,2069,"잘못된 유저 타입입니다."),
     INVALID_ID(false,2070,"잘못된 ID 형식입니다."),
     INVALID_IMAGE_TYPE(false,2071,"잘못된 파일 형식입니다."),
-    INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~7자리로 입력해주세요.)"),
+    INVALID_NICKNAME(false,2072,"잘못된 닉네임 형식입니다.(2~10자리로 입력해주세요.)"),
     EMPTY_ADDRESS(false,2073, "주소를 입력해주세요."),
     EMPTY_CODE(false,2074,"인증번호를 입력해주세요."),
     WRONG_SECURE_CODE(false,2075,"인증번호가 틀렷습니다."),
@@ -100,8 +97,52 @@ public enum BaseResponseStatus {
     EMPTY_MESSAGE_DESCRIPTION(false,2079,"메시지를 입력해주세요."),
     TOO_LONG_MESSAGE_DESCRIPTION(false,2080,"메시지 길이가 너무 깁니다"),
     WRONG_CORP_NUM(false,2081,"사업자 번호 입력 형식이 틀립니다."),
-
-
+    EMPTY_REPORT_DESCRIPTION(false,2082,"신고 사유를 적어주세요."),
+    EMPTY_INQUIRY_CATEGORY_SELECTED(false,2083,"1:1문의 카테고리를 선택해주세요."),
+    EMPTY_INQUIRY_TITLE(false,2084,"1:1문의 제목을 입력해주세요."),
+    EMPTY_INQUIRY_DESCRIPTION(false,2085,"1:1문의 내용을 입력해주세요."),
+    WRONG_CASTING_STATUS(false,2086,"올바른 상태 변경을 해주세요."),
+    EMPTY_CASTING_INDEX(false,2087,"섭외 요청을 보낼 전문가를 선택해주세요."),
+    EMPTY_NEW_PASSWORD(false,2088,"새로운 비밀번호를 입력해주세요."),
+    EMPTY_NEW_CONFIRM_PASSWORD(false,2089,"변경할 비밀번호를 입력해주세요."),
+    WRONG_CURRENT_PASSWORD(false,2090,"현재 비밀번호가 일치하지 않습니다."),
+    INVALID_AGREE_ADVERTISEMENT_CHECK(false,2091,"광고동의 여부를 체크해주세요."),
+    INVALID_BUSINESS_NUMBER(false,2092,"사업자 등록번호 형식을 확인해주세요.(-제외 10자리)"),
+    INVALID_CORP_BUSINESS_NUMBER(false,2093,"법인 사업자 등록번호 형식을 확인해주세요.(-제외 10자리)"),
+    NO_SELECT_AGREE_SHOW_DB(false,2094,"인재 DB 공개여부를 체크해주세요."),
+    WRONG_CASTING_STATUS_SEARCH(false,2096,"올바른 섭외 상태를 선택해주세요."),
+    WRONG_DURATION(false,2097,"올바른 기한을 선택해주세요."),
+    EMPTY_EXPERT_TO_POST_BASKET(false,2098,"장바구니에 담을 전문가를 선택해주세요."),
+    EMPTY_PROJECT_INDEX(false,2099,"어떤 프로젝트에 담을지 선택해주세요."),
+    TOO_LONG_INTRODUCE(false,2100,"전문가 소개가 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    TOO_LONG_CAREER(false,2101,"경력 소개가 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    TOO_LONG_ETC(false,2102,"기타 사항이 너무 깁니다.(500자 이하로 작성해주세요.)"),
+    EMPTY_PAGE(false,2103,"페이지 번호를 입력해주세요."),
+    EMPTY_SORT_OPTION(false,2104,"정렬 옵션을 선택해주세요."),
+    WRONG_SORT_OPTION(false,2105,"잘못된 정렬 옵션입니다."),
+    EMPTY_NAME(false,2106,"이름을 입력해주세요."),
+    INVALID_NAME(false,2107,"잘못된 이름 형식입니다. (2~20자리 영문 한글 조합)"),
+    DIFFERENT_JWT_AND_USERIDX(false,2108,"유저 인덱스와 JWT 가 일치하지 않습니다."),
+    EMPTY_YEAR(false,2109,"년도를 입력해주세요."),
+    EMPTY_MONTH(false,2110,"월을 입력해주세요."),
+    EMPTY_REPORT_CATEGORY(false,2111,"신고 유형 카테고리를 입력해주세요."),
+    WRONG_REVIEW_STATUS(false,2112,"잘못된 평가 상태입니다."),
+    EMPTY_DURATION(false,2113,"조회할 기간을 입력해주세요."),
+    EMPTY_CASTING_STATUS(false,2114,"섭외 상태를 입력해주세요."),
+    EMPTY_REVIEW_STATUS(false,2115,"평가 상태를 입력해주세요."),
+    INVALID_CASTING_START_DATE(false,2116,"올바르지 않은 섭외 시작 날짜입니다."),
+    INVALID_CASTING_END_DATE(false,2117,"올바르지 않은 섭외 종료 날짜입니다."),
+    INVALID_CASTING_POSSIBLE_START_DATE(false,2118,"올바르지 않은 섭외 가능 시작 날짜입니다."),
+    INVALID_CASTING_POSSIBLE_END_DATE(false,2119,"올바르지 않은 섭외 가능 종료 날짜입니다."),
+    INVALID_PROJECT_START_DATE(false,2120,"올바르지 않은 프로젝트 시작 날짜입니다."),
+    INVALID_PROJECT_END_DATE(false,2121,"올바르지 않은 프로젝트 종료 날짜입니다."),
+    INVALID_CASTING_PRICE_DATE(false,2122,"올바르지 않은 섭외 금액 입금 날짜입니다."),
+    EMPTY_DAY(false,2123,"날짜를 선택해주세요."),
+    WRONG_YEAR(false,2124,"잘못된 년도 형식입니다.(4자리로 입력해주세요.)"),
+    WRONG_MONTH(false,2125,"잘못된 월 형식입니다.(01~12 사이의 값을 입력해주세요.)"),
+    WRONG_DAY(false,2126,"잘못된 일 형식입니다.(01~31 사이의 값을 입력해주세요.)"),
+    CANNOT_CASTING_YOURSELF(false,2127,"본인에게 섭외신청을 할 수 없습니다."),
+    CANNOT_PUT_BASKET_YOURSELF(false,2128,"본인을 장바구니에 담을 수는 없습니다."),
 
     //2500 : admin 오류
     EMPTY_USER_TYPE(false,2500,"유저타입이 비었습니다."),
@@ -119,16 +160,7 @@ public enum BaseResponseStatus {
     EMPTY_FAQ_ANSWER(false, 2512, "FAQ 답변이 비었습니다."),
     EMPTY_INQUIRY_IDX(false, 2513, "1:1문의 인덱스가 비었습니다."),
     EMPTY_INQUIRY_ANSWER(false, 2514, "1:1문의 답변이 비었습니다."),
-    EMPTY_NAME(false, 2515, "이름을 입력해주세요."),
-    EMPTY_REVIEW_IDX(false, 2516, "평가 인덱스가 비었습니다."),
-    EMPTY_CONTRACT_CONTENT(false, 2517, "계약서 내용이 비었습니다."),
-    EMPTY_NEW_PASSWORD(false, 2518, "새로운 비밀번호를 입력해주세요."),
-    EMPTY_CASTING_IDX(false, 2519, "섭외 인덱스가 비었습니다."),
-    EMPTY_REPORT_IDX(false, 2520, "신고 인덱스가 비었습니다."),
-    NOT_VALID_CORP_BUSINESS_NAME(false, 2521, "법인 회사명을 입력할 수 없습니다."),
-    NOT_VALID_PIV_BUSINESS_NAME(false, 2522, "개인 회사명을 입력할 수 없습니다."),
-    NOT_VALID_BUSINESS_NUM(false, 2523, "사업자 등록번호를 입력할 수 없습니다."),
-    NOT_VALID_BUSINESS_IMG(false, 2524, "사업자 등록증을 업로드 할 수 없습니다."),
+
 
     // 3000 : Response 오류
     RESPONSE_ERROR(false, 3000, "값을 불러오는데 실패하였습니다."),
@@ -143,7 +175,7 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_PROJECTS(false,3018,"프로젝트를 불러오는데 실패하였습니다."),
     FAILED_TO_POST_CASTING(false,3019,"섭외 신청에 실패하였습니다."),
     ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT(false,3020,"이미 해당 프로젝트에 대해 해당 유저에게 섭외 요청을 보낸적이 있습니다."),
-    FAILED_TO_GET_CASTING(false,3021,"캐스팅 정보 조회에 실패하였습니다."),
+    FAILED_TO_GET_CASTING(false,3021,"섭외 정보 조회에 실패하였습니다."),
     NOT_FOUND_CASTING(false,3022,"존재하지 않는 캐스팅입니다."),
     FAILED_TO_SEND_MESSAGE(false,3023,"메시지 전송에 실패하였습니다."),
     FAILED_TO_POST_SECURE_CODE(false,3024,"인증번호를 저장 못했습니다."),
@@ -161,7 +193,31 @@ public enum BaseResponseStatus {
     NOT_FOUND_MESSAGE(false,3036,"존재하지 않는 메시지입니다."),
     FAILED_TO_GET_REPORT_CATEGORIES(false,3037,"신고 카테고리 조회에 실패했습니다."),
     FAILED_TO_GET_CORP_AUTHENTICATION(false,3038,"사업자 인증에 실패했습니다."),
-
+    FAILED_TO_POST_REPORT(false,3039,"신고에 실패했습니다."),
+    FAILED_TO_COUNT_REPORT(false,3040,"신고 횟수 조회에 실패했습니다."),
+    FAIlED_TO_GET_NOTICE(false,3041,"공지사항 조회에 실패했습니다."),
+    FAIlED_TO_GET_FAQ(false,3042,"FAQ 조회에 실패했습니다"),
+    FAILED_TO_GET_INQUIRY_CATEGORIES(false,3043,"1:1문의 카테고리를 불러오는데 실패했습니다."),
+    FAILED_TO_GET_INQUIRIES(false,3044,"1:1문의 내역을 불러오는데 실패했습니다."),
+    FAILED_TO_POST_INQUIRY(false,3045,"1:1문의 접수에 실패했습니다."),
+    FAILED_TO_UPDATE_CASTING_STATUS(false,3046,"섭외 상태 변경에 실패했습니다."),
+    FAILED_TO_SEND_ALARM(false,3047,"알림 전송에 실패했습니다."),
+    FAILED_TO_GET_MY_ALARMS(false,3048,"알림 리스트 조회에 실패했습니다."),
+    DID_NOT_INSERT_CASTING_CONDITION(false,3049,"섭외 조건을 입력해주세요."),
+    FAILED_SAVE_NEW_PASSWORD(false,3050,"비밀번호 수정에 실패했습니다."),
+    FAILED_TO_SAVE_BASKETS(false,3051,"장바구니 담기에 실패했습니다."),
+    FAILED_TO_CHANGE_TO_EXPERT(false,3052,"전문가 전환에 실패했습니다."),
+    FAILED_TO_SEND_EMAIL(false,3053,"메일 전송에 실패했습니다."),
+    NO_CASTING(false,3054,"본인이 한 섭외 신청이 아닙니다."),
+    ALREADY_POST_REVIEW(false,3035,"이미 평가를 한 상태입니다."),
+    NOT_EXPERT(false,3036,"전문가가 아닙니다."),
+    NOT_USER_PROJECT(false,3037,"프로젝트 소유자가 아닙니다."),
+    ALREADY_EXPERT(false,3038,"이미 전문가입니다."),
+    SAME_PASSWORD_BEFORE_CHANGE(false,3039,"이전 비밀번호와 다른 비밀번호를 입력해주세요."),
+    NOT_USER_MESSAGE(false,3040,"회원의 메시지가 아닙니다."),
+    NO_INQUIRY(false,3041,"존재하지 않는 1:1문의 입니다."),
+    NOT_USER_INQUIRY(false,3042,"본인이 등록한 1:1문의가 아닙니다."),
+    NO_CASTING_FOR_YOU(false,3063,"본인과 관련된 섭외가 아닙니다."),
     //3500 : admin 오류
     FAILED_TO_GET_BANNER(false,3500,"광고 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_BANNER(false, 3501, "광고 수정에 실패하였습니다."),
@@ -172,30 +228,27 @@ public enum BaseResponseStatus {
     FAILED_TO_GET_FAQS(false,3506,"FAQ 조회하는데 실패했습니다."),
     FAILED_TO_POST_FAQS(false,3507,"FAQ 등록에 실패하였습니다."),
     FAILED_TO_PATCH_FAQS(false, 3508, "FAQ 수정에 실패하였습니다."),
-    FAILED_TO_GET_INQUIRIES(false,3509,"1:1문의 조회하는데 실패했습니다."),
+    //FAILED_TO_GET_INQUIRIES(false,3509,"1:1문의 조회하는데 실패했습니다."),
     FAILED_TO_GET_INQUIRY_FILE(false,3510,"1:1문의 파일 조회하는데 실패했습니다."),
     FAILED_TO_PATCH_INQUIRIES(false, 3511, "1:1문의 수정에 실패하였습니다."),
-    DUPLICATED_ID(false, 3512, "이미 존재하는 닉네임입니다."),
-    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 핸드폰번호입니다."),
+    DUPLICATED_ID(false, 3512, "이미 존재하는 아이디입니다."),
+    DUPLICATED_PHONE_NUMBER(false, 3513, "이미 존재하는 전화번호입니다."),
     DUPLICATED_EMAIL(false, 3514, "이미 존재하는 이메일입니다."),
     DUPLICATED_NICKNAME(false, 3515, "이미 존재하는 닉네임입니다."),
     NOT_MATCH_PRESENT_PASSWORD(false,3516,"현재 비밀번호가 일치하지 않습니다."),
-    FAILED_TO_GET_REVIEWS(false,3517,"평가 조회하는데 실패했습니다."),
-    FAILED_TO_GET_REPORTS(false,3518,"신고 조회하는데 실패했습니다."),
-    FAILED_TO_PATCH_CONTRACT(false,3519,"계약서 수정에 실패했습니다."),
-    EMPTY_REVIEW(false,3520,"평가 대기중입니다."),
-    FAILED_TO_GET_CASTINGS(false,3521,"섭외 조회하는데 실패했습니다."),
-    FAILED_REGISTER_USER_BY_BAN(false, 3522, "이용 정지된 회원입니다."),
-
 
     // 4000 : Database 오류
     SERVER_ERROR(false, 4000, "서버와의 통신에 실패하였습니다."),
     DATABASE_ERROR(false, 4001, "데이터베이스 연결에 실패하였습니다.");
+
+
     // 5000 : 필요시 만들어서 쓰세요
     // 6000 : 필요시 만들어서 쓰세요
+
     private final boolean isSuccess;
     private final int code;
     private final String message;
+
     private BaseResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;
