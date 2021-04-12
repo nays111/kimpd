@@ -45,7 +45,7 @@ public class AdminBannerController {
 
             getBannersResList = adminBannerProvider.getBannerList();
             AdminGetBannersListRes bannerList = new AdminGetBannersListRes(getBannersResList);
-            return new BaseResponse<>(SUCCESS, bannerList);
+            return new BaseResponse<>(SUCCESS_READ_BANNERS, bannerList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -71,7 +71,7 @@ public class AdminBannerController {
             }
 
             AdminGetBannersRes adminGetBannersRes = adminBannerProvider.retrieveBannerInfo(bannerIdx);
-            return new BaseResponse<>(SUCCESS, adminGetBannersRes);
+            return new BaseResponse<>(SUCCESS_READ_BANNERS, adminGetBannersRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -126,7 +126,7 @@ public class AdminBannerController {
             }
 
             adminBannerService.createBanners(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_POST_BANNERS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }
@@ -179,7 +179,7 @@ public class AdminBannerController {
             }
 
             adminBannerService.updateBanner(parameters);
-            return new BaseResponse<>(SUCCESS);
+            return new BaseResponse<>(SUCCESS_PATCH_BANNERS);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

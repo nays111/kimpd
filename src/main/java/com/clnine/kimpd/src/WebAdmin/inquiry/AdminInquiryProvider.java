@@ -35,10 +35,10 @@ public class AdminInquiryProvider {
         try{
             inquiryList = adminInquiryRepository.findAll();
         }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_INQUIRIES);
+            throw new BaseException(FAILED_TO_GET_FAQS);
         }
 
-        SimpleDateFormat sDate = new SimpleDateFormat("yyyy.MM.dd");
+        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
         return inquiryList.stream().map(Inquiry ->{
             int inquiryIdx = Inquiry.getInquiryIdx();
             String inquiryAnswer = Inquiry.getInquiryAnswer();

@@ -17,6 +17,7 @@ import static com.clnine.kimpd.config.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class AdminCastingController {
     private final AdminCastingProvider adminCastingProvider;
+    private final AdminCastingService adminCastingService;
     private final AdminUserInfoProvider adminUserInfoProvider;
 
     /**
@@ -28,16 +29,16 @@ public class AdminCastingController {
     @GetMapping("/castings")
     @CrossOrigin(origins = "*")
     public BaseResponse<AdminGetCastingsListRes> getCastings() throws BaseException {
-        List<AdminGetCastingsRes> getCastingList;
+        List<AdminGetCastingsRes> getInquiriesResList;
 
         try{
             if(adminUserInfoProvider.checkJWT() == false){
                 return new BaseResponse<>(INVALID_JWT);
             }
 
-            getCastingList = adminCastingProvider.getCastingList();
-            AdminGetCastingsListRes castingList = new AdminGetCastingsListRes(getCastingList);
-            return new BaseResponse<>(SUCCESS, castingList);
+            getInquiriesResList = adminCastingProvider.getCastingList();
+            AdminGetCastingsListRes castingList = new AdminGetCastingsListRes(getInquiriesResList);
+            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, castingList);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }
@@ -63,7 +64,7 @@ public class AdminCastingController {
             }
 
             AdminGetCastingRes adminGetCastingRes = adminCastingProvider.retrieveCastingInfo(castingIdx);
-            return new BaseResponse<>(SUCCESS, adminGetCastingRes);
+            return new BaseResponse<>(SUCCESS_READ_INQUIRIES, adminGetCastingRes);
         } catch (BaseException exception) {
             return new BaseResponse<>(exception.getStatus());
         }

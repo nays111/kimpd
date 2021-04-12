@@ -10,6 +10,6 @@ public class AdminGetUsersRes {
     private final String id;
     private final String email;
     private final String phoneNum;
-    private final String nickname;
+    private final String city;
     private final String status;
 }

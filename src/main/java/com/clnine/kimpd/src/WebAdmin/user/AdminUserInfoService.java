@@ -97,11 +97,9 @@ public class AdminUserInfoService {
      */
     public AdminPostUserRes createUserInfo(AdminPostUserReq postUserReq) throws BaseException {
         AdminUserInfo existUserInfo = null;
-        AdminUserInfo existPhoneNumUserInfo = null;
         try {
             // 1-1. 이미 존재하는 회원이 있는지 조회
             existUserInfo = adminUserInfoProvider.retrieveUserInfoByEmail(postUserReq.getEmail());
-            existPhoneNumUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(postUserReq.getPhoneNum(), "ACTIVE");
         } catch (BaseException exception) {
             // 1-2. 이미 존재하는 회원이 없다면 그대로 진행
             if (exception.getStatus() != NOT_FOUND_USER) {
@@ -112,23 +110,13 @@ public class AdminUserInfoService {
         if (existUserInfo != null) {
             throw new BaseException(DUPLICATED_USER);
         }
-        if(existPhoneNumUserInfo != null){
-            throw new BaseException(DUPLICATED_USER);
-        }
-
-        AdminUserInfo banPhoneUserInfo = null;
-        banPhoneUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(postUserReq.getPhoneNum(), "DISABLED");
-        if(banPhoneUserInfo != null){
-            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
-        }
-
-        AdminUserInfo banEmailUserInfo = null;
-        banEmailUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(postUserReq.getEmail(), "DISABLED");
-        if(banEmailUserInfo != null){
-            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
-        }
 
         // 2. 유저 정보 생성
+        Random random = new Random();
+        StringBuffer buffer = new StringBuffer();
+        int index;
+        char password;
+
         String newPassword = mailService.sendPwFindMail(postUserReq.getEmail());
         String hashPassword;
         try {
@@ -136,32 +124,29 @@ public class AdminUserInfoService {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_POST_USER);
         }
-
         int userType = postUserReq.getUserType();
         String id = postUserReq.getId();
         String email = postUserReq.getEmail();
         String phoneNum = postUserReq.getPhoneNum();
-        String name = postUserReq.getName();
         String city = postUserReq.getCity();
         String nickname = postUserReq.getNickname();
         String profileImageURL = postUserReq.getProfileImageURL();
         String introduce = postUserReq.getIntroduce();
         String career = postUserReq.getCareer();
         String etc = postUserReq.getEtc();
-        int minimumCastingPrice = postUserReq.getMinimumCastingPrice();
+        String minimumCastingPrice = postUserReq.getMinimumCastingPrice();
         String privateBusinessName = postUserReq.getPrivateBusinessName();
         String businessNumber = postUserReq.getBusinessNumber();
         String businessImageURL = postUserReq.getBusinessImageURL();
         String corporationBusinessName = postUserReq.getCorporationBusinessName();
-        String castingPossibleStartDate = postUserReq.getCastingPossibleStartDate();
-        String castingPossibleEndDate = postUserReq.getCastingPossibleEndDate();
+        String corporationBusinessNumber = postUserReq.getCorporationBusinessNumber();
         int agreeShowDB = 0;
         if (userType == 4 || userType == 5 || userType == 6) {
             agreeShowDB = 1;
         }
-        AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, name, city, nickname, profileImageURL,
+        AdminUserInfo userInfo = new AdminUserInfo(userType, id, hashPassword, email, phoneNum, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber, businessImageURL, corporationBusinessName,
-                castingPossibleStartDate, castingPossibleEndDate, agreeShowDB, "ACTIVE");
+                corporationBusinessNumber, agreeShowDB, "ACTIVE");
 
         // 3. 유저 정보 저장
         try {
@@ -183,28 +168,14 @@ public class AdminUserInfoService {
     public void updateUserInfo(AdminPatchUserReq adminPatchUserReq) throws BaseException {
         AdminUserInfo adminUserInfo = null;
         int userType = 0;
+        int agreeShowDB = 0;
 
         adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(adminPatchUserReq.getUserIdx());
-        if(adminUserInfo == null){
-            throw new BaseException(FAILED_TO_PATCH_USER);
-        }
 
         if (!adminPatchUserReq.getId().equals(adminUserInfo.getId())) {
             if (adminUserInfoProvider.isIdUseable(adminPatchUserReq.getId()) == false) {
                 throw new BaseException(DUPLICATED_USER);
             }
-        }
-
-        AdminUserInfo banPhoneUserInfo = null;
-        banPhoneUserInfo = adminUserInfoRepository.findAdminUserInfoByPhoneNumAndStatus(adminPatchUserReq.getPhoneNum(), "DISABLED");
-        if(banPhoneUserInfo != null){
-            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
-        }
-
-        AdminUserInfo banEmailUserInfo = null;
-        banEmailUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(adminPatchUserReq.getEmail(), "DISABLED");
-        if(banEmailUserInfo != null){
-            throw new BaseException(FAILED_REGISTER_USER_BY_BAN);
         }
 
         if (!adminPatchUserReq.getPhoneNum().equals(adminUserInfo.getPhoneNum())) {
@@ -233,17 +204,20 @@ public class AdminUserInfoService {
             userType = 3;
         } else if (adminPatchUserReq.getUserType().equals("전문가-클라이언트")) {
             userType = 4;
+            agreeShowDB = 1;
         } else if (adminPatchUserReq.getUserType().equals("전문가-개인")) {
             userType = 5;
+            agreeShowDB = 1;
         } else if (adminPatchUserReq.getUserType().equals("전문가-법인")) {
             userType = 6;
+            agreeShowDB = 1;
         }
 
         adminUserInfo.setUserType(userType);
+        adminUserInfo.setAgreeShowDB(agreeShowDB);
         adminUserInfo.setId(adminPatchUserReq.getId());
         adminUserInfo.setEmail(adminPatchUserReq.getEmail());
         adminUserInfo.setPhoneNum(adminPatchUserReq.getPhoneNum());
-        adminUserInfo.setName(adminPatchUserReq.getName());
         if (adminPatchUserReq.getCity() == null || adminPatchUserReq.getCity().length() == 0) {
             adminUserInfo.setCity(null);
         } else {
@@ -275,7 +249,10 @@ public class AdminUserInfoService {
         else
             adminUserInfo.setEtc(adminPatchUserReq.getEtc());
 
-        adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
+        if (adminPatchUserReq.getMinimumCastingPrice() == null || adminPatchUserReq.getMinimumCastingPrice().length() == 0)
+            adminUserInfo.setMinimumCastingPrice(null);
+        else
+            adminUserInfo.setMinimumCastingPrice(adminPatchUserReq.getMinimumCastingPrice());
 
         if (adminPatchUserReq.getPrivateBusinessName() == null || adminPatchUserReq.getPrivateBusinessName().length() == 0)
             adminUserInfo.setPrivateBusinessName(null);
@@ -297,17 +274,11 @@ public class AdminUserInfoService {
         else
             adminUserInfo.setCorporationBusinessName(adminPatchUserReq.getCorporationBusinessName());
 
-        if (adminPatchUserReq.getCastingPossibleStartDate() == null || adminPatchUserReq.getCastingPossibleStartDate().length() == 0) {
-            adminUserInfo.setCastingPossibleStartDate(null);
-        } else {
-            adminUserInfo.setCastingPossibleStartDate(adminPatchUserReq.getCastingPossibleStartDate());
-        }
 
-        if (adminPatchUserReq.getCastingPossibleEndDate() == null || adminPatchUserReq.getCastingPossibleEndDate().length() == 0) {
-            adminUserInfo.setCastingPossibleEndDate(null);
-        } else {
-            adminUserInfo.setCastingPossibleEndDate(adminPatchUserReq.getCastingPossibleEndDate());
-        }
+        if (adminPatchUserReq.getCorporationBusinessNumber() == null || adminPatchUserReq.getCorporationBusinessNumber().length() == 0)
+            adminUserInfo.setCorporationBusinessNumber(null);
+        else
+            adminUserInfo.setCorporationBusinessNumber(adminPatchUserReq.getCorporationBusinessNumber());
 
         adminUserInfo.setStatus(adminPatchUserReq.getStatus());
         adminUserInfoRepository.save(adminUserInfo);
@@ -385,5 +356,31 @@ public class AdminUserInfoService {
         }
         return new AdminPatchAdminPwRes(adminPatchAdminPwReq.getId());
 
+    }
+
+    /**
+     * 회원 탈퇴
+     *
+     * @param userId
+     * @throws BaseException
+     */
+    public void deleteUserInfo(int userId) throws BaseException {
+        // 1. 존재하는 UserInfo가 있는지 확인 후 저장
+        AdminUserInfo adminUserInfo = adminUserInfoProvider.retrieveUserInfoByUserId(userId);
+
+        // 2-1. 해당 UserInfo를 완전히 삭제
+//        try {
+//            userInfoRepository.delete(userInfo);
+//        } catch (Exception exception) {
+//            throw new BaseException(DATABASE_ERROR_USER_INFO);
+//        }
+
+        // 2-2. 해당 UserInfo의 status를 INACTIVE로 설정
+        adminUserInfo.setStatus("INACTIVE");
+        try {
+            adminUserInfoRepository.save(adminUserInfo);
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_DELETE_USER);
+        }
     }
 }

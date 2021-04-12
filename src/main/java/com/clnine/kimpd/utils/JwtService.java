@@ -1,5 +1,4 @@
 package com.clnine.kimpd.utils;
-
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import io.jsonwebtoken.Claims;
@@ -9,12 +8,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
-
 @Service
 public class JwtService {
     /**
@@ -30,7 +26,6 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
-
     /**
      * WebAdmin JWT 생성
      * @param adminIdx
@@ -44,7 +39,6 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
-
     /**
      * Header에서 X-ACCESS-TOKEN 으로 JWT 추출
      * @return String
@@ -53,7 +47,6 @@ public class JwtService {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         return request.getHeader("X-ACCESS-TOKEN");
     }
-
     /**
      * JWT에서 userIdx 추출
      * @return int
@@ -65,7 +58,6 @@ public class JwtService {
         if (accessToken == null || accessToken.length() == 0) {
             throw new BaseException(EMPTY_JWT);
         }
-
         // 2. JWT parsing
         Jws<Claims> claims;
         try {
@@ -75,11 +67,9 @@ public class JwtService {
         } catch (Exception ignored) {
             throw new BaseException(INVALID_JWT);
         }
-
         // 3. userIdx 추출
         return claims.getBody().get("userIdx", Integer.class);
     }
-
     /**
      * JWT에서 adminIdx 추출
      * @return int
@@ -91,7 +81,6 @@ public class JwtService {
         if (accessToken == null || accessToken.length() == 0) {
             throw new BaseException(EMPTY_JWT);
         }
-
         // 2. JWT parsing
         Jws<Claims> claims;
         try {
@@ -101,7 +90,6 @@ public class JwtService {
         } catch (Exception ignored) {
             throw new BaseException(INVALID_JWT);
         }
-
         // 3. userIdx 추출
         return claims.getBody().get("adminIdx", Integer.class);
     }

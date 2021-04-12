@@ -36,8 +36,12 @@ public class AdminUserInfoProvider {
     public List<AdminGetUsersRes> retrieveUserInfoList(String word) throws BaseException {
         // 1. DB에서 전체 UserInfo 조회
         List<AdminUserInfo> adminUserInfoList;
+        try {
+            adminUserInfoList = adminUserInfoRepository.findAll();
 
-        adminUserInfoList = adminUserInfoRepository.findAll();
+        } catch (Exception ignored) {
+            throw new BaseException(FAILED_TO_GET_USER);
+        }
 
         // 2. UserInfoRes로 변환하여 return
         return adminUserInfoList.stream().map(adminUserInfo -> {
@@ -65,9 +69,9 @@ public class AdminUserInfoProvider {
             String id = adminUserInfo.getId();
             String email = adminUserInfo.getEmail();
             String phoneNum = adminUserInfo.getPhoneNum();
-            String nickname = adminUserInfo.getNickname();
+            String city = adminUserInfo.getCity();
             String status = adminUserInfo.getStatus();
-            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, nickname, status);
+            return new AdminGetUsersRes(userIdx, userType, id, email, phoneNum, city, status);
         }).collect(Collectors.toList());
     }
 
@@ -103,23 +107,23 @@ public class AdminUserInfoProvider {
         String id = adminUserInfo.getId();
         String email = adminUserInfo.getEmail();
         String phoneNum = adminUserInfo.getPhoneNum();
-        String name = adminUserInfo.getName();
         String city = adminUserInfo.getCity();
         String nickname = adminUserInfo.getNickname();
         String profileImageURL = adminUserInfo.getProfileImageURL();
         String introduce = adminUserInfo.getIntroduce();
         String career = adminUserInfo.getCareer();
         String etc = adminUserInfo.getEtc();
-        int minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
+        String minimumCastingPrice = adminUserInfo.getMinimumCastingPrice();
         String privateBusinessName = adminUserInfo.getPrivateBusinessName();
         String businessNumber = adminUserInfo.getBusinessNumber();
         String businessImageURL = adminUserInfo.getBusinessImageURL();
         String corporationBusinessName = adminUserInfo.getCorporationBusinessName();
+        String corporationBusinessNumber = adminUserInfo.getCorporationBusinessNumber();
         String status = adminUserInfo.getStatus();
 
-        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, name, city, nickname, profileImageURL,
+        return new AdminGetUserRes(userIdx, userType, id, email, phoneNum, city, nickname, profileImageURL,
                 introduce, career, etc, minimumCastingPrice, privateBusinessName, businessNumber,
-                businessImageURL, corporationBusinessName, status);
+                businessImageURL, corporationBusinessName, corporationBusinessNumber, status);
     }
 
     /**
@@ -178,14 +182,23 @@ public class AdminUserInfoProvider {
      * @throws BaseException
      */
     public AdminUserInfo retrieveUserInfoByEmail(String email) throws BaseException {
-        AdminUserInfo existsUserInfo;
+        List<AdminUserInfo> existsUserInfoList;
         try {
-            existsUserInfo = adminUserInfoRepository.findAdminUserInfoByEmailAndStatus(email, "ACTIVE");
+            existsUserInfoList = adminUserInfoRepository.findByEmailAndStatus(email, "ACTIVE");
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_GET_USER);
         }
 
-        return existsUserInfo;
+        // 2. 존재하는 UserInfo가 있는지 확인
+        AdminUserInfo userInfo;
+        if (existsUserInfoList != null && existsUserInfoList.size() > 0) {
+            userInfo = existsUserInfoList.get(0);
+        } else {
+            throw new BaseException(NOT_FOUND_USER);
+        }
+
+        // 3. UserInfo를 return
+        return userInfo;
     }
 
     public WebAdmin retrieveUserInfoByWebAdminId(String id) throws BaseException {
