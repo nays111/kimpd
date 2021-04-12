@@ -46,7 +46,6 @@ public class MailService {
             password = charSpPw[index];
             buffer.append(password);
         }
-        System.out.println(buffer.toString());
 
         return buffer.toString();
     }
