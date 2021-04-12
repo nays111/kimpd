@@ -23,13 +23,19 @@ public class ValidationRegex {
         return matcher.find();
     }
     public static boolean isRegexId(String target){
-        String regex = "^[a-zA-Z]\\w{3,20}$";
+        String regex = "^[a-z]\\w{5,15}$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
     }
     public static boolean isRegexNickname(String target){
-        String regex = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\\*]{2,7}+$";
+        String regex = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|\\*]{2,10}+$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+    public static boolean isRegexName(String target){
+        String regex = "^[ㄱ-ㅎ|가-힣|a-z|A-Z|\\*]{2,20}+$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();
@@ -42,6 +48,30 @@ public class ValidationRegex {
     }
     public static boolean isRegexImageType(String target){
         String regex = "([^\\s]+(?=\\.(jpg|pdf|png))\\.\\2)";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+    public static boolean isRegexDateType(String target){
+        String regex = "^\\d{4}.(0[1-9]|1[012]).(0[1-9]|[12][0-9]|3[01])$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+    public static boolean isRegexYear(String target){
+        String regex = "^\\d{4}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+    public static boolean isRegexMonth(String target){
+        String regex = "(0[1-9]|1[012])$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(target);
+        return matcher.find();
+    }
+    public static boolean isRegexDay(String target){
+        String regex = "(0[1-9]|[12][0-9]|3[01])$";
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(target);
         return matcher.find();

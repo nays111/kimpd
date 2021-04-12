@@ -22,9 +22,11 @@ public class UserInfoProvider {
     private final CertificateRepository certificateRepository;
     private final CategoryProvider categoryProvider;
 
-    /**
-     * 로그인
-     */
+    public int getUserTypeByUserIdx(int userIdx) throws BaseException{
+        UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
+        return userInfo.getUserType();
+    }
+
     public PostLoginRes login(PostLoginReq postLoginReq) throws BaseException {
         UserInfo userInfo = retrieveUserInfoById(postLoginReq.getId());
         String password;
@@ -38,7 +40,17 @@ public class UserInfoProvider {
         }
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
-        return new PostLoginRes(userIdx, jwt);
+        String nickname = userInfo.getNickname();
+        String profileImageURL = userInfo.getProfileImageURL();
+        int userType = userInfo.getUserType();
+        PostLoginRes postLoginRes=null;
+        if (userType == 1 || userType==2 || userType==3) {
+            postLoginRes = new PostLoginRes(userIdx,jwt, nickname, profileImageURL, userType);
+        } else if (userType == 4 || userType ==5 || userType==6) {
+            String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
+            postLoginRes = new PostLoginRes(userIdx,jwt,nickname,profileImageURL,userType,jobCategoryChildName);
+        }
+        return postLoginRes;
     }
     /**
      * 유저 요약 정보
@@ -46,29 +58,18 @@ public class UserInfoProvider {
     public GetUserRes getUserRes(int userIdx) throws BaseException {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
         String nickname = userInfo.getNickname();
-        if(nickname==null){
-            nickname="닉네임 없음";
-        }
         String profileImageURL = userInfo.getProfileImageURL();
-        if(profileImageURL==null){
-            profileImageURL="프로필 사진 없음";
-        }
         int userType = userInfo.getUserType();
-        String stringUserType = null;
         GetUserRes getUserRes=null;
         if (userType == 1 || userType==2 || userType==3) {
-            stringUserType = "일반회원";
-            getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, stringUserType);
+            getUserRes = new GetUserRes(userIdx, nickname, profileImageURL, userType);
         } else if (userType == 4 || userType ==5 || userType==6) {
-            stringUserType = "전문가회원";
             String jobCategoryChildName = categoryProvider.getMainJobCategoryChild(userInfo);
-            getUserRes = new GetUserRes(userIdx,nickname,profileImageURL,stringUserType,jobCategoryChildName);
+            getUserRes = new GetUserRes(userIdx,nickname,profileImageURL,userType,jobCategoryChildName);
         }
         return getUserRes;
     }
-    /**
-     * 유저 인덱스로 유저 찾기
-     */
+
     public UserInfo retrieveUserInfoByUserIdx(int userIdx) throws BaseException {
         UserInfo userInfo;
         try {
@@ -81,9 +82,7 @@ public class UserInfoProvider {
         }
         return userInfo;
     }
-    /**
-     * ID로 유저 찾기
-     */
+
     public UserInfo retrieveUserInfoById(String id) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -100,21 +99,22 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 사용 가능한 ID인지
-     */
     public Boolean isIdUsable(String id) {
         return !userInfoRepository.existsByIdAndStatus(id, "ACTIVE");
     }
 
-    /**
-     * 사용 가능한 닉네임인지
-     */
-    public Boolean isNicknameUsable(String nickname) { return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE"); }
+    public Boolean isPhoneNumUsable(String phoneNum){
+        return !userInfoRepository.existsByPhoneNumAndStatus(phoneNum,"ACTIVE");
+    }
 
-    /**
-     * 휴대폰 번호로 유저 찾기
-     */
+    public Boolean isEmailUsable(String email){
+        return !userInfoRepository.existsByEmailAndStatus(email,"ACTIVE");
+    }
+
+    public Boolean isNicknameUsable(String nickname) {
+        return !userInfoRepository.existsByNicknameAndStatus(nickname, "ACTIVE");
+    }
+
     public UserInfo retrieveUserInfoByPhoneNum(String phoneNum) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -131,9 +131,6 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 이메일로 유저 찾기
-     */
     public UserInfo retrieveUserInfoByEmail(String email) throws BaseException {
         List<UserInfo> existsUserInfoList;
         try {
@@ -150,11 +147,9 @@ public class UserInfoProvider {
         return userInfo;
     }
 
-    /**
-     * 휴대폰 번호로 인증번호 전송
-     */
-    public GetIdRes SendId(String phoneNum) throws BaseException {
-        UserInfo userInfo = retrieveUserInfoByPhoneNum(phoneNum);
+    public void sendId(String phoneNum,String name) throws BaseException {
+        UserInfo userInfo = userInfoRepository.findByPhoneNumAndNameAndStatus(phoneNum,name,"ACTIVE");
+        if(userInfo==null){ throw new BaseException(NOT_FOUND_USER); }
         String id = userInfo.getId();
         String message = "김피디입니다. 회원님의 ID 는 [" + id + "] 입니다.";
         try {
@@ -162,12 +157,8 @@ public class UserInfoProvider {
         } catch (Exception ignored) {
             throw new BaseException(FAILED_TO_SEND_MESSAGE);
         }
-        return new GetIdRes(id);
     }
 
-    /**
-     *휴대폰 인증번호 검사
-     */
     public int checkPhoneNumCode(String phoneNum) throws BaseException {
         Timestamp t1 = new Timestamp(System.currentTimeMillis());
         Timestamp t2 = new Timestamp(System.currentTimeMillis() - 180000); //3분
@@ -179,40 +170,38 @@ public class UserInfoProvider {
         }
     }
 
+    public void deletePhoneNumCertCode(String phoneNum) throws BaseException{
+        List<Certification> certificationList = certificateRepository.findAllByUserPhoneNum(phoneNum);
+        certificateRepository.deleteAll(certificationList);
+    }
+
     public GetMyUserInfoRes getMyInfo(int userIdx) throws BaseException {
         UserInfo userInfo = retrieveUserInfoByUserIdx(userIdx);
-        /**
-         * 공통 컬럼
-         */
+
         String profileImageURL = userInfo.getProfileImageURL();
         String nickname = userInfo.getNickname();
         String id = userInfo.getId();
+        String name = userInfo.getName();
         String phoneNum = userInfo.getPhoneNum();
         String email = userInfo.getEmail();
-
-        /**
-         * 개인 사업자용
-         */
         String privateBusinessName = userInfo.getPrivateBusinessName();
         String businessNumber = userInfo.getBusinessNumber();
         String businessImageURL = userInfo.getBusinessImageURL();
-
-        /**
-         * 법인 사업자용
-         */
         String corpBusinessName = userInfo.getCorporationBusinessName();
-        String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
+        //String corpBusinessNumber = userInfo.getCorporationBusinessNumber();
+
         GetMyUserInfoRes getMyUserInfoRes = null;
+
         if (userInfo.getUserType() == 1 || userInfo.getUserType() == 4) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email).build();
         } else if (userInfo.getUserType() == 2 || userInfo.getUserType() == 5) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
                     .privateBusinessName(privateBusinessName)
@@ -221,11 +210,11 @@ public class UserInfoProvider {
         } else if (userInfo.getUserType() == 3 || userInfo.getUserType() == 6) {
             getMyUserInfoRes = GetMyUserInfoRes.builder().userIdx(userIdx)
                     .profileImageURL(profileImageURL)
-                    .id(id).nickname(nickname)
+                    .id(id).name(name).nickname(nickname)
                     .phoneNum(phoneNum)
                     .email(email)
                     .corpBusinessName(corpBusinessName)
-                    .corpBusinessNumber(corpBusinessNumber)
+                    .businessNumber(businessNumber)
                     .businessImageURL(businessImageURL).build();
         }
         return getMyUserInfoRes;

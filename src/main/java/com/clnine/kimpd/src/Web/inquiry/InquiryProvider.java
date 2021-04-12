@@ -1,12 +1,9 @@
 package com.clnine.kimpd.src.Web.inquiry;
 
 import com.clnine.kimpd.config.BaseException;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryCategoryRes;
-import com.clnine.kimpd.src.Web.inquiry.models.GetInquiryListRes;
-import com.clnine.kimpd.src.Web.inquiry.models.Inquiry;
-import com.clnine.kimpd.src.Web.inquiry.models.InquiryCategory;
-import com.clnine.kimpd.src.Web.report.models.GetReportCategoryRes;
-import com.clnine.kimpd.src.Web.report.models.ReportCategory;
+import com.clnine.kimpd.src.Web.inquiry.models.*;
+import com.clnine.kimpd.src.Web.user.UserInfoProvider;
+import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,8 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_INQUIRIES;
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_INQUIRY_CATEGORIES;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 
 @Service
@@ -28,12 +24,9 @@ import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_INQUIRY_C
 public class InquiryProvider {
     private final InquiryCategoryRepository inquiryCategoryRepository;
     private final InquiryRepository inquiryRepository;
+    private final UserInfoProvider userInfoProvider;
+    private final InquiryFileRepository inquiryFileRepository;
 
-    /**
-     * 1:1문의 카테고리 조회 API
-     * @return
-     * @throws BaseException
-     */
     public List<GetInquiryCategoryRes> getInquiryCategoryList() throws BaseException{
         List<InquiryCategory> inquiryCategoryList;
         try{
@@ -48,17 +41,21 @@ public class InquiryProvider {
         }).collect(Collectors.toList());
     }
 
-    public List<GetInquiryListRes> getInquiryListRes(int page,int size) throws BaseException{
+
+    public GetInquiriesRes getInquiryListRes(int page, int size) throws BaseException{
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"inquiryIdx"));
         List<Inquiry> inquiryList;
+        int totalCount = 0;
         try{
             inquiryList = inquiryRepository.findAllByStatus("ACTIVE",pageable);
+            totalCount = inquiryRepository.countAllByStatus("ACTIVE");
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_INQUIRIES);
         }
-        List<GetInquiryListRes> getInquiryListResList = new ArrayList<>();
+        int temp = totalCount;
+        List<GetInquiriesDTO> getInquiryListResList = new ArrayList<>();
         for(int i=0;i<inquiryList.size();i++){
-            int no = inquiryList.size()+1-i;
+            int no = temp;
             int inquiryIdx = inquiryList.get(i).getInquiryIdx();
             String answerStatus=null;
             if(inquiryList.get(i).getInquiryAnswer()==null){
@@ -71,10 +68,44 @@ public class InquiryProvider {
             Date createdAt = inquiryList.get(i).getCreatedAt();
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
             String createdDate = sDate.format(createdAt);//4
-            GetInquiryListRes getInquiryListRes = new GetInquiryListRes(no,inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
-            getInquiryListResList.add(getInquiryListRes);
+            GetInquiriesDTO getInquiriesDTO = new GetInquiriesDTO(no,inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
+            getInquiryListResList.add(getInquiriesDTO);
+            temp--;
         }
+        GetInquiriesRes getInquiriesRes = new GetInquiriesRes(totalCount,getInquiryListResList);
+        return getInquiriesRes;
+    }
 
-        return getInquiryListResList;
+    public GetInquiryRes getInquiryRes(int userIdx, int inquiryIdx) throws BaseException{
+        Inquiry inquiry = inquiryRepository.findAllByInquiryIdxAndStatus(inquiryIdx,"ACTIVE");
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        if(inquiry==null){
+            throw new BaseException(NO_INQUIRY);
+        }
+        if(inquiry.getUserInfo()!=userInfo){
+            throw new BaseException(NOT_USER_INQUIRY);
+        }
+        List<InquiryFile> inquiryFiles = inquiryFileRepository.findAllByInquiryAndStatus(inquiry,"ACTIVE");
+        List<String> inquiryFileUrlList  = new ArrayList<>();
+        for(int i=0;i<inquiryFiles.size();i++){
+            String name = inquiryFiles.get(i).getInquiryFileName();
+            inquiryFileUrlList.add(name);
+        }
+        String inquiryTitle = inquiry.getInquiryTitle();
+        String inquiryDescription = inquiry.getInquiryDescription();
+        String userNickname = userInfo.getNickname();
+        String inquiryAnswer = inquiry.getInquiryAnswer();
+        Date createdAt = inquiry.getCreatedAt();
+        Date updatedAt = inquiry.getUpdatedAt();
+        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
+        String createdDate = sDate.format(createdAt);
+        String answerDate;
+        if(inquiryAnswer==null){
+            answerDate=null;
+        }else{
+            answerDate = sDate.format(updatedAt);
+        }
+        GetInquiryRes getInquiryRes = new GetInquiryRes(inquiryTitle,inquiryDescription,inquiryFileUrlList,userNickname,createdDate,inquiryAnswer,answerDate);
+        return getInquiryRes;
     }
 }

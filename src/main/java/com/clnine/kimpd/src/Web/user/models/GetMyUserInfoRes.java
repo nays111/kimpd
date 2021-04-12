@@ -11,6 +11,7 @@ public class GetMyUserInfoRes {
     private final int userIdx;
     private final String profileImageURL;
     private final String id;
+    private final String name;
     private final String nickname;
     private final String phoneNum;
     private final String email;
@@ -25,7 +26,7 @@ public class GetMyUserInfoRes {
      * 법인 사업자용
      */
     private final String corpBusinessName;
-    private final String corpBusinessNumber;
+    //private final String corpBusinessNumber;
 
 
 

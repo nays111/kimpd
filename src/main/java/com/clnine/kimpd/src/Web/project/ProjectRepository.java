@@ -15,11 +15,7 @@ public interface ProjectRepository extends CrudRepository<Project, Integer> {
     List<Project> findByUserInfoAndStatus(UserInfo user, String status, Pageable pageable);
     List<Project> findByUserInfoAndStatus(UserInfo user,String status);
     Project findByProjectIdxAndStatus(int projectIdx,String status);
-
-
     int countAllByUserInfoAndStatus(UserInfo userinfo,String status);
-
     List<Project> findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, String status, Date now, Date end, Pageable pageable);
-
-
+    int countAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, String status, Date now, Date end);
 }

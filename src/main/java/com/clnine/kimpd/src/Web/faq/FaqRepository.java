@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface FaqRepository extends CrudRepository<Faq,Integer> {
     List<Faq> findAllByStatus(String status, Pageable pageable);
+    int countAllByStatus(String status);
 }

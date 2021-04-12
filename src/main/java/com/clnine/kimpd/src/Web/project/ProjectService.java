@@ -5,11 +5,13 @@ import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.project.models.PatchProjectReq;
 import com.clnine.kimpd.src.Web.project.models.PostProjectReq;
 import com.clnine.kimpd.src.Web.project.models.Project;
+import com.clnine.kimpd.src.Web.user.UserInfoProvider;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import com.clnine.kimpd.utils.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
 import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_POST_PROJECT;
@@ -17,20 +19,13 @@ import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_POST_PROJECT;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
-    private final JwtService jwtService;
-    private final UserInfoRepository userInfoRepository;
     private final ProjectRepository projectRepository;
+    private final ProjectProvider projectProvider;
+    private final UserInfoProvider userInfoProvider;
 
-    public void PostProject(PostProjectReq postProjectReq, int userIdx) throws BaseException {
-
-        UserInfo userInfo;
-        try {
-            userInfo = userInfoRepository.findUserInfoByUserIdxAndStatus(userIdx, "ACTIVE");
-        } catch (Exception ignored) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER);
-        }
-        System.out.println("userIdx:" + userInfo.getUserIdx());
-
+    @Transactional
+    public void postProject(PostProjectReq postProjectReq, int userIdx) throws BaseException {
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         String projectName = postProjectReq.getProjectName();
         String projectMaker = postProjectReq.getProjectMaker();
         String projectStartDate = postProjectReq.getProjectStartDate();
@@ -39,9 +34,7 @@ public class ProjectService {
         String projectDescription = postProjectReq.getProjectDescription();
         String projectFileURL = postProjectReq.getProjectFileURL();
         String projectBudget = postProjectReq.getProjectBudget();
-
         Project project = new Project(userInfo, projectName, projectMaker, projectStartDate, projectEndDate, projectManager,projectFileURL, projectBudget, projectDescription);
-        System.out.println(userInfo.getUserIdx());
         try {
             projectRepository.save(project);
         } catch (Exception ignored) {
@@ -49,12 +42,12 @@ public class ProjectService {
         }
     }
 
-    public void UpdateProject(PatchProjectReq patchProjectReq,int projectIdx) throws BaseException{
-        Project project;
-        try{
-            project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_PROJECTS);
+    @Transactional
+    public void updateProject(PatchProjectReq patchProjectReq,int projectIdx,int userIdx) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        Project project = projectProvider.retrieveProjectByProjectIdx(projectIdx);
+        if(project.getUserInfo()!=userInfo){
+            throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
         }
         project.setProjectName(patchProjectReq.getProjectName());
         project.setProjectMaker(patchProjectReq.getProjectMaker());
@@ -71,12 +64,12 @@ public class ProjectService {
         }
     }
 
-    public void DeleteProject(int projectIdx)throws BaseException{
-        Project project;
-        try{
-            project = projectRepository.findByProjectIdxAndStatus(projectIdx,"ACTIVE");
-        }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_GET_PROJECTS);
+    @Transactional
+    public void deleteProject(int projectIdx,int userIdx) throws BaseException{
+        UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
+        Project project = projectProvider.retrieveProjectByProjectIdx(projectIdx);
+        if(project.getUserInfo()!=userInfo){
+            throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
         }
         project.setStatus("INACTIVE");
         try{

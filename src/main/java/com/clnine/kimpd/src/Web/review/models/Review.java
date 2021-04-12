@@ -26,9 +26,12 @@ public class Review extends BaseEntity {
     @Column(name="description")
     private String description;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="castingIdx")
-//    private Casting casting;
+    /**
+     * 섭외
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="castingIdx",referencedColumnName = "castingIdx")
+    private Casting casting;
 
     /**
      * 평가한 사람
@@ -45,10 +48,11 @@ public class Review extends BaseEntity {
 
     private String status="ACTIVE";
 
-    public Review(float star, String description, UserInfo userInfo, UserInfo expertInfo) {
+    public Review(float star, String description, UserInfo evaluateUserInfo, UserInfo evaluatedUserInfo,Casting casting) {
         this.star = star;
         this.description = description;
-        this.evaluateUserInfo = userInfo;
-        this.evaluatedUserInfo = expertInfo;
+        this.evaluateUserInfo = evaluateUserInfo;
+        this.evaluatedUserInfo = evaluatedUserInfo;
+        this.casting = casting;
     }
 }

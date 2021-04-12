@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface AlarmRepository extends CrudRepository<Alarm,Integer> {
-    List<Alarm> findAllByUserInfoAndStatus(UserInfo userInfo,String status);
+    List<Alarm> findAllByUserInfoAndStatusOrderByAlarmIdxDesc(UserInfo userInfo,String status);
 }

@@ -6,10 +6,6 @@ import com.clnine.kimpd.src.Web.inquiry.models.Inquiry;
 import com.clnine.kimpd.src.Web.inquiry.models.InquiryCategory;
 import com.clnine.kimpd.src.Web.inquiry.models.InquiryFile;
 import com.clnine.kimpd.src.Web.inquiry.models.PostInquiryReq;
-import com.clnine.kimpd.src.Web.project.models.GetProjectsRes;
-import com.clnine.kimpd.src.Web.report.models.PostReportReq;
-import com.clnine.kimpd.src.Web.report.models.Report;
-import com.clnine.kimpd.src.Web.report.models.ReportCategory;
 import com.clnine.kimpd.src.Web.user.UserInfoRepository;
 import com.clnine.kimpd.src.Web.user.models.UserInfo;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,8 +43,11 @@ public class InquiryService {
         String description = postInquiryReq.getInquiryDescription();
         Inquiry inquiry = new Inquiry(title,description,inquiryCategory,userInfo);
 
-        if(postInquiryReq.getInquiryFileList()!=null){
-            List<String> inquiryFileList = postInquiryReq.getInquiryFileList();
+
+
+
+        if(postInquiryReq.getInquiryFileUrlList()!=null){
+            List<String> inquiryFileList = postInquiryReq.getInquiryFileUrlList();
 
             for(int i=0;i<inquiryFileList.size();i++){
                 String inquiryFileName = inquiryFileList.get(i);
