@@ -11,4 +11,6 @@ import java.util.List;
 public interface InquiryRepository extends CrudRepository<Inquiry,Integer> {
 
     List<Inquiry> findAllByStatus(String status, Pageable pageable);
+    int countAllByStatus(String status);
+    Inquiry findAllByInquiryIdxAndStatus(int inquiryIdx,String status);
 }

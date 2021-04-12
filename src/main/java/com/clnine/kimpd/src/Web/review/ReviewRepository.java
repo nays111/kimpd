@@ -13,5 +13,11 @@ public interface ReviewRepository extends CrudRepository<Review,Integer> {
 
     int countAllByEvaluatedUserInfoAndStatus(UserInfo userInfo,String status);
     List<Review> findAllByEvaluatedUserInfoAndStatus(UserInfo userInfo, String status);
-    //Review findByCastingAndStatus(Casting casting, String status);
+
+    Review findByEvaluatedUserInfoAndEvaluateUserInfoAndCastingAndStatus(UserInfo evaluatedUserInfo, UserInfo evaluateUserInfo, Casting casting,String status);
+
+    Review findByEvaluateUserInfoAndCastingAndStatus(UserInfo evaluateUserInfo, Casting casting,String status);
+
+
+
 }

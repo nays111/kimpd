@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class PostReportReq {
-    private int reportCategoryIdx;
+    private Integer reportCategoryIdx;
     private String reportDescription;
 }

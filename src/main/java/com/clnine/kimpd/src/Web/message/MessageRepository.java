@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends CrudRepository<Message,Integer> {
     Message findByMessageIdxAndStatus(int messageIdx,String status);
-    List<Message> findByReceiverAndStatus(UserInfo user, String status, Pageable pageable);
+    List<Message> findByReceiverAndStatus(UserInfo userInfo, String status, Pageable pageable);
+    int countAllByReceiverAndStatus(UserInfo userInfo,String status);
 }

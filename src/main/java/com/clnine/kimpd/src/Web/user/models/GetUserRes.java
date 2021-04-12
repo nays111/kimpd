@@ -10,22 +10,24 @@ public class GetUserRes {
     private int userIdx;
     private String nickname;
     private String profileImageURL;
-    private String userType;
+    private int userType;
     private String jobCategoryChildName;
 
     @Builder
-    public GetUserRes(int userIdx, String nickname, String profileImageURL, String userType, String jobCategoryChildName) {
+    public GetUserRes(int userIdx, String nickname, String profileImageURL, int userType, String jobCategoryChildName) {
         this.userIdx = userIdx;
         this.nickname = nickname;
         this.profileImageURL = profileImageURL;
         this.userType = userType;
         this.jobCategoryChildName = jobCategoryChildName;
     }
+
     @Builder
-    public GetUserRes(int userIdx, String nickname, String profileImageURL, String userType) {
+    public GetUserRes(int userIdx, String nickname, String profileImageURL, int userType) {
         this.userIdx = userIdx;
         this.nickname = nickname;
         this.profileImageURL = profileImageURL;
         this.userType = userType;
     }
+
 }

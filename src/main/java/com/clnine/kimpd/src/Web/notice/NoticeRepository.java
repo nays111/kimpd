@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface NoticeRepository extends CrudRepository<Notice,Integer> {
     List<Notice> findAllByStatus(String status, Pageable pageable);
+    int countAllByStatus(String status);
 }

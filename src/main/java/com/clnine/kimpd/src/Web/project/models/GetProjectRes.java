@@ -12,4 +12,5 @@ public class GetProjectRes {
     private final String projectDescription;
     private final String projectStartDate;
     private final String projectEndDate;
+    private final String projectManager;
 }

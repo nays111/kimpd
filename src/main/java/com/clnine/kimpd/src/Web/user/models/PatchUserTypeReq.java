@@ -10,8 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class PatchUserTypeReq {
-    private final List<Integer> jobParentCategoryIdx;
-    private final List<Integer> jobChildCategoryIdx;
+    private ArrayList<ArrayList<Integer>> jobCategoryIdx;
     private final List<Integer> genreCategoryIdx;
     private final int agreeShowDB;
 }

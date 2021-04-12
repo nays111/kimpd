@@ -34,6 +34,9 @@ public class UserInfo extends BaseEntity {
     @Column(name="email",nullable = false)
     private String email;
 
+    @Column(name="name",nullable = false)
+    private String name;
+
     @Column(name="phoneNum",nullable = false)
     private String phoneNum;
 
@@ -44,27 +47,27 @@ public class UserInfo extends BaseEntity {
     private String address;
 
     @Column(name="agreeAdvertisement")
-    private int agreeAdvertisement=0;
+    private Integer agreeAdvertisement;
 
     @Column(name="privateBusinessName")
     private String privateBusinessName;//개인 사업자명
     @Column(name="businessNumber")
-    private String businessNumber;//사업자 등록번호
+    private String businessNumber;//사업자 등록번호 (개입 사업자 + 법인 사업자 공통)
     @Column(name="businessImageURL")
-    private String businessImageURL;//사업자 등록 이미지
+    private String businessImageURL;//사업자 등록 이미지 (개인사업자 + 법인사업자 공통)
     @Column(name="corporationBusinessName")
     private String corporationBusinessName;//법인 사업자명
-    @Column(name="corporationBusinessNumber")
-    private String corporationBusinessNumber;//법인 사업자번호
+//    @Column(name="corporationBusinessNumber")
+//    private String corporationBusinessNumber;//법인 사업자번호
 
     @Column(name="nickname")
-    private String nickname="";//닉네임
+    private String nickname;//닉네임
 
     /**
      * 전문가 전용 컬럼
      */
     @Column(name="profileImageURL")
-    private String profileImageURL;//프로필이미지
+    private String profileImageURL="";//프로필이미지
 
     @Column(name="introduce")
     private String introduce="";
@@ -86,21 +89,21 @@ public class UserInfo extends BaseEntity {
 
 
     @Column(name="agreeShowDB")
-    private int agreeShowDB=1;
+    private Integer agreeShowDB;
 
     @Column(name="status")
     private String status="ACTIVE";
 
     public UserInfo(int userType, String id, String password,
-                    String email, String phoneNum, String city,String address,
-                    int agreeAdvertisement, String privateBusinessName,
+                    String email, String name, String phoneNum, String city,String address,
+                    Integer agreeAdvertisement, String privateBusinessName,
                     String businessNumber, String businessImageURL,
-                    String corporationBusinessName, String corporationBusinessNumber,
-                    String nickname,int agreeShowDB) {
+                    String corporationBusinessName, String nickname,Integer agreeShowDB) {
         this.userType = userType;
         this.id = id;
         this.password = password;
         this.email = email;
+        this.name = name;
         this.phoneNum = phoneNum;
         this.city = city;
         this.address = address;
@@ -109,7 +112,6 @@ public class UserInfo extends BaseEntity {
         this.businessNumber = businessNumber;
         this.businessImageURL = businessImageURL;
         this.corporationBusinessName = corporationBusinessName;
-        this.corporationBusinessNumber = corporationBusinessNumber;
         this.nickname = nickname;
         this.agreeShowDB = agreeShowDB;
     }

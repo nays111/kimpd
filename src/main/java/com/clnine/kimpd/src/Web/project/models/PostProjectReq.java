@@ -4,8 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Getter
+@NoArgsConstructor(access = AccessLevel.PUBLIC) @Getter
 public class PostProjectReq {
     private String projectName;
     private String projectMaker;
