@@ -167,7 +167,7 @@ public class CastingService {
                 throw exception;
             }
         }
-        if(existsCasting!=null){
+        if(existsCasting==null){
             throw new BaseException(ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT);
         }
 
@@ -227,7 +227,7 @@ public class CastingService {
         try{
             castingRepository.save(casting);
         }catch(Exception ignored){
-            throw new BaseException(FAILED_TO_RECASTING);
+            throw new BaseException(FAILED_TO_SAVE_CASTING);
         }
     }
 
