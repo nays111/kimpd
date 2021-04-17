@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.clnine.kimpd.config.BaseResponseStatus.ALREADY_POST_BASKET;
+
 @Service
 @RequiredArgsConstructor
 public class BasketService {
@@ -28,6 +30,7 @@ public class BasketService {
     private final UserInfoProvider userInfoProvider;
     private final ProjectProvider projectProvider;
     private final CastingProvider castingProvider;
+    private final BasketRepository basketRepository;
 
     /**
      * 장바구니 담기
@@ -53,6 +56,15 @@ public class BasketService {
         for(int i=0;i<expertIdxList.size();i++){
             int expertIdx = expertIdxList.get(i);
             UserInfo expertInfo = userInfoProvider.retrieveUserInfoByUserIdx(expertIdx);
+
+            /**
+             * 이미 장바구니에 담은 전문가가 존재할 경우 예외 처리
+             */
+            Casting existCasting = basketRepository.findAllByUserInfoAndExpertAndProjectAndStatusAndCastingStatus(userInfo,expertInfo,project,"ACTIVE",0);
+            if(existCasting != null){
+                throw new BaseException(ALREADY_POST_BASKET);
+            }
+
             Casting casting = new Casting(userInfo,expertInfo,project,0);
             try{
                 castingRepository.save(casting);

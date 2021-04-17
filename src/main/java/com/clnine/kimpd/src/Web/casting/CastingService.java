@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
@@ -78,7 +79,8 @@ public class CastingService {
         /**
          * 이미 해당 유저가 전문가에게 이 프로젝트 하자고 섭외신청을 한 경우
          */
-        Casting existsCasting = null;
+        Casting existsCasting=null;
+        //List<Casting> existCasting  = castingRepository.findByUserInfoAndExpertAndProjectAndCastingStatusNotAndStatus( userInfo,  expertInfo,  project,1, "ACTIVE");
         try{
             existsCasting = castingProvider.retrieveCastingInfoByUserExpertProject(userInfo,expertInfo,project);
         }catch (BaseException exception){
@@ -125,7 +127,7 @@ public class CastingService {
     /**
      * 프로젝트 불러오기 한 이후 섭외 신청을 하는 경우
      */
-    @Transactional
+
     public void PostCastingByProjectLoaded(PostCastingReq postCastingReq,int userIdx,int expertIdx) throws BaseException{
 
         /**
@@ -160,6 +162,7 @@ public class CastingService {
          * 이미 이 전문가한테 이 프로젝트를 섭외 요청한 경우
          */
         Casting existsCasting=null;
+        //List<Casting> existCasting  = castingRepository.findByUserInfoAndExpertAndProjectAndCastingStatusNotAndStatus( userInfo,  expertInfo,  project,1, "ACTIVE");
         try{
             existsCasting = castingProvider.retrieveCastingInfoByUserExpertProject(userInfo,expertInfo,project);
         }catch (BaseException exception){
@@ -167,9 +170,10 @@ public class CastingService {
                 throw exception;
             }
         }
-        if(existsCasting==null){
+        if(existsCasting!=null){
             throw new BaseException(ALREADY_SEND_CASTING_TO_EXPERT_WITH_THIS_PROJECT);
         }
+
 
         /**
          * 입력받은 섭외 정보 저장

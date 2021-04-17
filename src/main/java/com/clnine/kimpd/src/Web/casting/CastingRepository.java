@@ -21,6 +21,8 @@ public interface CastingRepository extends CrudRepository<Casting,Integer> {
     int countAllByExpertAndCastingStatusAndStatus(UserInfo user,int castingStatus,String status);
 
 
+
+
     // 섭외 요청을 보낸 경우
     //전체 기간 전체 조회
     List<Casting> findAllByUserInfoAndStatusAndCastingStatusNotOrderByCastingIdxDesc(UserInfo userInfo, String status,int castingStatus ,Pageable pageable);

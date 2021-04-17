@@ -320,7 +320,9 @@ public class UserInfoController {
         int state = corpState.getState();
         if(state>=1){
             return new BaseResponse<>(SUCCESS);
-        }else{
+        }
+        else{
+            System.out.println(state);
             return new BaseResponse<>(FAILED_TO_GET_CORP_AUTHENTICATION);
         }
     }

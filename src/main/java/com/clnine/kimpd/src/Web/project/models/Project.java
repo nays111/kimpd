@@ -47,7 +47,7 @@ public class Project extends BaseEntity {
     private String projectBudget;
 
     @Column(name="projectStatus")
-    private int projectStatus=1; //프로젝트 완료 여부
+    private int projectStatus=1; //프로젝트 완료 여부 (1: 진행중, 0 : 완료)
 
     @Column(name="status")
     private String status="ACTIVE"; //프로젝트 삭제 여부

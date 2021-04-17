@@ -12,10 +12,11 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Integer> {
-    List<Project> findByUserInfoAndStatus(UserInfo user, String status, Pageable pageable);
+    List<Project> findByUserInfoAndProjectStatusAndStatus(UserInfo user, int projectStatus,String status, Pageable pageable);
     List<Project> findByUserInfoAndStatus(UserInfo user,String status);
     Project findByProjectIdxAndStatus(int projectIdx,String status);
-    int countAllByUserInfoAndStatus(UserInfo userinfo,String status);
-    List<Project> findAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, String status, Date now, Date end, Pageable pageable);
-    int countAllByUserInfoAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, String status, Date now, Date end);
+    int countAllByUserInfoAndStatus(UserInfo userInfo,String status);
+    int countAllByUserInfoAndProjectStatusAndStatus(UserInfo userinfo,int projectStatus,String status);
+    List<Project> findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus, String status, Date now, Date end, Pageable pageable);
+    int countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus,String status, Date now, Date end);
 }

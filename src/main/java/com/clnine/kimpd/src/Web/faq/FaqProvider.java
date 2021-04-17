@@ -18,10 +18,19 @@ import static com.clnine.kimpd.config.BaseResponseStatus.FAIlED_TO_GET_FAQ;
 @Service
 @RequiredArgsConstructor
 public class FaqProvider {
+
     private final FaqRepository faqRepository;
+
     public GetFaqsRes getFaqList(int page, int size) throws BaseException {
+        /**
+         * 최신순 기준으로 페이징 처리
+         */
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"faqIdx"));
         List<Faq> faqList = new ArrayList<>();
+
+        /**
+         * 페이징을 위한 전체 개수 필요
+         */
         int totalCount = 0;
         try{
             faqList = faqRepository.findAllByStatus("ACTIVE",pageable);

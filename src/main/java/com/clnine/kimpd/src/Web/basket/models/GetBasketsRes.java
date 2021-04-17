@@ -15,5 +15,5 @@ public class GetBasketsRes {
     private final String castingDate;
     private final String projectName;
     private final String castingPrice;
-    private final String castingCondition;
+    private final int castingCondition;
 }

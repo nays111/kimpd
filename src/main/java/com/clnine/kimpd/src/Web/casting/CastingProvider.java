@@ -32,7 +32,7 @@ public class CastingProvider {
     private final ReviewRepository reviewRepository;
 
     /**
-     * 섭외 보낸 사람, 섭외 받은 전문가, 프로젝트 정보로 casting 찾기
+     * 섭외 보낸 사람, 섭외 받은 전문가, 프로젝트 정보로 casting 찾기 (섭외중인 상태일 때)
      */
     public Casting retrieveCastingInfoByUserExpertProject(UserInfo user, UserInfo expert, Project project) throws BaseException{
         List<Casting> existsCastingList;

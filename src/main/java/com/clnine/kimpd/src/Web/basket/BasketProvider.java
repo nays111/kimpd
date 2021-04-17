@@ -103,7 +103,7 @@ public class BasketProvider {
                  * 섭외 시작일자, 종료일자를 입력하지 않은 경우 -> 정보없음
                  */
                 if(castingStartDate==null && castingEndDate==null){
-                    castingDate = "정보 없음";
+                    castingDate = "";
                 }else{
                     castingDate  = castingStartDate+"~"+castingEndDate;
                 }
@@ -115,7 +115,7 @@ public class BasketProvider {
                 if(castingList.get(i).getCastingPrice()!=null){
                     castingPrice = castingList.get(i).getCastingPrice();
                 }else{
-                    castingPrice = "정보 없음";
+                    castingPrice = "";
                 }
 
                 /**
@@ -126,10 +126,10 @@ public class BasketProvider {
                 /**
                  * 섭외 조건을 입력한 상태 / 입력하지 않은 상태 구분
                  */
-                String castingCondition = "섭외 조건 입력";
+                int castingCondition = 1;
                 if(castingList.get(i).getCastingMessage()!=null && castingList.get(i).getCastingPriceDate()!=null && castingList.get(i).getCastingWork()!=null
                         && castingList.get(i).getCastingPrice()!=null && castingList.get(i).getCastingStartDate()!=null && castingList.get(i).getCastingEndDate()!=null){
-                    castingCondition = "섭외 조건 입력 완료";
+                    castingCondition = 0;
                 }
 
                 GetBasketsRes getBasketsRes = new GetBasketsRes(castingIdx,expertIdx,profileImageURL,nickname,userMainJobCategoryChildName,introduce,castingDate,projectName,castingPrice,castingCondition);
@@ -139,7 +139,7 @@ public class BasketProvider {
                 /**
                  * totalCastingPrice : 장바구니에 담긴 castingPrice들의 합
                  */
-                if(castingPrice!="정보 없음"){
+                if(castingPrice!=""){
                     totalCastingPrice = Integer.toString(Integer.parseInt(totalCastingPrice) + Integer.parseInt(castingPrice));
                 }
             }
