@@ -13,8 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_GET_PROJECTS;
-import static com.clnine.kimpd.config.BaseResponseStatus.FAILED_TO_POST_PROJECT;
+import static com.clnine.kimpd.config.BaseResponseStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +70,13 @@ public class ProjectService {
         if(project.getUserInfo()!=userInfo){
             throw new BaseException(BaseResponseStatus.NOT_USER_PROJECT);
         }
+        /**
+         * 프로젝트가 완료된 상태이면 삭제 불가
+         */
+        if(project.getProjectStatus()==0){
+            throw new BaseException(CANNOT_DELETE_PROJECT_IF_FINISHED);
+        }
+
         project.setStatus("INACTIVE");
         try{
             projectRepository.save(project);

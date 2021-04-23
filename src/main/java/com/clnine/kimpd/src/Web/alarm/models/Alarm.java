@@ -21,10 +21,10 @@ public class Alarm extends BaseEntity {
     @JoinColumn(name="userIdx")
     private UserInfo userInfo;
 
-    @Column(name="alarmMessage")
+    @Column(name="alarmMessage",length = 100)
     private String alarmMessage;
 
-    @Column(name="readStatus")
+    @Column(name="readStatus",length = 1)
     private int readStatus=0;
 
     @Column(name="status")

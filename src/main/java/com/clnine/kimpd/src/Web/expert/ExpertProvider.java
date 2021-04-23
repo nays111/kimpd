@@ -3,10 +3,8 @@ package com.clnine.kimpd.src.Web.expert;
 import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.src.Web.casting.CastingRepository;
 import com.clnine.kimpd.src.Web.casting.models.Casting;
+import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.expert.models.GetMyReceivedCastingsByCalendarRes;
-import com.clnine.kimpd.src.Web.category.CategoryProvider;
-import com.clnine.kimpd.src.Web.category.UserGenreCategoryRepository;
-import com.clnine.kimpd.src.Web.category.UserJobCategoryRepository;
 import com.clnine.kimpd.src.Web.category.models.*;
 import com.clnine.kimpd.src.Web.expert.models.*;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
@@ -40,6 +38,10 @@ public class ExpertProvider {
     private final UserGenreCategoryRepository userGenreCategoryRepository;
     private final UserInfoProvider userInfoProvider;
     private final CastingRepository castingRepository;
+    private final JobCategoryChildRepository jobCategoryChildRepository;
+    private final JobCategoryParentRepository jobCategoryParentRepository;
+    private final GenreCategoryRepository genreCategoryRepository;
+    private final ExpertCastingDateRepository expertCastingDateRepository;
 
     /**
      * 전문가 상세보기
@@ -110,24 +112,36 @@ public class ExpertProvider {
          * 직종 1차 카테고리를 전체 조회할 경우 (존재하는 직종 1차 모두 넣어두기)
          */
         if(jobCategoryParentIdx.size()==0 || jobCategoryParentIdx.isEmpty() || jobCategoryParentIdx==null){
+            JobCategoryParent jobCategoryParent = jobCategoryParentRepository.findTopByOrderByJobCategoryParentIdxDesc();
+            long lastJobCategoryParent = jobCategoryParent.getJobCategoryParentIdx();
+            while(lastJobCategoryParent > 0){
+                jobCategoryParentIdx.add(lastJobCategoryParent);
+                lastJobCategoryParent--;
+            }
             jobCategoryParentIdx.add(1L);jobCategoryParentIdx.add(2L);
             jobCategoryParentIdx.add(3L);jobCategoryParentIdx.add(4L);
-            jobCategoryParentIdx.add(5L);
+            jobCategoryParentIdx.add(5L);jobCategoryParentIdx.add(6L);
         }
         /**
          * 직종 2차 카테고리를 전체 조회할 경우 (존재하는 직종 2차 모두 넣어두기)
          */
         if(jobCategoryChildIdx.size()==0 || jobCategoryChildIdx.isEmpty()){
-            for(Long i=1L;i<=31L;i++){
-                jobCategoryChildIdx.add(i);
+            JobCategoryChild jobCategoryChild  = jobCategoryChildRepository.findTopByOrderByJobCategoryChildIdxDesc();
+            long lastJobCategoryChild = jobCategoryChild.getJobCategoryChildIdx();
+            while(lastJobCategoryChild > 0){
+                jobCategoryChildIdx.add(lastJobCategoryChild);
+                lastJobCategoryChild--;
             }
         }
         /**
          * 장르 카테고리를 전체 조회할 경우 (존재하는 장르 카테고리 모두 넣어두기)
          */
         if(genreCategoryIdx.size()==0 || genreCategoryIdx.isEmpty()){
-            for(Long i=1L;i<=11L;i++){
-                genreCategoryIdx.add(i);
+            GenreCategory genreCategory = genreCategoryRepository.findTopByOrderByGenreCategoryIdxDesc();
+            long lastGenreCategoryIdx = genreCategory.getGenreCategoryIdx();
+            while(lastGenreCategoryIdx>0){
+                genreCategoryIdx.add(lastGenreCategoryIdx);
+                lastGenreCategoryIdx--;
             }
         }
         /**
@@ -150,10 +164,10 @@ public class ExpertProvider {
          * 섭외 기간을 전체 대상으로 조회할 경우 (""~ "9999.99.99" 까지 조회)
          */
         if(castingStartDate==null || castingStartDate.length()==0){
-            castingStartDate="";
+            castingStartDate=null;
         }
         if(castingEndDate==null || castingEndDate.length()==0){
-            castingEndDate="9999.99.99";
+            castingEndDate=null;
         }
 
         /**
@@ -166,11 +180,11 @@ public class ExpertProvider {
         List<Object[]> resultList = null;
         List<Object[]> sizeResultList = null;
         if(sort==1){ //평점순 정렬
-            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
-            sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
+            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,pageSearch);
+            sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate);
         } else if(sort==2){ //섭외순 정렬
-            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate,pageSearch);
-            sizeResultList = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,castingStartDate,castingEndDate);
+            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,pageSearch);
+            sizeResultList = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate);
         }
 
         int size = sizeResultList.size(); //검색 결과 건수
@@ -208,6 +222,8 @@ public class ExpertProvider {
         List<UserGenreCategory> userGenreCategoryList = userGenreCategoryRepository.findByUserInfo(userInfo);
         List<Portfolio> portfolioList = portfolioRepository.findAllByUserInfo(userInfo);
 
+        List<ExpertCastingDate> expertCastingDateList = expertCastingDateRepository.findAllByUserInfo(userInfo);
+
         List<UserJobCategoryParentDTO> jobCategoryParentDTOS = new ArrayList<>();
         List<UserJobCategoryChildDTO> jobCategoryChildDTOS = new ArrayList<>();
         List<UserGenreCategoryDTO> genreCategoryDTOS = new ArrayList<>();
@@ -240,19 +256,29 @@ public class ExpertProvider {
                 portfolioFileURL.add(portfolioURL);
             }
         }
+        /**
+         * 내 섭외 가능 날짜 보기
+         * 추기 : 2021.04.23
+         */
+        List<String> castingPossibleDateList = new ArrayList<>();
+        if(castingPossibleDateList!=null){
+            for(int i=0;i<expertCastingDateList.size();i++){
+                String castingPossibleDate = expertCastingDateList.get(i).getCastingPossibleDate();
+                castingPossibleDateList.add(castingPossibleDate);
+            }
+        }
 
-        String introduce,career,etc,castingStartPossibleDate,castingEndPossibleDate;
+        String introduce,career,etc;
         Integer minimumCastingPrice,agreeShowDB;
 
          introduce = userInfo.getIntroduce();
          career = userInfo.getCareer();
          etc = userInfo.getEtc();
          minimumCastingPrice = userInfo.getMinimumCastingPrice();
-         castingStartPossibleDate = userInfo.getCastingPossibleStartDate();
-         castingEndPossibleDate = userInfo.getCastingPossibleEndDate();
+
          agreeShowDB = userInfo.getAgreeShowDB();
 
-        GetMyExpertRes getMyExpertRes = new GetMyExpertRes(jobCategoryParentDTOS,jobCategoryChildDTOS,genreCategoryDTOS,introduce,career,portfolioFileURL,etc,minimumCastingPrice,castingStartPossibleDate,castingEndPossibleDate,agreeShowDB);
+        GetMyExpertRes getMyExpertRes = new GetMyExpertRes(jobCategoryParentDTOS,jobCategoryChildDTOS,genreCategoryDTOS,introduce,career,portfolioFileURL,etc,minimumCastingPrice,castingPossibleDateList,agreeShowDB);
         return getMyExpertRes;
     }
 
@@ -360,7 +386,7 @@ public class ExpertProvider {
             String castingMessage = castingList.get(i).getCastingMessage();
 
             /**
-             * 프로제그 정보 가져오기
+             * 프로젝트 정보 가져오기
              */
             String projectDescription = castingList.get(i).getProject().getProjectDescription();
             String projectMaker = castingList.get(i).getProject().getProjectMaker();

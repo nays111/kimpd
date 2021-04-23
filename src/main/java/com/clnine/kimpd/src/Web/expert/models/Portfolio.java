@@ -23,7 +23,7 @@ public class Portfolio extends BaseEntity {
     @JoinColumn(name="userIdx")
     private UserInfo userInfo;
 
-    @Column(name="portfolioURL",nullable = false)
+    @Column(name="portfolioURL",nullable = false,columnDefinition = "TEXT")
     private String portfolioURL;
 
     @Column(name="status")

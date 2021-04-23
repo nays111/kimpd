@@ -464,4 +464,21 @@ public class UserInfoController {
             return new BaseResponse<>(exception.getStatus());
         }
     }
+
+    @PatchMapping("{userIdx}/status")
+    @ResponseBody
+    @Operation (summary = "회원 탈퇴 API",description = "토큰이 필요합니다.")
+    public BaseResponse<String> deleteUser(@PathVariable(required = true,value = "userIdx")int userIdx){
+        try{
+            int userIdxJWT = jwtService.getUserIdx();
+            if(userIdxJWT!=userIdx){
+                return new BaseResponse<>(DIFFERENT_JWT_AND_USERIDX);
+            }
+            userInfoService.deleteUserInfo(userIdx);
+            return new BaseResponse<String>(SUCCESS);
+        }catch (BaseException exception) {
+            return new BaseResponse<>(exception.getStatus());
+        }
+    }
+
 }

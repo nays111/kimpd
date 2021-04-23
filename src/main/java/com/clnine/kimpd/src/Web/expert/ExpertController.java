@@ -26,6 +26,12 @@ public class ExpertController {
     @ResponseBody
     @Operation(summary="전문가 상세 조회 API")
     public BaseResponse<GetExpertRes> getExpert(@PathVariable(required = true,value = "userIdx")int userIdx){
+        int userIdxJWT;
+        try{
+            userIdxJWT = jwtService.getUserIdx();
+        }catch(BaseException exception){
+            return new BaseResponse<>(exception.getStatus());
+        }
         try{
             GetExpertRes getExpertRes = expertProvider.getExpertRes(userIdx);
             return new BaseResponse<>(SUCCESS,getExpertRes);
@@ -88,14 +94,12 @@ public class ExpertController {
         if(patchMyExpertReq.getEtc().length()>500){
             return new BaseResponse<>(TOO_LONG_ETC);
         }
-        if(patchMyExpertReq.getCastingStartPossibleDate()!=null){
-            if(!isRegexDateType(patchMyExpertReq.getCastingStartPossibleDate())){
-                return new BaseResponse<>(INVALID_CASTING_POSSIBLE_START_DATE);
-            }
-        }
-        if(patchMyExpertReq.getCastingEndPossibleDate()!=null){
-            if(!isRegexDateType(patchMyExpertReq.getCastingEndPossibleDate())){
-                return new BaseResponse<>(INVALID_CASTING_POSSIBLE_END_DATE);
+
+        if(patchMyExpertReq.getCastingPossibleDate().size()!=0){
+            for(int i=0;i<patchMyExpertReq.getCastingPossibleDate().size();i++){
+                if(!isRegexDateType(patchMyExpertReq.getCastingPossibleDate().get(i))){
+                    return new BaseResponse<>(INVALID_CASTING_POSSIBLE_DATE);
+                }
             }
         }
         try{

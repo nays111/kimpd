@@ -16,7 +16,6 @@ public class GetMyExpertRes {
     private List<String> portfolioFileURL;
     private String etc;
     private Integer minimumCastingPrice;
-    private String castingStartPossibleDate;
-    private String castingEndPossibleDate;
+    private List<String> castingPossibleDateList;
     private int agreeShowDB;
 }

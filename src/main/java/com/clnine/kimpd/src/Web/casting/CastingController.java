@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -334,6 +336,8 @@ public class CastingController {
         if(!isRegexDateType(patchCastingReq.getCastingPriceDate())){
             return new BaseResponse<>(INVALID_CASTING_PRICE_DATE);
         }
+
+
         try{
             int userIdx = jwtService.getUserIdx();
             castingService.patchCasting(castingIdx,patchCastingReq,userIdx);

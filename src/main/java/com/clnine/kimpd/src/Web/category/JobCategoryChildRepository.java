@@ -1,5 +1,6 @@
 package com.clnine.kimpd.src.Web.category;
 
+import com.clnine.kimpd.src.Web.category.models.GenreCategory;
 import com.clnine.kimpd.src.Web.category.models.JobCategoryChild;
 import com.clnine.kimpd.src.Web.category.models.JobCategoryParent;
 import org.springframework.data.repository.CrudRepository;
@@ -12,4 +13,5 @@ public interface JobCategoryChildRepository extends CrudRepository<JobCategoryCh
     //JobCategoryChild findAllByJobCategoryChildIdxAndAndJobCategoryParent(int jobCategoryChildIdx,JobCategoryParent jobCategoryParent);
     JobCategoryChild findAllByJobCategoryChildIdx(int jobCategoryChildIdx);
     List<JobCategoryChild> findAllByJobCategoryParent(JobCategoryParent jobCategoryParent);
+    JobCategoryChild findTopByOrderByJobCategoryChildIdxDesc();
 }

@@ -22,7 +22,7 @@ public class UserInfo extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userIdx;
 
-    @Column(name="userType",nullable = false)
+    @Column(name="userType",nullable = false,length = 1)
     private int userType;
 
     @Column(name="id",nullable = false,length = 20)
@@ -31,64 +31,67 @@ public class UserInfo extends BaseEntity {
     @Column(name="password",nullable = false)
     private String password;
 
-    @Column(name="email",nullable = false)
+    @Column(name="email",nullable = false,length = 45)
     private String email;
 
-    @Column(name="name",nullable = false)
+    @Column(name="name",nullable = false,length = 10)
     private String name;
 
     @Column(name="phoneNum",nullable = false)
     private String phoneNum;
 
-    @Column(name="city")
+    @Column(name="city",length = 10)
     private String city;
 
     @Column(name="address")
     private String address;
 
-    @Column(name="agreeAdvertisement")
+    @Column(name="agreeAdvertisement",length = 1)
     private Integer agreeAdvertisement;
 
     @Column(name="privateBusinessName")
     private String privateBusinessName;//개인 사업자명
-    @Column(name="businessNumber")
+
+    @Column(name="businessNumber",length = 10)
     private String businessNumber;//사업자 등록번호 (개입 사업자 + 법인 사업자 공통)
-    @Column(name="businessImageURL")
+
+    @Column(name="businessImageURL",columnDefinition = "TEXT")
     private String businessImageURL;//사업자 등록 이미지 (개인사업자 + 법인사업자 공통)
+
     @Column(name="corporationBusinessName")
     private String corporationBusinessName;//법인 사업자명
+
 //    @Column(name="corporationBusinessNumber")
 //    private String corporationBusinessNumber;//법인 사업자번호
 
-    @Column(name="nickname")
+    @Column(name="nickname",length = 10)
     private String nickname;//닉네임
 
     /**
      * 전문가 전용 컬럼
      */
-    @Column(name="profileImageURL")
+    @Column(name="profileImageURL",columnDefinition = "TEXT")
     private String profileImageURL="";//프로필이미지
 
-    @Column(name="introduce")
+    @Column(name="introduce",length = 500)
     private String introduce="";
 
-    @Column(name="career")
+    @Column(name="career",length = 500)
     private String career;
 
-    @Column(name="etc")
+    @Column(name="etc",length = 500)
     private String etc;
 
     @Column(name="minimumCastingPrice")
     private Integer minimumCastingPrice=0;
 
-    //섭외 가능 시작 날짜
-    private String castingPossibleStartDate="";
+//    //섭외 가능 시작 날짜
+//    private String castingPossibleStartDate="";
+//
+//    //섭외 가능 종료 잘짜
+//    private String castingPossibleEndDate="";
 
-    //섭외 가능 종료 잘짜
-    private String castingPossibleEndDate="";
-
-
-    @Column(name="agreeShowDB")
+    @Column(name="agreeShowDB",length = 1)
     private Integer agreeShowDB;
 
     @Column(name="status")

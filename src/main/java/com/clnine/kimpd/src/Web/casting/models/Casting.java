@@ -61,11 +61,11 @@ public class Casting extends BaseEntity {
      * castingStatus=3 : 섭외 거절한 상태
      * castingStatus=4 : 작업 완료한 상태
      */
-    @Column(name="castingStatus")
+    @Column(name="castingStatus",length = 1)
     private int castingStatus=1;
 
 
-    @Column(name="contractFileUrl")
+    @Column(name="contractFileUrl",columnDefinition = "TEXT")
     private String contractFileUrl; //계약서 파일 firebase url
 
     private String status="ACTIVE";

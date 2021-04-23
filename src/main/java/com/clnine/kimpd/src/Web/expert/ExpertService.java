@@ -4,6 +4,7 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.BaseResponseStatus;
 import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.category.models.*;
+import com.clnine.kimpd.src.Web.expert.models.ExpertCastingDate;
 import com.clnine.kimpd.src.Web.expert.models.PatchMyExpertReq;
 import com.clnine.kimpd.src.Web.expert.models.Portfolio;
 import com.clnine.kimpd.src.Web.user.UserInfoProvider;
@@ -29,6 +30,7 @@ public class ExpertService {
     private final JobCategoryChildRepository jobCategoryChildRepository;
     private final GenreCategoryRepository genreCategoryRepository;
     private final UserInfoProvider userInfoProvider;
+    private final ExpertCastingDateRepository expertCastingDateRepository;
 
 
     /**
@@ -54,8 +56,10 @@ public class ExpertService {
         String etc = patchMyExpertReq.getEtc();
         int minimumCastingPrice = patchMyExpertReq.getMinimumCastingPrice();
         List<String> portfolioFileURL = patchMyExpertReq.getPortfolioFileURL();
-        String castingStartPossibleDate = patchMyExpertReq.getCastingStartPossibleDate();
-        String castingEndPossibleDate = patchMyExpertReq.getCastingEndPossibleDate();
+
+
+        List<String> castingPossibleDateList = patchMyExpertReq.getCastingPossibleDate();
+
         int agreeShowDB = patchMyExpertReq.getAgreeShowDB();
 
         /**
@@ -83,6 +87,15 @@ public class ExpertService {
         }
 
         /**
+         * 추가 : 2021.04.23
+         * 기존에 가능했던 섭외 가능 날짜들 제거
+         */
+        List<ExpertCastingDate> expertCastingDateList =expertCastingDateRepository.findAllByUserInfo(userInfo);
+        for(int i=0;i<expertCastingDateList.size();i++){
+            expertCastingDateRepository.delete(expertCastingDateList.get(i));
+        }
+
+        /**
          * 새롭게 입력받은 직종 카테고리들 저장
          */
         for(int i=0;i<jobCategoryParentIdxList.size();i++){
@@ -107,7 +120,18 @@ public class ExpertService {
             Portfolio portfolio = new Portfolio(userInfo,portfolioFileURL.get(i));
             portfolioRepository.save(portfolio);
         }
-
+        /**
+         * 추가 : 2021.04.23
+         * 새롭게 입력받은 섭외가능날짜 리스트를 저장
+         */
+        for(int i=0;i<castingPossibleDateList.size();i++){
+            ExpertCastingDate expertCastingDate = new ExpertCastingDate(userInfo,castingPossibleDateList.get(i));
+            expertCastingDateRepository.save(expertCastingDate);
+        }
+        if(castingPossibleDateList.size()==0){
+            ExpertCastingDate expertCastingDate = new ExpertCastingDate(userInfo,"");
+            expertCastingDateRepository.save(expertCastingDate);
+        }
         /**
          * 전문가 프로필 정보 수정
          */
@@ -115,8 +139,6 @@ public class ExpertService {
         userInfo.setCareer(career);
         userInfo.setEtc(etc);
         userInfo.setMinimumCastingPrice(minimumCastingPrice);
-        userInfo.setCastingPossibleStartDate(castingStartPossibleDate);
-        userInfo.setCastingPossibleEndDate(castingEndPossibleDate);
         userInfo.setAgreeShowDB(agreeShowDB);
         userInfoRepository.save(userInfo);
     }

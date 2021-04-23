@@ -30,8 +30,8 @@ public class ContractController {
 
     @ResponseBody
     @PostMapping("/to-pdf/{castingIdx}")
-    public BaseResponse<String> getContracts(@PathVariable(required = true,value="castingIdx") int castingIdx,
-                                                    @RequestBody HtmlToPdfReq htmlToPdfReq) throws IOException,BaseException {
+    public BaseResponse<String> getContracts(@PathVariable(required = true,value="castingIdx") int castingIdx
+                                                    ) throws IOException,BaseException {
 
         Casting casting = castingProvider.retrieveCastingByCastingIdx(castingIdx);
         String s = contractProvider.makepdf(casting,12);
@@ -39,13 +39,6 @@ public class ContractController {
 
     }
 
-
-//    @PostMapping("/profile/pic")
-//    public BaseResponse<String> upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-//
-//        String s = contractProvider.upload(multipartFile);
-//        return new BaseResponse<>(SUCCESS,s);
-//    }
 
     @GetMapping("/castings/{castingIdx}/contracts")
     public BaseResponse<GetContractRes> getContract(@PathVariable(required = true,value = "castingIdx")int castingIdx){

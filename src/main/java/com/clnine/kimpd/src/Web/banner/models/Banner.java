@@ -16,10 +16,10 @@ public class Banner extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int bannerIdx;
 
-    @Column(name="bannerImageURL")
+    @Column(name="bannerImageURL",columnDefinition = "TEXT")
     private String bannerImageURL;
 
-    @Column(name="bannerLink")
+    @Column(name="bannerLink",columnDefinition = "TEXT")
     private String bannerLink;
 
     @Column(name="startDate")
@@ -27,7 +27,6 @@ public class Banner extends BaseEntity {
 
     @Column(name="endDate")
     private Date endDate;
-
 
     private String status="ACTIVE";
 

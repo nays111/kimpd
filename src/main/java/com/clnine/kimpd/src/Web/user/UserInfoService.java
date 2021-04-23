@@ -4,6 +4,8 @@ import com.clnine.kimpd.config.BaseException;
 import com.clnine.kimpd.config.secret.Secret;
 import com.clnine.kimpd.src.Web.category.*;
 import com.clnine.kimpd.src.Web.category.models.*;
+import com.clnine.kimpd.src.Web.expert.ExpertCastingDateRepository;
+import com.clnine.kimpd.src.Web.expert.models.ExpertCastingDate;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
 import com.clnine.kimpd.src.Web.user.models.*;
@@ -37,6 +39,7 @@ public class UserInfoService {
     private final JobCategoryParentRepository jobCategoryParentRepository;
     private final UserJobCategoryRepository userJobCategoryRepository;
     private final ProjectRepository projectRepository;
+    private final ExpertCastingDateRepository expertCastingDateRepository;
 
     @Transactional
     public PostUserRes createUserInfo(PostUserReq postUserReq) throws BaseException {
@@ -101,6 +104,14 @@ public class UserInfoService {
         }catch (Exception exception){
             throw new BaseException(FAILED_TO_POST_PROJECT);
         }
+        /**
+         * 전문가일시 ExpertCastingDate 생성 (전체검색시 빈값이 하나 들어가야 검색이 되기 때문에)
+         */
+        if(userType==4 || userType==5 || userType==6){
+            ExpertCastingDate expertCastingDate = new ExpertCastingDate(userInfo,"");
+            expertCastingDateRepository.save(expertCastingDate);
+        }
+
         String jwt = jwtService.createJwt(userInfo.getUserIdx());
         int userIdx = userInfo.getUserIdx();
         return new PostUserRes(userIdx, jwt);
@@ -191,11 +202,16 @@ public class UserInfoService {
         }else if(userInfo.getUserType()==3){
             userInfo.setUserType(6);
         }
+        ExpertCastingDate expertCastingDate = new ExpertCastingDate(userInfo,"");
         try{
             userInfoRepository.save(userInfo);
+            expertCastingDateRepository.save(expertCastingDate);
         }catch (Exception ignored) {
             throw new BaseException(FAILED_TO_CHANGE_TO_EXPERT);
         }
+
+
+
     }
 
     @Transactional

@@ -22,7 +22,7 @@ public class InquiryFile extends BaseEntity {
     @JoinColumn(name="inquiryIdx")
     private Inquiry inquiry;
 
-    @Column(name="inquiryFileName")
+    @Column(name="inquiryFileName",columnDefinition = "TEXT")
     private String inquiryFileName;
 
     @Column(name="status")

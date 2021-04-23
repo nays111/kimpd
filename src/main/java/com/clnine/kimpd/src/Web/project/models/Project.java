@@ -25,28 +25,28 @@ public class Project extends BaseEntity {
     @Column(name="projectName",nullable = false)
     private String projectName;
 
-    @Column(name="projectMaker")
+    @Column(name="projectMaker",length = 20)
     private String projectMaker;
 
-    @Column(name="projectStartDate")
+    @Column(name="projectStartDate",length = 45)
     private String projectStartDate;
 
-    @Column(name="projectEndDate")
+    @Column(name="projectEndDate",length = 45)
     private String projectEndDate;
 
-    @Column(name="projectManager")
+    @Column(name="projectManager",length = 20)
     private String projectManager;
 
     @Column(name="projectDescription",nullable = false)
     private String projectDescription;
 
-    @Column(name="projectFileURL")
+    @Column(name="projectFileURL",columnDefinition = "TEXT")
     private String projectFileURL;
 
     @Column(name="projectBudget")
     private String projectBudget;
 
-    @Column(name="projectStatus")
+    @Column(name="projectStatus",length = 1)
     private int projectStatus=1; //프로젝트 완료 여부 (1: 진행중, 0 : 완료)
 
     @Column(name="status")

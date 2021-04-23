@@ -9,6 +9,8 @@ import com.clnine.kimpd.src.Web.casting.models.PatchCastingReq;
 import com.clnine.kimpd.src.Web.casting.models.PatchCastingStatusReq;
 import com.clnine.kimpd.src.Web.casting.models.PostCastingReq;
 import com.clnine.kimpd.src.Web.contract.ContractProvider;
+import com.clnine.kimpd.src.Web.contract.ContractRepository;
+import com.clnine.kimpd.src.Web.contract.models.Contract;
 import com.clnine.kimpd.src.Web.project.ProjectProvider;
 import com.clnine.kimpd.src.Web.project.ProjectRepository;
 import com.clnine.kimpd.src.Web.project.models.Project;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -35,6 +39,7 @@ public class CastingService {
     private final UserInfoProvider userInfoProvider;
     private final ProjectProvider projectProvider;
     private final ContractProvider contractProvider;
+    private final ContractRepository contractRepository;
 
     /**
      * 프로젝트를 입력하여 섭외 신청을 하는 경우 -> 프로젝트 동시 생성
@@ -262,6 +267,7 @@ public class CastingService {
         String castingWork = patchCastingReq.getCastingWork();
         String castingMessage = patchCastingReq.getCastingMessage();
 
+
         casting.setCastingPrice(castingPrice);
         casting.setCastingStartDate(castingStartDate);
         casting.setCastingEndDate(castingEndDate);
@@ -301,6 +307,17 @@ public class CastingService {
         if(casting.getExpert().getUserIdx()!=userIdx){
             throw new BaseException(NO_CASTING_FOR_YOU);
         }
+//        /**
+//         * 작업완료를 할 경우, 현재날짜가 섭외시작날짜보다 이전이 되면 안됨!
+//         */
+//        if(state==4){
+//            SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+//            Date date = new Date();
+//            String currentTime = format.format(date);
+//            if(currentTime.compareTo(casting.getCastingStartDate()) < 0){
+//                throw new BaseException(CANNOT_FINISH_WORK_BEFORE_CASTING_START_DATE);
+//            }
+//        }
 
         /**
          * 섭외 상태 변경
@@ -322,7 +339,9 @@ public class CastingService {
              * 1) 계약서 생성 (contractProvider.makepdf)
              * (계약서 수정될 경우 계약서 인덱스 수정)
              */
-            String contractUrl = contractProvider.makepdf(casting,12);
+            //가장 최근에 추가된 계약서를 가져온다.
+            Contract contract = contractRepository.findTopByOrderByContractIdxDesc();
+            String contractUrl = contractProvider.makepdf(casting,contract.getContractIdx());
             casting.setContractFileUrl(contractUrl);
             try{
                 castingRepository.save(casting);
@@ -358,5 +377,6 @@ public class CastingService {
                 throw new BaseException(FAILED_TO_SEND_ALARM);
             }
         }
+
     }
 }

@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.clnine.kimpd.config.BaseResponseStatus.*;
@@ -57,6 +59,16 @@ public class ProjectController {
         if(!isRegexDateType(postProjectReq.getProjectEndDate())){
             return new BaseResponse<>(INVALID_PROJECT_END_DATE);
         }
+        /**
+         * 프로젝트 종료일은 오늘 날짜 이후로만 가능
+         */
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd");
+        Date date = new Date();
+        String currentTime = format.format(date);
+        if(currentTime.compareTo(postProjectReq.getProjectEndDate()) > 0){
+            return new BaseResponse<>(CANNOT_POST_PROJECT_IF_PROJECT_END_DATE_IS_BEFORE_NOW);
+        }
+
         if(postProjectReq.getProjectManager()==null||postProjectReq.getProjectManager().length()==0){
             return new BaseResponse<>(EMPTY_PROJECT_MANAGER);
         }

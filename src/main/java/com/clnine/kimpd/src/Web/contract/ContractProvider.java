@@ -153,7 +153,7 @@ public class ContractProvider {
         BODY=BODY.replace("${userName}",casting.getUserInfo().getName());
         BODY=BODY.replace("${expertName}",casting.getExpert().getName());
         BODY=BODY.replace("${projectName}",casting.getProject().getProjectName());
-        BODY=BODY.replace("${projectDescription}",casting.getProject().getProjectDescription());
+        BODY=BODY.replace("${projectDescription}",casting.getCastingWork()); //projectDescription에서 castingWork로 수정
         BODY=BODY.replace("${castingStartDate}",transformDateFrom(casting.getCastingStartDate()));
         BODY=BODY.replace("${castingEndDate}",transformDateFrom(casting.getCastingEndDate()));
         BODY=BODY.replace("${castingPriceDate}",transformDateFrom(casting.getCastingPriceDate()));
@@ -275,7 +275,7 @@ public class ContractProvider {
             /**
              * "조항(1조~~~)" bold체 적용
              */
-            if(i==4 || i==7 || i==12 || i==16 || i==23 || i==26 ||i==30 || i==34 || i==37 || i==40 || i==48 || i==54){
+            if(i==4 || i==7 || i==12 || i==16 || i==23 || i==26 ||i==30 || i==34 || i==37 || i==40 || i==48 || i==53){
                 blockElement.setBold();
             }
             /**
@@ -337,7 +337,7 @@ public class ContractProvider {
          * firebase admin sdk 사용을 위한 인증 credentials (json파일) 저장 경로
          */
         //Local 주소
-        // Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
+         //Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("src/main/java/com/clnine/kimpd/config/secret/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));
 
         //Server 주소소
        Credentials credentials = GoogleCredentials.fromStream(new FileInputStream("/var/www/html/kimpd/files/kimpd-2ad1d-firebase-adminsdk-ybxoh-c4cd6bdf89.json"));

@@ -67,7 +67,14 @@ public class MessageProvider {
             int senderIdx = sender.getUserIdx();
             String senderNickname = sender.getNickname(); //쪽지 보낸 사람 닉네임
             String senderProfileImageUrl = sender.getProfileImageURL();
-            String senderJobName = categoryProvider.getMainJobCategoryChild(sender);//쪽지 보낸 사람 직종 이름
+
+            String senderJobName = "";
+            if(sender.getUserType()==1 || sender.getUserType()==2 || sender.getUserType()==3){
+                senderJobName ="";
+            }else{
+                senderJobName = categoryProvider.getMainJobCategoryChild(sender);//쪽지 보낸 사람 직종 이름
+            }
+
             Date sendTimeDateForm = message.getCreatedAt();
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
