@@ -13,10 +13,10 @@ public class PostExpertsReq {
     private List<Long> jobCategoryChildIdx;
     private List<Long> genreCategoryIdx;
     private List<String> city;
-    private String castingStartDate;
-    private String castingEndDate;
+//    private String castingStartDate;
+//    private String castingEndDate;
     private Integer minimumCastingPrice;
-    List<String> castingDate;
+    private List<String> castingDate;
     private Integer page;
     private Integer sort;
 }

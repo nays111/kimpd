@@ -34,6 +34,12 @@ public class MessageController {
         }
         try{
             Integer senderIdx = jwtService.getUserIdx();
+            /**
+             * 자기 자신에게 쪽지는 보낼 수 없음
+             */
+            if(senderIdx==userIdx){
+                return new BaseResponse<>(CANNOT_SEND_MESSAGE_TO_YOURSELF);
+            }
             messageService.postMessage(senderIdx,userIdx,postMessageReq);
             return new BaseResponse<>(SUCCESS);
         } catch (BaseException exception) {

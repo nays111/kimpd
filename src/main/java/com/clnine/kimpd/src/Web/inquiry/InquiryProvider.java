@@ -27,6 +27,9 @@ public class InquiryProvider {
     private final UserInfoProvider userInfoProvider;
     private final InquiryFileRepository inquiryFileRepository;
 
+    /**
+     * 1:1 문의 카테고리 조회
+     */
     public List<GetInquiryCategoryRes> getInquiryCategoryList() throws BaseException{
         List<InquiryCategory> inquiryCategoryList;
         try{
@@ -42,6 +45,9 @@ public class InquiryProvider {
     }
 
 
+    /**
+     * 1:1문의 리스트 조회
+     */
     public GetInquiriesRes getInquiryListRes(int page, int size) throws BaseException{
         Pageable pageable = PageRequest.of(page-1,size, Sort.by(Sort.Direction.DESC,"inquiryIdx"));
         List<Inquiry> inquiryList;
@@ -52,43 +58,50 @@ public class InquiryProvider {
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_INQUIRIES);
         }
-        int temp = totalCount;
+
         List<GetInquiriesDTO> getInquiryListResList = new ArrayList<>();
-        for(int i=0;i<inquiryList.size();i++){
-            int no = temp;
-            int inquiryIdx = inquiryList.get(i).getInquiryIdx();
+        for(Inquiry inquiry : inquiryList){
+            int inquiryIdx = inquiry.getInquiryIdx();
+
             String answerStatus=null;
-            if(inquiryList.get(i).getInquiryAnswer()==null){
+            if(inquiry.getInquiryAnswer()==null){
                 answerStatus = "답변대기";
             }else{
                 answerStatus = "답변완료";
             }
-            String inquiryTitle = inquiryList.get(i).getInquiryTitle();
-            String userNickname = inquiryList.get(i).getUserInfo().getNickname();
-            Date createdAt = inquiryList.get(i).getCreatedAt();
+
+            String inquiryTitle = inquiry.getInquiryTitle();
+            String userNickname = inquiry.getUserInfo().getNickname();
+            Date createdAt = inquiry.getCreatedAt();
             SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
             String createdDate = sDate.format(createdAt);//4
-            GetInquiriesDTO getInquiriesDTO = new GetInquiriesDTO(no,inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
+            GetInquiriesDTO getInquiriesDTO = new GetInquiriesDTO(inquiryIdx,answerStatus,inquiryTitle,userNickname,createdDate);
             getInquiryListResList.add(getInquiriesDTO);
-            temp--;
+
         }
         GetInquiriesRes getInquiriesRes = new GetInquiriesRes(totalCount,getInquiryListResList);
         return getInquiriesRes;
     }
 
+    /**
+     * 1:1 문의 글 상세 조회
+     */
     public GetInquiryRes getInquiryRes(int userIdx, int inquiryIdx) throws BaseException{
         Inquiry inquiry = inquiryRepository.findAllByInquiryIdxAndStatus(inquiryIdx,"ACTIVE");
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         if(inquiry==null){
             throw new BaseException(NO_INQUIRY);
         }
+        /**
+         * 1:1 문의 글은 글 작성자만 볼 수 있음
+         */
         if(inquiry.getUserInfo()!=userInfo){
             throw new BaseException(NOT_USER_INQUIRY);
         }
         List<InquiryFile> inquiryFiles = inquiryFileRepository.findAllByInquiryAndStatus(inquiry,"ACTIVE");
         List<String> inquiryFileUrlList  = new ArrayList<>();
-        for(int i=0;i<inquiryFiles.size();i++){
-            String name = inquiryFiles.get(i).getInquiryFileName();
+        for(InquiryFile inquiryFile : inquiryFiles){
+            String name = inquiryFile.getInquiryFileName();
             inquiryFileUrlList.add(name);
         }
         String inquiryTitle = inquiry.getInquiryTitle();
@@ -100,6 +113,9 @@ public class InquiryProvider {
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
         String createdDate = sDate.format(createdAt);
         String answerDate;
+        /**
+         * 답변 여부
+         */
         if(inquiryAnswer==null){
             answerDate=null;
         }else{

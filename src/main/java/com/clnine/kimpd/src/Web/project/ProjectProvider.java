@@ -82,24 +82,27 @@ public class ProjectProvider {
         return getMyProjectRes;
     }
 
+    /**
+     * 기간과 프로젝트 상태에 따른 프로젝트 리스트 조회
+     */
     @Transactional(readOnly = true)
     public GetProjectsRes getProjectsResList(int userIdx, Integer sort, Integer duration,int projectStatus, int page, int size) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
 
         Pageable pageable = PageRequest.of(page-1,size,Sort.by(Sort.Direction.DESC,"projectIdx"));//최신순
         Pageable pageable1 = PageRequest.of(page-1,size,Sort.by(Sort.Direction.ASC,"projectIdx"));//과거순
-        SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
-        Calendar cal = Calendar.getInstance();
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd");
+
         Calendar cal2 = Calendar.getInstance();
         Calendar cal3 = Calendar.getInstance();
-        String now = formatter.format(cal.getTime());
         cal2.add(Calendar.MONTH,-3);
         cal3.add(Calendar.MONTH,-6);
-        String end3 = formatter.format(cal2.getTime());
-        String end6 = formatter.format(cal3.getTime());
-        Timestamp end1 = Timestamp.valueOf(end3);
-        Timestamp end2 = Timestamp.valueOf(end6);
-        Timestamp now1 = Timestamp.valueOf(now);
+
+        String threeMonthsAgoToday = formatter.format(cal2.getTime());
+        String sixMonthsAgoToday = formatter.format(cal3.getTime());
+
+
 
         List<Project> projectList = null;
         int totalCount = 0;
@@ -107,41 +110,39 @@ public class ProjectProvider {
             if(duration==0){//전체 기간
                 projectList = projectRepository.findByUserInfoAndProjectStatusAndStatus(userInfo,projectStatus,"ACTIVE",pageable);
                 totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatus(userInfo,projectStatus,"ACTIVE");
-            }else if(duration==1){//최근 3개월
-                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end1,now1,pageable);
-                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end1,now1);
-            }else if(duration==2){//최근 6개월
-                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end2,now1,pageable);
-                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end2,now1);
+            }else if(duration==1){//프로젝트 시작일 기준 3개월 이내
+                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",threeMonthsAgoToday,pageable);
+                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",threeMonthsAgoToday);
+            }else if(duration==2){//프로젝트 시작일 기준 6개월 이내
+                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",sixMonthsAgoToday,pageable);
+                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",sixMonthsAgoToday);
             }
         }else if(sort==1){//과거순
             if(duration==0){//전체 기간
                 projectList = projectRepository.findByUserInfoAndProjectStatusAndStatus(userInfo,projectStatus,"ACTIVE",pageable1);
                 totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatus(userInfo,projectStatus,"ACTIVE");
-            }else if(duration==1){//최근 3개월
-                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end1,now1,pageable1);
-                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end1,now1);
-            }else if(duration==2){//최근 6개월
-                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end2,now1,pageable1);
-                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",end2,now1);
+            }else if(duration==1){//프로젝트 시작일 기준 3개월 이내
+                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",threeMonthsAgoToday,pageable1);
+                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",threeMonthsAgoToday);
+            }else if(duration==2){//프로젝트 시작일 기준 6개월 이내
+                projectList = projectRepository.findAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",sixMonthsAgoToday,pageable1);
+                totalCount = projectRepository.countAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(userInfo,projectStatus,"ACTIVE",sixMonthsAgoToday);
             }
         }
         List<GetProjectsDTO> getProjectsList = new ArrayList<>();
-        for(int i=0;i<projectList.size();i++){
-            int projectIdx= projectList.get(i).getProjectIdx();
-            String projectName = projectList.get(i).getProjectName();
-            String projectDescription = projectList.get(i).getProjectDescription();
-
+        for(Project project : projectList){
+            int projectIdx= project.getProjectIdx();
+            String projectName = project.getProjectName();
+            String projectDescription = project.getProjectDescription();
 
             String projectDate =null;
-            if(projectList.get(i).getProjectStartDate()==null || projectList.get(i).getProjectEndDate()==null){
+            if(project.getProjectStartDate()==null || project.getProjectEndDate()==null){
                 projectDate = null;
             }else{
-                projectDate = projectList.get(i).getProjectStartDate()+"~"+projectList.get(i).getProjectEndDate();
+                projectDate = project.getProjectStartDate()+"~"+project.getProjectEndDate();
             }
 
-
-            String projectBudget = projectList.get(i).getProjectBudget();
+            String projectBudget = project.getProjectBudget();
             GetProjectsDTO getProjectsDTO = new GetProjectsDTO(projectIdx,projectName,projectDescription,projectDate,projectBudget);
             getProjectsList.add(getProjectsDTO);
         }
@@ -149,12 +150,15 @@ public class ProjectProvider {
         return  getProjectsRes;
     }
 
+    /**
+     * 장바구니에 담을 때 쓰이는 프로젝트 리스트 조회 (프로젝트 인덱스와 이름만)
+     */
     @Transactional(readOnly = true)
     public List<GetProjectListRes> getProjectListRes(int userIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
         List<Project> projectList;
         try{
-            projectList = projectRepository.findByUserInfoAndStatus(userInfo,"ACTIVE");
+            projectList = projectRepository.findByUserInfoAndProjectStatusAndStatus(userInfo,1,"ACTIVE");
         }catch(Exception ignored){
             throw new BaseException(FAILED_TO_GET_PROJECTS);
         }
@@ -165,6 +169,9 @@ public class ProjectProvider {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * 프로젝트 상세 조회
+     */
     @Transactional
     public GetProjectRes getProjectRes(int userIdx,int projectIdx) throws BaseException{
         UserInfo userInfo = userInfoProvider.retrieveUserInfoByUserIdx(userIdx);
@@ -179,6 +186,7 @@ public class ProjectProvider {
         String currentTime = format.format(date);
         /**
          * 프로젝트를 조회했을 떄, 현재 날짜가 프로젝트 종료일자를 넘어가면 projectStatus 변경
+         * projectStatus 완료된거 -> 0, 완료되지 않으면 ->1
          */
         if(currentTime.compareTo(project.getProjectEndDate()) > 0){
             project.setProjectStatus(0);

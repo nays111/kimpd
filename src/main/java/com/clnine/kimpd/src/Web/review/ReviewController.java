@@ -43,6 +43,9 @@ public class ReviewController {
     }
 
 
+    /**
+     * 내가 평가한 것들 대상으로 조회
+     */
     @ResponseBody
     @GetMapping("/castings/reviews")
     @Operation(summary = "평가 내역 리스트 조회 API",description = "토큰이 필요합니다.")

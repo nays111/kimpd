@@ -31,7 +31,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "       ifnull((select count(*)\n" +
             "               from Casting C\n" +
             "               where C.expertIdx = UI.userIdx and C.status = \"ACTIVE\"\n" +
-            "               group by UI.userIdx), 0) as castingCount\n" +
+            "               group by UI.userIdx), 0) as castingCount,\n" +
+            "       group_concat(ECD.castingPossibleDate separator '') as GC\n" +
             "from UserInfo as UI\n" +
             "         left join UserJobCategory UJC on UI.userIdx = UJC.userIdx\n" +
             "         left join JobCategoryParent JCP on UJC.jobCategoryParentIdx = JCP.jobCategoryParentIdx\n" +
@@ -49,20 +50,19 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and (UI.nickname like concat('%', ifnull(:nickname, UI.nickname), '%') or\n" +
             "       UI.introduce like concat('%', ifnull(:introduce, UI.introduce), '%'))\n" +
             "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
-            "  and ECD.castingPossibleDate between ifnull(:castingStartDate,ECD.castingPossibleDate) and ifnull(:castingEndDate,ECD.castingPossibleDate)\n"+
             "group by UI.userIdx\n" +
+            "having GC like concat('%',:castingDate,'%')" +
             "order by castingCount desc\n" +
             "limit :page,5;",nativeQuery = true,name="findExpertOrderByCasting")
     List<Object[]> findExpertListOrderByCasting(@Param("jobCategoryParentIdx")List<Long> jobCategoryParentIdx,
-                                            @Param("jobCategoryChildIdx") List<Long> jobCategoryChildIdx,
-                                            @Param("genreCategoryIdx")List<Long> genreCategoryIdx,
-                                            @Param("city")List<String> city,
-                                            @Param("nickname")String nickname,
-                                            @Param("introduce") String introduce,
+                                                @Param("jobCategoryChildIdx") List<Long> jobCategoryChildIdx,
+                                                @Param("genreCategoryIdx")List<Long> genreCategoryIdx,
+                                                @Param("city")List<String> city,
+                                                @Param("nickname")String nickname,
+                                                @Param("introduce") String introduce,
                                                 @Param("minimumCastingPrice")int minimumCastingPrice,
-                                                @Param("castingStartDate")String castingStartDate,
-                                                @Param("castingEndDate")String castingEndDate,
-                                            @Param("page")int page);
+                                                @Param("castingDate")String castingDate,
+                                                @Param("page")int page);
 
     @Query(value="select UI.userIdx,\n" +
             "       UI.profileImageURL,\n" +
@@ -85,7 +85,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "       ifnull((select count(*)\n" +
             "               from Casting C\n" +
             "               where C.expertIdx = UI.userIdx and C.status = \"ACTIVE\"\n" +
-            "               group by UI.userIdx), 0) as castingCount\n" +
+            "               group by UI.userIdx), 0) as castingCount,\n" +
+            "       group_concat(ECD.castingPossibleDate separator '') as GC\n" +
             "from UserInfo as UI\n" +
             "         left join UserJobCategory UJC on UI.userIdx = UJC.userIdx\n" +
             "         left join JobCategoryParent JCP on UJC.jobCategoryParentIdx = JCP.jobCategoryParentIdx\n" +
@@ -103,8 +104,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and (UI.nickname like concat('%', ifnull(:nickname, UI.nickname), '%') or\n" +
             "       UI.introduce like concat('%', ifnull(:introduce, UI.introduce), '%'))\n" +
             "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
-            "  and ECD.castingPossibleDate between ifnull(:castingStartDate,ECD.castingPossibleDate) and ifnull(:castingEndDate,ECD.castingPossibleDate)\n"+
             "group by UI.userIdx\n" +
+            "having GC like concat('%',:castingDate,'%')" +
             "order by reviewAverage desc\n" +
             "limit :page,5;",nativeQuery = true,name="findExpertOrderByCasting")
     List<Object[]> findExpertListOrderByReview(@Param("jobCategoryParentIdx")List<Long> jobCategoryParentIdx,
@@ -114,8 +115,7 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
                                                 @Param("nickname")String nickname,
                                                 @Param("introduce") String introduce,
                                                @Param("minimumCastingPrice")int minimumCastingPrice,
-                                                @Param("castingStartDate")String castingStartDate,
-                                                @Param("castingEndDate")String castingEndDate,
+                                               @Param("castingDate")String castingDate,
                                                 @Param("page")int page);
 
 
@@ -143,7 +143,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "       ifnull((select count(*)\n" +
             "               from Casting C\n" +
             "               where C.expertIdx = UI.userIdx and C.status = \"ACTIVE\"\n" +
-            "               group by UI.userIdx), 0) as castingCount\n" +
+            "               group by UI.userIdx), 0) as castingCount,\n" +
+            "       group_concat(ECD.castingPossibleDate separator '') as GC\n" +
             "from UserInfo as UI\n" +
             "         left join UserJobCategory UJC on UI.userIdx = UJC.userIdx\n" +
             "         left join JobCategoryParent JCP on UJC.jobCategoryParentIdx = JCP.jobCategoryParentIdx\n" +
@@ -161,8 +162,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and (UI.nickname like concat('%', ifnull(:nickname, UI.nickname), '%') or\n" +
             "       UI.introduce like concat('%', ifnull(:introduce, UI.introduce), '%'))\n" +
             "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
-            "  and ECD.castingPossibleDate between ifnull(:castingStartDate,ECD.castingPossibleDate) and ifnull(:castingEndDate,ECD.castingPossibleDate)\n"+
             "group by UI.userIdx\n" +
+            "having GC like concat('%',:castingDate,'%')" +
             "order by castingCount desc;",nativeQuery = true,name="findExpertOrderByCasting")
     List<Object[]> findExpertListCountOrderByCasting(@Param("jobCategoryParentIdx")List<Long> jobCategoryParentIdx,
                                                      @Param("jobCategoryChildIdx") List<Long> jobCategoryChildIdx,
@@ -171,8 +172,7 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
                                                      @Param("nickname")String nickname,
                                                      @Param("introduce") String introduce,
                                                      @Param("minimumCastingPrice")int minimumCastingPrice,
-                                                     @Param("castingStartDate")String castingStartDate,
-                                                     @Param("castingEndDate")String castingEndDate);
+                                                     @Param("castingDate")String castingDate);
 
 
     @Query(value="select UI.userIdx,\n" +
@@ -196,7 +196,8 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "       ifnull((select count(*)\n" +
             "               from Casting C\n" +
             "               where C.expertIdx = UI.userIdx and C.status = \"ACTIVE\"\n" +
-            "               group by UI.userIdx), 0) as castingCount\n" +
+            "               group by UI.userIdx), 0) as castingCount,\n" +
+            "       group_concat(ECD.castingPossibleDate separator '') as GC\n" +
             "from UserInfo as UI\n" +
             "         left join UserJobCategory UJC on UI.userIdx = UJC.userIdx\n" +
             "         left join JobCategoryParent JCP on UJC.jobCategoryParentIdx = JCP.jobCategoryParentIdx\n" +
@@ -216,16 +217,16 @@ public interface ExpertRepository extends CrudRepository<UserInfo, Integer> {
             "  and UI.minimumCastingPrice <= ifnull(:minimumCastingPrice, UI.minimumCastingPrice)\n" +
             "  and ECD.castingPossibleDate between ifnull(:castingStartDate,ECD.castingPossibleDate) and ifnull(:castingEndDate,ECD.castingPossibleDate)\n"+
             "group by UI.userIdx\n" +
+            "having GC like concat('%',:castingDate,'%')" +
             "order by reviewAverage desc;",nativeQuery = true,name="findExpertOrderByCasting")
     List<Object[]> findExpertListCountOrderByReview(@Param("jobCategoryParentIdx")List<Long> jobCategoryParentIdx,
-                                               @Param("jobCategoryChildIdx") List<Long> jobCategoryChildIdx,
-                                               @Param("genreCategoryIdx")List<Long> genreCategoryIdx,
-                                               @Param("city")List<String> city,
-                                               @Param("nickname")String nickname,
-                                               @Param("introduce") String introduce,
-                                               @Param("minimumCastingPrice")int minimumCastingPrice,
-                                               @Param("castingStartDate")String castingStartDate,
-                                               @Param("castingEndDate")String castingEndDate);
+                                                    @Param("jobCategoryChildIdx") List<Long> jobCategoryChildIdx,
+                                                    @Param("genreCategoryIdx")List<Long> genreCategoryIdx,
+                                                    @Param("city")List<String> city,
+                                                    @Param("nickname")String nickname,
+                                                    @Param("introduce") String introduce,
+                                                    @Param("minimumCastingPrice")int minimumCastingPrice,
+                                                    @Param("castingDate")String castingDate);
 
 
 

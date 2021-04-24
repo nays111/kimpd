@@ -27,12 +27,15 @@ public class BasketController {
     @PostMapping("/baskets")
     @Operation(summary = "장바구니 담기 API",description = "여러명의 유저를 한 프로젝트 안에 담는 방식입니다, 토큰이 필요합니다.")
     public BaseResponse<String> postBasket(@RequestBody PostBasketReq postBasketReq){
+
         if(postBasketReq.getUserIdx().size()==0 || postBasketReq.getUserIdx()==null){
             return new BaseResponse<>(EMPTY_EXPERT_TO_POST_BASKET);
         }
+
         if(postBasketReq.getProjectIdx()==null){
             return new BaseResponse<>(EMPTY_PROJECT_INDEX);
         }
+
         try{
             int userIdx = jwtService.getUserIdx();
             List<Integer> expertIdxList = postBasketReq.getUserIdx();

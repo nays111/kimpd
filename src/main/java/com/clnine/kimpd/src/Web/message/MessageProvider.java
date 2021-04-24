@@ -60,9 +60,9 @@ public class MessageProvider {
 
         List<Message> messageList = messageRepository.findByReceiverAndStatus(receiverInfo,"ACTIVE",pageable);
         int totalCount = messageRepository.countAllByReceiverAndStatus(receiverInfo,"ACTIVE");
-        for(int i=0;i<messageList.size();i++){
-            UserInfo sender = messageList.get(i).getSender();
-            Message message = messageList.get(i);
+        for(Message message : messageList){
+            UserInfo sender = message.getSender();
+
             int messageIdx = message.getMessageIdx();
             int senderIdx = sender.getUserIdx();
             String senderNickname = sender.getNickname(); //쪽지 보낸 사람 닉네임
@@ -76,7 +76,7 @@ public class MessageProvider {
             }
 
             Date sendTimeDateForm = message.getCreatedAt();
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[hh:mm]");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd[HH]:mm]");
             String sendTime = simpleDateFormat.format(sendTimeDateForm); //쪽지 보낸 시간
             String description = message.getDescription();
             int readStatus = message.getReadStatus();

@@ -50,11 +50,8 @@ public class ReportController {
         try{
             int reporterUserIdx = jwtService.getUserIdx();
             reportService.postReport(reporterUserIdx,reportedUserIdx,postReportReq);
-            if(reportService.deleteUserByReport(reportedUserIdx)==true){
-                return new BaseResponse<>(SUCCESS);
-            }else{
-                return new BaseResponse<>(SUCCESS_USER_BE_INACTIVE);
-            }
+            reportService.deleteUserByReport(reportedUserIdx);
+            return new BaseResponse<>(SUCCESS);
         }catch(BaseException exception){
             return new BaseResponse<>(exception.getStatus());
         }

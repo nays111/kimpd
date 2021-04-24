@@ -14,9 +14,14 @@ import java.util.List;
 public interface ProjectRepository extends CrudRepository<Project, Integer> {
     List<Project> findByUserInfoAndProjectStatusAndStatus(UserInfo user, int projectStatus,String status, Pageable pageable);
     List<Project> findByUserInfoAndStatus(UserInfo user,String status);
+
+    List<Project> findByUserInfoAndProjectStatusAndStatus(UserInfo userInfo,int projectStatus,String status);
+
     Project findByProjectIdxAndStatus(int projectIdx,String status);
     int countAllByUserInfoAndStatus(UserInfo userInfo,String status);
     int countAllByUserInfoAndProjectStatusAndStatus(UserInfo userinfo,int projectStatus,String status);
-    List<Project> findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus, String status, Date now, Date end, Pageable pageable);
-    int countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus,String status, Date now, Date end);
+    //List<Project> findAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus, String status, Date now, Date end, Pageable pageable);
+    //int countAllByUserInfoAndProjectStatusAndStatusAndCreatedAtBetweenOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus,String status, Date now, Date end);
+    List<Project> findAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus, String status, String beforeDay, Pageable pageable);
+    int countAllByUserInfoAndProjectStatusAndStatusAndProjectStartDateGreaterThanOrderByProjectIdxDesc(UserInfo userInfo, int projectStatus, String status, String beforeDay);
 }

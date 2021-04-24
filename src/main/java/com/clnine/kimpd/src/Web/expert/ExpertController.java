@@ -50,16 +50,23 @@ public class ExpertController {
         if(postExpertsReq.getSort()==null){
             return new BaseResponse<>(EMPTY_SORT_OPTION);
         }
-        if(postExpertsReq.getCastingStartDate().length()>0){
-            if(!isRegexDateType(postExpertsReq.getCastingStartDate())){
-                return new BaseResponse<>(INVALID_CASTING_START_DATE);
+        if(postExpertsReq.getCastingDate().size()>0){
+            for(String castingDate : postExpertsReq.getCastingDate()){
+                if(!isRegexDateType(castingDate)){
+                    return new BaseResponse<>(INVALID_CASTING_END_DATE);
+                }
             }
         }
-        if(postExpertsReq.getCastingEndDate().length()>0){
-            if(!isRegexDateType(postExpertsReq.getCastingEndDate())){
-                return new BaseResponse<>(INVALID_CASTING_END_DATE);
-            }
-        }
+//        if(postExpertsReq.getCastingStartDate().length()>0){
+//            if(!isRegexDateType(postExpertsReq.getCastingStartDate())){
+//
+//            }
+//        }
+//        if(postExpertsReq.getCastingEndDate().length()>0){
+//            if(!isRegexDateType(postExpertsReq.getCastingEndDate())){
+//                return new BaseResponse<>(INVALID_CASTING_END_DATE);
+//            }
+//        }
         if(postExpertsReq.getSort()!=1 && postExpertsReq.getSort()!=2){
             return new BaseResponse<>(WRONG_SORT_OPTION);
         }

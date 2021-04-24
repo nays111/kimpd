@@ -40,15 +40,12 @@ public class ReportService {
         }
     }
 
-    public boolean deleteUserByReport(int reportedUserIdx) throws BaseException{
+    public void deleteUserByReport(int reportedUserIdx) throws BaseException{
         UserInfo reportedUserInfo = userInfoProvider.retrieveUserInfoByUserIdx(reportedUserIdx);
         int reportCount = reportRepository.countReportByReportedUserInfoAndStatus(reportedUserInfo,"ACTIVE");
         if(reportCount >=5){
             reportedUserInfo.setStatus("INACTIVE");
             userInfoRepository.save(reportedUserInfo);
-            return true;
-        }else{
-            return false;
         }
     }
 }

@@ -101,8 +101,10 @@ public class ExpertProvider {
         List<Long> jobCategoryChildIdx = postExpertsReq.getJobCategoryChildIdx();
         List<Long> genreCategoryIdx = postExpertsReq.getGenreCategoryIdx();
         List<String> city = postExpertsReq.getCity();
-        String castingStartDate = postExpertsReq.getCastingStartDate();
-        String castingEndDate = postExpertsReq.getCastingEndDate();
+//        String castingStartDate = postExpertsReq.getCastingStartDate();
+//        String castingEndDate = postExpertsReq.getCastingEndDate();
+        List<String> castingDateList = postExpertsReq.getCastingDate();
+
         Integer minimumCastingPrice = postExpertsReq.getMinimumCastingPrice();
         int page = postExpertsReq.getPage();
         int sort = postExpertsReq.getSort();
@@ -163,11 +165,19 @@ public class ExpertProvider {
         /**
          * 섭외 기간을 전체 대상으로 조회할 경우 (""~ "9999.99.99" 까지 조회)
          */
-        if(castingStartDate==null || castingStartDate.length()==0){
-            castingStartDate=null;
-        }
-        if(castingEndDate==null || castingEndDate.length()==0){
-            castingEndDate=null;
+//        if(castingStartDate==null || castingStartDate.length()==0){
+//            castingStartDate=null;
+//        }
+//        if(castingEndDate==null || castingEndDate.length()==0){
+//            castingEndDate=null;
+//        }
+        /**
+         * 2021.04.25
+         * castingDate : 날짜 하나하나 받는 형식으로 수정
+         */
+        String castingDate="";
+        for(String date : castingDateList){
+            castingDate += date;
         }
 
         /**
@@ -177,14 +187,15 @@ public class ExpertProvider {
             minimumCastingPrice=999999999;
         }
 
+
         List<Object[]> resultList = null;
         List<Object[]> sizeResultList = null;
         if(sort==1){ //평점순 정렬
-            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,pageSearch);
-            sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate);
+            resultList = expertRepository.findExpertListOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingDate,pageSearch);
+            sizeResultList = expertRepository.findExpertListCountOrderByReview(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingDate);
         } else if(sort==2){ //섭외순 정렬
-            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate,pageSearch);
-            sizeResultList = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingStartDate,castingEndDate);
+            resultList = expertRepository.findExpertListOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingDate,pageSearch);
+            sizeResultList = expertRepository.findExpertListCountOrderByCasting(jobCategoryParentIdx,jobCategoryChildIdx,genreCategoryIdx,city,word,word,minimumCastingPrice,castingDate);
         }
 
         int size = sizeResultList.size(); //검색 결과 건수

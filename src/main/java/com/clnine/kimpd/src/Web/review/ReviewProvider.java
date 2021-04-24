@@ -94,13 +94,13 @@ public class ReviewProvider {
 
             }else if(reviewStatus==1){
 
-                castingList = castingRepository.findCastingNotWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end1,now1,pageable);
-                totalCount = castingRepository.countCastingNotWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end1,now1);
+                castingList = castingRepository.findCastingNotWriteReviewInNMonth(userInfo,4,"ACTIVE",end1,now1,pageable);
+                totalCount = castingRepository.countCastingNotWriteReviewInNMonth(userInfo,4,"ACTIVE",end1,now1);
 
             }else if(reviewStatus==2){
 
-                castingList = castingRepository.findCastingWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end1,now1,pageable);
-                totalCount = castingRepository.countCastingWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end1,now1);
+                castingList = castingRepository.findCastingWriteReviewInNMonth(userInfo,4,"ACTIVE",end1,now1,pageable);
+                totalCount = castingRepository.countCastingWriteReviewInNMonth(userInfo,4,"ACTIVE",end1,now1);
 
             }
 
@@ -113,39 +113,30 @@ public class ReviewProvider {
 
             }else if(reviewStatus==1){
 
-                castingList = castingRepository.findCastingNotWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end2,now1,pageable);
-                totalCount = castingRepository.countCastingNotWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end2,now1);
+                castingList = castingRepository.findCastingNotWriteReviewInNMonth(userInfo,4,"ACTIVE",end2,now1,pageable);
+                totalCount = castingRepository.countCastingNotWriteReviewInNMonth(userInfo,4,"ACTIVE",end2,now1);
 
             }else if(reviewStatus==2){
 
-                castingList = castingRepository.findCastingWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end2,now1,pageable);
-                totalCount = castingRepository.countCastingWriteReviewInThreeMonth(userInfo,4,"ACTIVE",end2,now1);
+                castingList = castingRepository.findCastingWriteReviewInNMonth(userInfo,4,"ACTIVE",end2,now1,pageable);
+                totalCount = castingRepository.countCastingWriteReviewInNMonth(userInfo,4,"ACTIVE",end2,now1);
 
             }
         }
 
         List<GetMyReviewsListDTO> getMyReviewsListDTOList = new ArrayList<>();
 
-        for(int i=0;i<castingList.size();i++){
-            Casting casting = castingList.get(i);
-            UserInfo expertInfo = casting.getExpert();
+        for(Casting casting : castingList){
+            UserInfo expert = casting.getExpert();
             Project project = casting.getProject();
 
             int castingIdx = casting.getCastingIdx();
-            int userIdx = expertInfo.getUserIdx();
-            String nickname = expertInfo.getNickname();
-            String categoryJobName = categoryProvider.getMainJobCategoryChild(expertInfo);
-
-            String profileImageURL = expertInfo.getProfileImageURL();
-
-
-            String introduce = expertInfo.getIntroduce();
-
-
-            String castingStartDate = casting.getCastingStartDate();
-            String castingEndDate = casting.getCastingEndDate();
-            String castingTerm = castingStartDate+"~"+castingEndDate;
-
+            int userIdx = expert.getUserIdx();
+            String nickname = expert.getNickname();
+            String categoryJobName = categoryProvider.getMainJobCategoryChild(expert);
+            String profileImageURL = expert.getProfileImageURL();
+            String introduce = expert.getIntroduce();
+            String castingTerm = casting.getCastingStartDate()+"~"+casting.getCastingEndDate();
             String projectName = project.getProjectName();
             String castingPrice = casting.getCastingPrice();
             String reviewState = null;
@@ -159,12 +150,12 @@ public class ReviewProvider {
                 reviewState = "평가완료";
                 star = review.getStar();
             }
-
             GetMyReviewsListDTO getMyReviewsListDTO = new GetMyReviewsListDTO(userIdx,nickname,
                     profileImageURL,categoryJobName,introduce,castingIdx,castingTerm,projectName,castingPrice,reviewState,star);
 
             getMyReviewsListDTOList.add(getMyReviewsListDTO);
         }
+
         GetMyReviewsRes getMyReviewsRes = new GetMyReviewsRes(totalCount,getMyReviewsListDTOList);
         return getMyReviewsRes;
     }
